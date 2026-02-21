@@ -1,55 +1,1228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Char Dham Yatra</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta Chariset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Chari Dham | ChariDhamCentral</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Variables ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --saffron:   #e07b39;
+      --saffron-d: #c45e1e;
+      --maroon:    #8b1a1a;
+      --gold:      #d4a017;
+      --dark:      #1a1a1a;
+      --text:      #444;
+      --light:     #f8f5f0;
+      --border:    #e0d9cf;
+      --white:     #ffffff;
+      --radius:    8px;
+      --shadow:    0 2px 12px rgba(0,0,0,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.7;
+    }
+
+    a { text-decoration: none; color: var(--saffron); }
+    a:hover { color: var(--saffron-d); text-decoration: underline; }
+
+    img { max-width: 100%; display: block; }
+
+    /* ─── Top Bar ─────────────────────────────────────────────── */
+    .top-bar {
+      background: var(--maroon);
+      color: #f5d9a0;
+      font-size: .78rem;
+      padding: 6px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .top-bar a { color: #f5d9a0; }
+    .top-bar a:hover { color: var(--gold); text-decoration: none; }
+    .top-bar .tb-left, .top-bar .tb-right { display: flex; align-items: center; gap: 16px; }
+
+    /* ─── Header ──────────────────────────────────────────────── */
+    header {
+      background: var(--white);
+      border-bottom: 3px solid var(--saffron);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid var(--saffron);
+      background: white;
+    }
+    .logo-icon img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .logo-text { font-family: 'Merriweather', serif; }
+    .logo-text strong { display: block; font-size: 1.18rem; color: var(--maroon); line-height: 1.1; }
+    .logo-text span { font-size: .72rem; color: var(--saffron); letter-spacing: 1px; text-transform: uppercase; }
+
+    nav ul { list-style: none; display: flex; gap: 4px; }
+    nav ul li a {
+      display: block;
+      padding: 8px 13px;
+      font-size: .87rem;
+      font-weight: 600;
+      color: var(--dark);
+      border-radius: 4px;
+      transition: background .2s, color .2s;
+    }
+    nav ul li a:hover,
+    nav ul li a.active { background: var(--saffron); color: white; text-decoration: none; }
+
+    .header-cta {
+      background: var(--maroon);
+      color: white !important;
+      padding: 9px 18px !important;
+      border-radius: 5px;
+    }
+    .header-cta:hover { background: var(--saffron-d) !important; }
+
+    /* hamburger (mobile) */
+    .hamburger { display: none; font-size: 26px; cursor: pointer; color: var(--dark); }
+
+    /* ─── Hero Banner ─────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 380px;
+      overflow: hidden;
+    }
+    .hero img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 60%;
+      filter: brightness(.55);
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 36px 40px;
+      background: linear-gradient(0deg, rgba(0,0,0,.6) 0%, transparent 60%);
+    }
+    .hero-overlay h1 {
+      font-family: 'Merriweather', serif;
+      font-size: 2.4rem;
+      color: white;
+      text-shadow: 0 2px 6px rgba(0,0,0,.5);
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .82rem;
+      color: #eee;
+      margin-top: 6px;
+    }
+    .breadcrumb a { color: var(--gold); }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: #bbb; }
+
+    /* ─── Layout ──────────────────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 36px;
+      padding: 40px 0 60px;
+      align-items: start;
+    }
+
+    /* ─── Main Content ────────────────────────────────────────── */
+    .main-content > * + * { margin-top: 2rem; }
+
+    .intro-card {
+      background: var(--light);
+      border-left: 5px solid var(--saffron);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      font-size: 1rem;
+    }
+    .intro-card p + p { margin-top: .9rem; }
+
+    /* Logo Feature */
+    .logo-feature {
+      text-align: center;
+      padding: 20px 0 10px;
+    }
+    .logo-feature img {
+      max-width: 280px;
+      width: 100%;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    }
+
+    /* Dham cards grid */
+    .dham-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 1.2rem;
+    }
+    .dham-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: white;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .dham-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.14); }
+    .dham-card img { height: 160px; width: 100%; object-fit: cover; }
+    .dham-card-body { padding: 14px 16px 16px; }
+    .dham-card-body h3 {
+      font-family: 'Merriweather', serif;
+      font-size: 1rem;
+      color: var(--maroon);
+      margin-bottom: 5px;
+    }
+    .dham-card-body p { font-size: .88rem; color: #555; }
+
+    /* Section headings */
+    .section-block { padding: 28px 0; border-top: 1px solid var(--border); }
+    .section-block:first-child { border-top: none; padding-top: 0; }
+
+    .section-block h2 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.45rem;
+      color: var(--maroon);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-block h2::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 26px;
+      background: var(--saffron);
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .section-block p + p { margin-top: .85rem; }
+
+    /* Mythology numbered list */
+    .myth-list { list-style: none; counter-reset: myth; margin-top: 1rem; }
+    .myth-list li {
+      counter-increment: myth;
+      position: relative;
+      padding: 16px 16px 16px 52px;
+      background: var(--light);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+    }
+    .myth-list li::before {
+      content: counter(myth);
+      position: absolute;
+      left: 14px; top: 14px;
+      width: 28px; height: 28px;
+      background: var(--saffron);
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: .9rem;
+    }
+    .myth-list li h4 {
+      font-size: .96rem;
+      font-weight: 700;
+      color: var(--maroon);
+      margin-bottom: 6px;
+    }
+    .myth-list li p { font-size: .9rem; }
+
+    /* Circuit steps */
+    .circuit-steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 1.2rem;
+    }
+    .circuit-step {
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 16px 10px;
+      position: relative;
+    }
+    .circuit-step .step-num {
+      width: 36px; height: 36px;
+      background: var(--saffron);
+      color: white;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 8px;
+      font-size: .95rem;
+    }
+    .circuit-step .step-name { font-weight: 700; font-size: .88rem; color: var(--maroon); }
+    .circuit-step .step-desc { font-size: .78rem; color: #666; margin-top: 3px; }
+    .circuit-arrow { font-size: 1.4rem; color: var(--saffron); flex-shrink: 0; }
+
+    /* FAQ */
+    .faq-list { margin-top: 1rem; }
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .faq-q {
+      background: var(--light);
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: .92rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--dark);
+      user-select: none;
+    }
+    .faq-q:hover { background: #f0e8dc; }
+    .faq-q .faq-icon { font-size: 1rem; color: var(--saffron); flex-shrink: 0; transition: transform .25s; }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 18px;
+      font-size: .9rem;
+      transition: max-height .35s ease, padding .35s ease;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding: 14px 18px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* ─── Sidebar ─────────────────────────────────────────────── */
+    .sidebar > * + * { margin-top: 24px; }
+
+    .sidebar-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .sidebar-card-head {
+      background: var(--maroon);
+      color: white;
+      padding: 13px 18px;
+      font-family: 'Merriweather', serif;
+      font-size: .98rem;
+    }
+    .sidebar-card-body { padding: 18px; }
+
+    /* Enquiry form */
+    .enquiry-form label { display: block; font-size: .82rem; font-weight: 600; margin-bottom: 4px; color: #555; }
+    .enquiry-form input,
+    .enquiry-form select,
+    .enquiry-form textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: .88rem;
+      font-family: inherit;
+      color: var(--dark);
+      margin-bottom: 12px;
+      transition: border-color .2s;
+    }
+    .enquiry-form input:focus,
+    .enquiry-form select:focus,
+    .enquiry-form textarea:focus { outline: none; border-color: var(--saffron); }
+    .enquiry-form textarea { resize: vertical; min-height: 80px; }
+    .btn-enquiry {
+      width: 100%;
+      background: var(--saffron);
+      color: white;
+      border: none;
+      padding: 11px;
+      border-radius: 5px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-enquiry:hover { background: var(--saffron-d); }
+
+    /* Packages card */
+    .pkg-item {
+      border-bottom: 1px solid var(--border);
+      padding: 13px 0;
+    }
+    .pkg-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .pkg-item h4 { font-size: .9rem; color: var(--dark); font-weight: 700; margin-bottom: 3px; }
+    .pkg-item .pkg-meta { font-size: .78rem; color: #888; }
+    .pkg-item .pkg-price { font-size: .88rem; color: var(--maroon); font-weight: 700; margin-top: 4px; }
+    .pkg-item .btn-detail {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: .78rem;
+      background: var(--saffron);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+    .pkg-item .btn-detail:hover { background: var(--saffron-d); text-decoration: none; }
+
+    /* ─── Events ─────────────────────────────────────────────── */
+    .ev-badge {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .6px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .ev-live     { background: #fdecea; color: #c0392b; border: 1px solid #f5b7b1; }
+    .ev-upcoming { background: #eaf4fb; color: #1a6fa8; border: 1px solid #aed6f1; }
+    .ev-regular  { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+
+    .ev-item {
+      padding: 10px 0 12px;
+    }
+    .ev-item--current {
+      background: #fffdf5;
+      border: 1px solid #f0d080;
+      border-radius: var(--radius);
+      padding: 10px 12px 12px;
+      margin-bottom: 4px;
+    }
+    .ev-date {
+      font-size: .74rem;
+      font-weight: 700;
+      color: var(--saffron);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      margin-bottom: 3px;
+    }
+    .ev-title {
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--maroon);
+      margin-bottom: 3px;
+    }
+    .ev-location {
+      font-size: .76rem;
+      color: #777;
+      margin-bottom: 5px;
+    }
+    .ev-desc {
+      font-size: .82rem;
+      color: #555;
+      line-height: 1.55;
+      margin-bottom: 7px;
+    }
+    .ev-divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 10px 0 12px;
+    }
+
+    /* Quick links */
+    .quick-links { list-style: none; }
+    .quick-links li {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 0;
+    }
+    .quick-links li:last-child { border-bottom: none; }
+    .quick-links li a {
+      font-size: .88rem;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: color .2s;
+    }
+    .quick-links li a::before { content: '›'; color: var(--saffron); font-size: 1.1rem; }
+    .quick-links li a:hover { color: var(--saffron); text-decoration: none; }
+
+    /* ─── Tour Packages Strip ─────────────────────────────────── */
+    .packages-strip {
+      background: var(--light);
+      border-top: 4px solid var(--saffron);
+      padding: 48px 0;
+    }
+    .strip-head {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .strip-head h2 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.7rem;
+      color: var(--maroon);
+    }
+    .strip-head p { color: #666; margin-top: 6px; }
+
+    .pkg-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 22px;
+    }
+    .pkg-card {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .pkg-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.14); }
+    .pkg-card img { height: 150px; width: 100%; object-fit: cover; }
+    .pkg-card-body { padding: 16px; }
+    .pkg-card-body h3 { font-size: .95rem; color: var(--dark); font-weight: 700; margin-bottom: 5px; }
+    .pkg-card-body .meta { font-size: .78rem; color: #888; }
+    .pkg-card-body .price { color: var(--maroon); font-weight: 700; margin: 8px 0; }
+    .pkg-card-body .btn-book {
+      display: block;
+      text-align: center;
+      background: var(--maroon);
+      color: white;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: .85rem;
+      font-weight: 600;
+      transition: background .2s;
+    }
+    .pkg-card-body .btn-book:hover { background: var(--saffron); text-decoration: none; }
+
+    /* ─── CTA Banner ──────────────────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--maroon) 0%, #5a0d0d 100%);
+      color: white;
+      text-align: center;
+      padding: 52px 20px;
+    }
+    .cta-banner h2 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.9rem;
+      margin-bottom: 10px;
+    }
+    .cta-banner p { font-size: 1rem; color: #eecba0; margin-bottom: 24px; }
+    .btn-cta-white {
+      display: inline-block;
+      background: white;
+      color: var(--maroon);
+      font-weight: 700;
+      padding: 13px 34px;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: background .2s;
+    }
+    .btn-cta-white:hover { background: var(--gold); color: white; text-decoration: none; }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    footer {
+      background: #111;
+      color: #bbb;
+      padding: 50px 0 0;
+    }
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 36px;
+    }
+    .footer-about .logo-text strong { color: #f5d9a0; }
+    .footer-about .logo-text span { color: var(--saffron); }
+    .footer-about p { font-size: .88rem; margin-top: 14px; line-height: 1.7; }
+    .footer-contact { font-size: .85rem; margin-top: 14px; }
+    .footer-contact div { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+    .footer-contact .icon { color: var(--saffron); flex-shrink: 0; }
+
+    .footer-col h4 {
+      color: #f5d9a0;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--saffron);
+      display: inline-block;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a { color: #bbb; font-size: .86rem; transition: color .2s; }
+    .footer-col ul li a:hover { color: var(--gold); text-decoration: none; }
+    .footer-col ul li a::before { content: '›  '; color: var(--saffron); }
+
+    .footer-bottom {
+      background: #0a0a0a;
+      text-align: center;
+      padding: 16px 20px;
+      margin-top: 40px;
+      font-size: .8rem;
+      color: #777;
+    }
+    .footer-bottom a { color: #999; }
+    .footer-bottom a:hover { color: var(--gold); }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .dham-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      nav, .header-cta { display: none; }
+      .hamburger { display: block; }
+      .hero { height: 240px; }
+      .hero-overlay h1 { font-size: 1.5rem; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .dham-grid { grid-template-columns: 1fr; }
+      .circuit-steps { flex-direction: column; }
+      .circuit-arrow { transform: rotate(90deg); }
+      .pkg-cards { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Char Dham Yatra</h1>
-        <nav>
-            <ul>
-                <li><a href="#yamunotri">Yamunotri</a></li>
-                <li><a href="#gangotri">Gangotri</a></li>
-                <li><a href="#kedarnath">Kedarnath</a></li>
-                <li><a href="#badrinath">Badrinath</a></li>
+
+  <!-- ═══ TOP BAR ═══════════════════════════════════════════════ -->
+  <div class="top-bar">
+    <div class="tb-left">
+      <span>📞 +91 1236 5656</span>
+      <span>✉ Charidhamcentral@gmail.com</span>
+    </div>
+    <div class="tb-right">
+      <a href="#">Chari Dham Registration</a>
+      <a href="#">Helicopter Tour</a>
+      <a href="#">Book Pooja Online</a>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ════════════════════════════════════════════════ -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon"><img src="Chardhamlogo.jpg" alt="CharDham Logo" /></div>
+        <div class="logo-text">
+          <strong>ChariDham Central</strong>
+          <span>Your Spiritual Journey Guide</span>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#" class="active">About Chari Dham</a></li>
+          <li><a href="#">Packages</a></li>
+          <li><a href="#">Locations</a></li>
+          <li><a href="#">Guide</a></li>
+          <li><a href="#" class="header-cta">Book Now</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger">☰</div>
+    </div>
+  </header>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════ -->
+  <section class="hero">
+    <img
+      src="https://images.unsplash.com/photo-1599661046289-e31897846e41?w=1400&q=80"
+      alt="Odisha Chari Dham Temples"
+    />
+    <div class="hero-overlay">
+      <nav class="breadcrumb">
+        <a href="#">Home</a>
+        <span>›</span>
+        <a href="#">Chari Dham </a>
+        <span>›</span>
+        <span>About Chari Dham</span>
+      </nav>
+      <h1>About Chari Dham</h1>
+    </div>
+  </section>
+
+  <!-- ═══ MAIN LAYOUT ═══════════════════════════════════════════ -->
+  <div class="container">
+    <div class="content-grid">
+
+      <!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+      <main class="main-content">
+
+        <!-- Intro -->
+        <div class="intro-card">
+          <p>
+            The <strong>Chari Dham</strong> is a sacred pilgrimage circuit located in the Indian
+            state of Odisha, known for its profound spiritual significance and awe-inspiring
+            natural beauty. The four revered pilgrimage sites that make up the
+            <em>Chota Chari Dham</em> in Odisha are
+            <a href="#">Lingaraj Temple</a>, <a href="#">Jagannath Temple</a>,
+            <a href="#">Samaleswari Temple</a>, and <a href="#">Konark Sun Temple</a>.
+          </p>
+          <p>
+            Each of these sites is dedicated to a specific deity and holds immense religious
+            importance for Hindus. The 4 Dham Yatra is considered one of the most significant
+            pilgrimages in Hinduism, believed to offer spiritual cleansing, moksha (liberation),
+            and salvation to devotees.
+          </p>
+        </div>
+
+        <!-- Logo Feature -->
+        <div class="logo-feature">
+          <img src="Chardhamlogo.jpg" alt="Chari Dham Logo" />
+        </div>
+
+        <!-- The Four Dhams -->
+        <div class="dham-grid">
+          <div class="dham-card">
+            <img src="lingaraj-temple.jpg" alt="Lingaraj Temple" />
+            <div class="dham-card-body">
+              <h3>🛕 Lingaraj Temple</h3>
+              <p>One of the oldest and largest temples in Bhubaneswar, dedicated to Lord Shiva.</p>
+            </div>
+          </div>
+          <div class="dham-card">
+            <img src="jagannath-temple.jpg" alt="Jagannath Temple Puri" />
+            <div class="dham-card-body">
+              <h3>🛕 Jagannath Temple</h3>
+              <p>The famous temple of Lord Jagannath, one of the Char Dham pilgrimage sites of India.</p>
+            </div>
+          </div>
+          <div class="dham-card">
+            <img src="samaleswari-temple.jpg" alt="Samaleswari Temple Sambalpur" />
+            <div class="dham-card-body">
+              <h3>🛕 Samaleswari Temple</h3>
+              <p>Dedicated to Goddess Samaleswari, an important Shakti shrine in western Odisha.</p>
+            </div>
+          </div>
+          <div class="dham-card">
+            <img src="konark-temple.jpg" alt="Konark Sun Temple" />
+            <div class="dham-card-body">
+              <h3>🛕 Konark Sun Temple</h3>
+              <p>A UNESCO World Heritage site known for its magnificent chariot-shaped architecture dedicated to the Sun God.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Significance -->
+        <div class="section-block">
+          <h2>Significance of Chari Dham Yatra</h2>
+          <p>
+            The Chari Dham Yatra is not just a physical journey, but a deeply transformative
+            spiritual experience, where pilgrims unite with the divine through devotion,
+            rituals, and contemplation. The challenging trek across the stunning yet rugged
+            Himalayan landscape represents the inner struggle and perseverance required to
+            overcome life's obstacles and achieve spiritual enlightenment.
+          </p>
+          <p>
+            As one of the most revered and sacred pilgrimages in Hinduism, the Chari Dham
+            Yatra holds immense significance. It is believed to purify one's soul, cleanse
+            accumulated sins, and grant <em>moksha</em> (liberation) after death. The journey
+            brings divine blessings, fostering spiritual tranquility and providing the path
+            to eternal peace and salvation.
+          </p>
+        </div>
+
+        <!-- History -->
+        <div class="section-block">
+          <h2>History of Chari Dham Yatra</h2>
+          <p>
+            The Chari Dham pilgrimage — consisting of Lingaraj Temple, Jagannath Temple, Samaleswari Temple, and
+            Konark Sun Temple — has a rich history, with each site holding its own unique legend and
+            significance. These sacred destinations were established by the revered philosopher
+            <strong>Adi ShankaraChariya</strong> to unite Hindus across India, overcoming
+            regional divisions and feuds.
+          </p>
+          <p>
+            For centuries, the journey to these sites was a challenging, arduous trek through
+            hilly terrain, with pilgrims often relying on foot travel. However, after the 1962
+            Indo-China war, India focused on improving infrastructure and connectivity to these
+            remote regions, making it significantly easier for pilgrims to reach the holy sites
+            by road. The pilgrimage continues to draw millions of devotees every year, seeking
+            the path to attain <em>moksha</em> — liberation from the cycle of birth and rebirth.
+          </p>
+        </div>
+
+        <!-- Mythology -->
+        <div class="section-block">
+          <h2>Mythology About Chari Dham</h2>
+          <p>
+            The Chari Dham Yatra is a sacred pilgrimage to the four holy shrines: Lingaraj Temple,
+            Jagannath Temple, Samaleswari Temple, and Konark Sun Temple. Each site is steeped in rich mythology and is
+            believed to purify pilgrims physically, mentally, and spiritually.
+          </p>
+          <ol class="myth-list">
+            <li>
+              <h4>Lingaraj Temple Mythology</h4>
+              <p>According to legend, two demons — Kambala and Meghala — terrorised the land. Lord
+                Shiva, disguised as a cowherd, lured them into submission and crushed them on this
+                sacred spot in Bhubaneswar. The place became known as the abode of Tribhubaneswar,
+                the Lord of Three Worlds, and the great Lingaraj Temple was built in his honour.</p>
+            </li>
+            <li>
+              <h4>Jagannath Temple Mythology</h4>
+              <p>King Indradyumna of Malwa had a divine vision of Lord Vishnu and resolved to build
+                a grand temple at Puri. The divine craftsman Vishwakarma fashioned the idols under
+                the condition of absolute privacy. When the king opened the door too soon, the
+                idols were left incomplete — yet Brahma consecrated them with divine life, giving
+                Lord Jagannath his unique, sacred form.</p>
+            </li>
+            <li>
+              <h4>Samaleswari Temple Mythology</h4>
+              <p>King Balram Dev of the Chouhan dynasty prayed fervently to Goddess Durga for
+                victory over his enemies. The goddess appeared on the banks of the Mahanadi River
+                in Sambalpur as Samaleswari, bestowing her blessings. The grateful king built this
+                revered Shakti shrine to honour her divine presence in western Odisha.</p>
+            </li>
+            <li>
+              <h4>Konark Sun Temple Mythology</h4>
+              <p>Samba, son of Lord Krishna, was afflicted with leprosy as a curse. He performed
+                severe penance to the Sun God (Surya) for twelve years on the banks of the
+                Chandrabhaga River at Konark and was miraculously cured. In gratitude, he built a
+                magnificent temple in the shape of the Sun God's chariot, now a UNESCO World
+                Heritage Site.</p>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Circuit -->
+        <div class="section-block">
+          <h2>Chari Dham Yatra Circuit</h2>
+          <p>
+            The Chari Dham Yatra is traditionally undertaken in a <strong>clockwise direction</strong>,
+            starting from Lingaraj Temple and concluding at Konark Sun Temple. This route is considered
+            spiritually significant and allows pilgrims to acclimatize progressively to the
+            increasing altitudes.
+          </p>
+          <div class="circuit-steps">
+            <div class="circuit-step">
+              <div class="step-num">1</div>
+              <div class="step-name">Lingaraj Temple</div>
+              <div class="step-desc">Bhubaneswar, Odisha</div>
+            </div>
+            <div class="circuit-arrow">→</div>
+            <div class="circuit-step">
+              <div class="step-num">2</div>
+              <div class="step-name">Jagannath Temple</div>
+              <div class="step-desc">Puri, Odisha</div>
+            </div>
+            <div class="circuit-arrow">→</div>
+            <div class="circuit-step">
+              <div class="step-num">3</div>
+              <div class="step-name">Samaleswari Temple</div>
+              <div class="step-desc">Sambalpur, Odisha</div>
+            </div>
+            <div class="circuit-arrow">→</div>
+            <div class="circuit-step">
+              <div class="step-num">4</div>
+              <div class="step-name">Konark Sun Temple</div>
+              <div class="step-desc">Konark, Odisha</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- India's Chari Dham -->
+        <div class="section-block">
+          <h2>India's Chari Dham</h2>
+          <p>
+            The <em>Chota Chari Dham Yatra</em> in Odisha — Lingaraj Temple, Jagannath Temple, Samaleswari Temple,
+            and Konark Sun Temple — is one of the most revered pilgrimage circuits in India. These four
+            sacred temples of Odisha are believed to purify the soul and grant spiritual liberation.
+          </p>
+          <p>
+            India's larger Chari Dham circuit encompasses four other important shrines:
+            <strong>Badrinath, Rameswaram, Jagannath Puri, and Dwarka</strong>, spread across
+            different states and collectively known as the <em>Bada Chari Dham Yatra</em>.
+            These shrines represent the four cardinal directions and form the ultimate pilgrimage
+            for Hindus. Traditionally popular among elderly devotees seeking salvation, the
+            yatra has seen growing participation from younger generations in recent years.
+          </p>
+        </div>
+
+        <!-- How it came into existence -->
+        <div class="section-block">
+          <h2>How Chari Dham Came Into Existence</h2>
+          <p>
+            The concept of the 4 Dham Yatra has its roots in ancient Hindu traditions, with its
+            origins tied to mythology and spiritual beliefs. The idea of Chari Dham is believed to
+            have been formalized by <strong>Adi ShankaraChariya</strong> in the 8th century, who
+            not only established temples at these locations but also created a unified spiritual
+            circuit for all Hindus.
+          </p>
+          <p>
+            The Chari Dham Yatra became an essential part of Hindu spiritual practice over time,
+            with the belief that completing the journey guarantees divine blessings and liberation.
+            The temples, each with their own mythological significance, evolved into major centres
+            for worship and spiritual reflection, with millions of devotees undertaking the journey
+            to seek salvation every year.
+          </p>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section-block">
+          <h2>About Chari Dham — FAQs</h2>
+          <div class="faq-list">
+            <div class="faq-item open">
+              <div class="faq-q">
+                What is the significance of the Chari Dham Yatra?
+                <span class="faq-icon">+</span>
+              </div>
+              <div class="faq-a">
+                The Chari Dham Yatra holds immense significance in Hinduism. It is believed to
+                purify the soul, cleanse accumulated sins, and grant moksha (liberation) after
+                death. The journey brings divine blessings, fosters spiritual tranquility, and
+                provides the path to eternal peace and salvation.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">
+                What is the history behind the Chari Dham Yatra?
+                <span class="faq-icon">+</span>
+              </div>
+              <div class="faq-a">
+                The Chari Dham pilgrimage was established by the philosopher Adi ShankaraChariya
+                in the 8th century to unite Hindus across India. Each site — Lingaraj Temple, Jagannath Temple,
+                Samaleswari Temple, and Konark Sun Temple — has its own unique legend and historical significance
+                spanning centuries.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">
+                Which Dham should be visited first in the Chari Dham Yatra?
+                <span class="faq-icon">+</span>
+              </div>
+              <div class="faq-a">
+                Traditionally, the Yatra begins at <strong>Lingaraj Temple</strong>, followed by
+                Jagannath Temple, Samaleswari Temple, and concludes at Konark Sun Temple. This clockwise route is
+                considered spiritually significant and also helps with altitude acclimatization.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">
+                Can the Chari Dham Yatra be done by helicopter?
+                <span class="faq-icon">+</span>
+              </div>
+              <div class="faq-a">
+                Yes! Helicopter services are available for Jagannath Temple and Konark Sun Temple, making the
+                journey more accessible for elderly pilgrims and those with physical limitations.
+                Booking in advance is highly recommended as slots fill quickly.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">
+                Is the Chari Dham Yatra physically challenging?
+                <span class="faq-icon">+</span>
+              </div>
+              <div class="faq-a">
+                The Yatra involves trekking at high altitudes (3,000–3,600 m) and can be
+                physically demanding. Pilgrims are advised to build fitness beforehand, carry
+                adequate clothing for cold weather, and consult a doctor if they have any
+                medical conditions.
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">
+                Are accommodations available near the Chari Dham temples?
+                <span class="faq-icon">+</span>
+              </div>
+              <div class="faq-a">
+                Yes, a range of accommodations — from dharamshalas and basic guesthouses to
+                comfortable hotels — are available near all four Dham sites. Booking in advance
+                during the peak pilgrimage season (May–June and September–October) is strongly
+                recommended.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+      <!-- ── END MAIN CONTENT ──────────────────────────────────── -->
+
+      <!-- ── SIDEBAR ───────────────────────────────────────────── -->
+      <aside class="sidebar">
+
+        <!-- Enquiry Form -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">🙏 Plan Your Yatra</div>
+          <div class="sidebar-card-body">
+            <form class="enquiry-form" onsubmit="return false;">
+              <label>Your Name</label>
+              <input type="text" placeholder="Full name" />
+              <label>Phone Number</label>
+              <input type="tel" placeholder="+91 XXXXX XXXXX" />
+              <label>Email Address</label>
+              <input type="email" placeholder="you@example.com" />
+              <label>Select Package</label>
+              <select>
+                <option>Chari Dham Yatra</option>
+                <option>Do Dham Package</option>
+                <option>Samaleswari Temple Tour</option>
+                <option>Konark Sun Temple Tour</option>
+                <option>Jagannath Temple Tour</option>
+                <option>Helicopter Tour</option>
+              </select>
+              <label>Travel Date</label>
+              <input type="date" />
+              <label>No. of Travellers</label>
+              <input type="number" placeholder="2" min="1" />
+              <label>Message (Optional)</label>
+              <textarea placeholder="Any special requirements…"></textarea>
+              <button type="submit" class="btn-enquiry">Send Enquiry →</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Temple Events -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">🗓️ Temple Events &amp; Festivals</div>
+          <div class="sidebar-card-body" style="padding:14px 16px;">
+
+            <!-- Current Event -->
+            <div class="ev-badge ev-live">🔴 LIVE NOW</div>
+            <div class="ev-item ev-item--current">
+              <div class="ev-date">Feb 18 – Feb 26, 2026</div>
+              <h4 class="ev-title">Shivaratri Mahotsav</h4>
+              <div class="ev-location">📍 Lingaraj Temple, Bhubaneswar</div>
+              <p class="ev-desc">Grand Maha Shivaratri celebrations with special abhishek, overnight jagaran, and illuminated processions around the Lingaraj complex.</p>
+              <a href="#" class="btn-detail">More Info</a>
+            </div>
+
+            <div class="ev-divider"></div>
+
+            <!-- Upcoming Events -->
+            <div class="ev-badge ev-upcoming">📅 UPCOMING</div>
+
+            <div class="ev-item">
+              <div class="ev-date">Mar 14, 2026</div>
+              <h4 class="ev-title">Dolotsav (Dol Purnima)</h4>
+              <div class="ev-location">📍 Jagannath Temple, Puri</div>
+              <p class="ev-desc">Holi celebrations at the Jagannath Temple with colourful processions and the swinging of the deities on golden swings.</p>
+              <a href="#" class="btn-detail">More Info</a>
+            </div>
+
+            <div class="ev-item">
+              <div class="ev-date">Apr 6 – Apr 8, 2026</div>
+              <h4 class="ev-title">Chaitra Parba</h4>
+              <div class="ev-location">📍 Samaleswari Temple, Sambalpur</div>
+              <p class="ev-desc">Annual tribal spring festival with traditional dances, folk music, and special puja offered to Goddess Samaleswari.</p>
+              <a href="#" class="btn-detail">More Info</a>
+            </div>
+
+            <div class="ev-item">
+              <div class="ev-date">Dec 1 – Dec 3, 2026</div>
+              <h4 class="ev-title">Konark Dance Festival</h4>
+              <div class="ev-location">📍 Konark Sun Temple, Konark</div>
+              <p class="ev-desc">Renowned classical dance festival held against the backdrop of the Sun Temple, showcasing Odissi, Bharatanatyam and more.</p>
+              <a href="#" class="btn-detail">More Info</a>
+            </div>
+
+            <div class="ev-divider"></div>
+
+            <!-- Year Round -->
+            <div class="ev-badge ev-regular">🔁 YEAR-ROUND</div>
+            <div class="ev-item">
+              <div class="ev-date">Every Monday</div>
+              <h4 class="ev-title">Somavar Abhishek</h4>
+              <div class="ev-location">📍 Lingaraj Temple, Bhubaneswar</div>
+              <p class="ev-desc">Weekly ritual bathing of the Shivalinga with panchamrit, open to all devotees from 5 AM.</p>
+              <a href="#" class="btn-detail">More Info</a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">🔗 Chari Dham Yatra 2026</div>
+          <div class="sidebar-card-body">
+            <ul class="quick-links">
+              <li><a href="#">Chari Dham Tour Packages</a></li>
+              <li><a href="#">Yatra by Helicopter</a></li>
+              <li><a href="#">Chari Dham Registration</a></li>
+              <li><a href="#">Opening / Closing Dates</a></li>
+              <li><a href="#">Book Online Pooja</a></li>
+              <li><a href="#">Route Map</a></li>
+              <li><a href="#">Hotels Near Dhams</a></li>
+              <li><a href="#">Taxi Services</a></li>
             </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="yamunotri">
-            <h2>Yamunotri</h2>
-            <p>Yamunotri, the source of the Yamuna River, is one of the four sacred sites of the Char Dham Yatra. It is believed to be the abode of Goddess Yamuna, and pilgrims come here to seek her blessings. The trek to Yamunotri offers breathtaking views of the Himalayas.</p>
-            <p><strong>Spiritual Significance:</strong> This site is significant for devotees seeking purification and blessing from the goddess.</p>
-            <p><strong>Historical Background:</strong> Yamunotri has a rich history linked to mythological tales. It is revered in many ancient texts.</p>
-            <p><strong>Transformative Experience:</strong> Pilgrims often describe a profound sense of peace and fulfillment after visiting Yamunotri.</p>
-        </section>
-        <section id="gangotri">
-            <h2>Gangotri</h2>
-            <p>Gangotri is the origin of the sacred Ganges River. Pilgrims travel here to purify their souls and seek blessings from Goddess Ganga.</p>
-            <p><strong>Spiritual Significance:</strong> Gangotri represents the flow of divine energy and an opportunity for spiritual rebirth.</p>
-            <p><strong>Historical Background:</strong> It is believed that Lord Shiva revealed himself in the form of the river Ganga at this location.</p>
-            <p><strong>Transformative Experience:</strong> Visitors often report a surge of spiritual connection upon witnessing the flowing Ganga.</p>
-        </section>
-        <section id="kedarnath">
-            <h2>Kedarnath</h2>
-            <p>Kedarnath is a famous Hindu temple located near the Kedarnath peak. Dedicated to Lord Shiva, it is a major pilgrimage site.</p>
-            <p><strong>Spiritual Significance:</strong> The temple is one of the twelve Jyotirlingas, a significant shrine for devotees.</p>
-            <p><strong>Historical Background:</strong> The temple's architecture and mythological importance date back thousands of years.</p>
-            <p><strong>Transformative Experience:</strong> Many feel divine presence and devotion while performing rituals at this holy site.</p>
-        </section>
-        <section id="badrinath">
-            <h2>Badrinath</h2>
-            <p>Badrinath is one of the most revered temples dedicated to Lord Vishnu. It sits at an elevation of 3,133 meters, surrounded by breathtaking mountain views.</p>
-            <p><strong>Spiritual Significance:</strong> It is believed that visiting Badrinath absolves one of sins and grants moksha.</p>
-            <p><strong>Historical Background:</strong> Mentioned in ancient scriptures and connected to the legendary sage Narada.</p>
-            <p><strong>Transformative Experience:</strong> Pilgrims often feel a deep connection to the divine, rejuvenated and spiritually uplifted.</p>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2026 Char Dham Yatra. All rights reserved.</p>
-    </footer>
+          </div>
+        </div>
+
+      </aside>
+      <!-- ── END SIDEBAR ───────────────────────────────────────── -->
+
+    </div>
+  </div>
+  <!-- ═══ END MAIN LAYOUT ═══════════════════════════════════════ -->
+
+  <!-- ═══ TOUR PACKAGES STRIP ══════════════════════════════════ -->
+  <section class="packages-strip">
+    <div class="container">
+      <div class="strip-head">
+        <h2>Chari Dham Yatra Tour Packages</h2>
+        <p>Carefully curated pilgrimage packages for a comfortable and spiritually enriching journey</p>
+      </div>
+      <div class="pkg-cards">
+        <div class="pkg-card">
+          <img src="jagannath-temple.jpg" alt="Jagannath Temple Package" />
+          <div class="pkg-card-body">
+            <h3>Jagannath Temple Yatra</h3>
+            <div class="meta">5 Days / 4 Nights</div>
+            <div class="price">₹12,000 <small style="color:#888;font-weight:400">/ person</small></div>
+            <a href="#" class="btn-book">Book Now</a>
+          </div>
+        </div>
+        <div class="pkg-card">
+          <img src="samaleswari-temple.jpg" alt="Samaleswari Temple Package" />
+          <div class="pkg-card-body">
+            <h3>Samaleswari Temple Package</h3>
+            <div class="meta">5 Days / 4 Nights</div>
+            <div class="price">₹15,000 <small style="color:#888;font-weight:400">/ person</small></div>
+            <a href="#" class="btn-book">Book Now</a>
+          </div>
+        </div>
+        <div class="pkg-card">
+          <img src="https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=500&q=70" alt="Do Dham Package" />
+          <div class="pkg-card-body">
+            <h3>Do Dham Yatra from Delhi</h3>
+            <div class="meta">7 Days / 6 Nights</div>
+            <div class="price">₹24,000 <small style="color:#888;font-weight:400">/ person</small></div>
+            <a href="#" class="btn-book">Book Now</a>
+          </div>
+        </div>
+        <div class="pkg-card">
+          <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&q=70" alt="Chari Dham Full Package" />
+          <div class="pkg-card-body">
+            <h3>Full Chari Dham Yatra</h3>
+            <div class="meta">11 Days / 10 Nights</div>
+            <div class="price">₹38,000 <small style="color:#888;font-weight:400">/ person</small></div>
+            <a href="#" class="btn-book">Book Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA BANNER ════════════════════════════════════════════ -->
+  <section class="cta-banner">
+    <h2>Looking for a Chari Dham Package?</h2>
+    <p>Explore the Chari Dham Yatra with our specially crafted packages. Start your spiritual journey today.</p>
+    <a href="#" class="btn-cta-white">Book Now!</a>
+  </section>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="logo">
+          <div class="logo-icon"><img src="Chardhamlogo.jpg" alt="CharDham Logo" /></div>
+          <div class="logo-text">
+            <strong>ChariDham Central</strong>
+            <span>Your Spiritual Journey Guide</span>
+          </div>
+        </div>
+        <p>
+          ChariDham Central is your trusted guide for the Chari Dham Yatra. We offer
+          carefully crafted pilgrimage packages, expert guidance, and comprehensive
+          travel resources to make your spiritual journey seamless and memorable.
+        </p>
+        <div class="footer-contact">
+          <div><span class="icon">📍</span><span>Berhampur, Odisha 741524</span></div>
+          <div><span class="icon">✉</span><span>charidham@gmail.com</span></div>
+          <div><span class="icon">📞</span><span>+91 125125125</span></div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Chari Dham Packages</h4>
+        <ul>
+          <li><a href="#">Charidham Yatra Packages</a></li>
+          <li><a href="#">Chari Dham by Helicopter</a></li>
+          <li><a href="#">Do Dham Packages</a></li>
+          <li><a href="#">Samaleswari Temple Packages</a></li>
+          <li><a href="#">Konark Sun Temple Packages</a></li>
+          <li><a href="#">Lingaraj Temple Packages</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Book Now</h4>
+        <ul>
+          <li><a href="#">Charidham Pooja Booking</a></li>
+          <li><a href="#">Chari Dham Route Map</a></li>
+          <li><a href="#">Hotels for 4 Dham</a></li>
+          <li><a href="#">Taxi for Yatra</a></li>
+          <li><a href="#">Yatra Registration</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Who We Are</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Disclaimer</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="#">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Copyrights © 2026. All Rights Reserved. — ChariDhamCentral.com &nbsp;|&nbsp;
+      <a href="#">Privacy Policy</a> &nbsp;:&nbsp;
+      <a href="#">Disclaimer</a> &nbsp;:&nbsp;
+      <a href="#">Terms &amp; Conditions</a>
+    </div>
+  </footer>
+
+  <!-- ═══ JAVASCRIPT ════════════════════════════════════════════ -->
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.faq-q').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+  </script>
+
 </body>
 </html>
