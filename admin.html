@@ -697,6 +697,16 @@
       });
     }
 
+    /* Adds or replaces a full item in IDB (used for GitHub-sourced submissions) */
+    function dbAddGitHub(db, item) {
+      return new Promise(function(resolve, reject) {
+        var tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).put(item);
+        tx.oncomplete = resolve;
+        tx.onerror    = function() { reject(tx.error); };
+      });
+    }
+
     /* ── Password management ───────────────────────────────────── */
     var SESSION_KEY = 'cdgallery_admin_session';
     var PW_KEY      = 'cdgallery_admin_hash';
@@ -858,16 +868,28 @@
     }
 
     /* ── Data & rendering ──────────────────────────────────────── */
-    var allItems    = [];
-    var currentTab  = 'pending';
-    var objectURLs  = [];
+    var allItems     = [];
+    var localItemIds = new Set(); // tracks IDs already saved in local IndexedDB
+    var currentTab   = 'pending';
+    var objectURLs   = [];
 
     async function loadAll() {
       try {
-        var db = await openDB();
-        allItems = await dbGetAll(db);
+        var db         = await openDB();
+        var localItems = await dbGetAll(db);
+        localItemIds   = new Set(localItems.map(function(i) { return i.id; }));
+
+        /* Load pending submissions from GitHub (cross-device sync) */
+        var ghItems    = await loadGitHubPending();
+        var newFromGh  = ghItems.filter(function(i) { return !localItemIds.has(i.id); });
+
+        allItems = localItems.concat(newFromGh);
         updateStats();
         renderTab();
+
+        if (newFromGh.length > 0) {
+          showToast('☁️ ' + newFromGh.length + ' new submission(s) synced from GitHub!', 'success');
+        }
       } catch (err) {
         console.error('Load error:', err);
         showToast('Failed to load submissions.', 'error');
@@ -1033,6 +1055,13 @@
       titleEl.textContent = item.title;
       titleArea.appendChild(titleEl);
 
+      if (item._source === 'github') {
+        var ghBadge = document.createElement('span');
+        ghBadge.style.cssText = 'display:inline-block;font-size:.68rem;background:#e6f7ff;color:#0366d6;border:1px solid #a8d8f8;border-radius:10px;padding:1px 8px;margin-top:3px;';
+        ghBadge.textContent = '☁️ via GitHub';
+        titleArea.appendChild(ghBadge);
+      }
+
       if (item.description) {
         var descEl = document.createElement('div');
         descEl.className   = 'item-desc';
@@ -1140,37 +1169,86 @@
     /* ── Status change ─────────────────────────────────────────── */
     async function changeStatus(id, newStatus, newFolder) {
       try {
-        var db = await openDB();
+        var db   = await openDB();
+        var item = allItems.find(function(i) { return i.id === id; });
 
-        /* If approving — try to push file to GitHub first */
-        if (newStatus === 'approved') {
-          var _item = allItems.find(function(i) { return i.id === id; });
-          if (_item && _item.fileData && !_item.fileUrl) {
+        /* ── Handle GitHub-sourced pending items ── */
+        if (newStatus === 'approved' && item) {
+          if (item._source === 'github' && item.fileUrl && !item.fileData) {
+            /* Fetch image from pending/ folder and re-upload to approved/ */
             var _cfg = loadGitHubConfig();
             if (_cfg.token && _cfg.owner && _cfg.repo) {
+              showToast('⬆️ Moving file to approved on GitHub…', '');
+              try {
+                var _imgRes = await fetch(item.fileUrl);
+                if (_imgRes.ok) {
+                  var _imgBuf  = await _imgRes.arrayBuffer();
+                  item.fileData = _imgBuf;
+                  var _moved   = await uploadToGitHub(item);
+                  item.fileUrl  = _moved;
+                  item.fileData = undefined;
+                }
+              } catch (_err) {
+                console.error('GitHub move error:', _err);
+                showToast('⚠️ GitHub move failed: ' + _err.message, 'error');
+              }
+            }
+          } else if (item && item.fileData && !item.fileUrl) {
+            /* Local-only item — upload to approved/ */
+            var _cfg2 = loadGitHubConfig();
+            if (_cfg2.token && _cfg2.owner && _cfg2.repo) {
               showToast('⬆️ Uploading to GitHub…', '');
               try {
-                var _fileUrl = await uploadToGitHub(_item);
+                var _fileUrl = await uploadToGitHub(item);
                 await dbSetFileUrl(db, id, _fileUrl);
                 allItems.forEach(function(i) { if (i.id === id) i.fileUrl = _fileUrl; });
-              } catch (_err) {
-                console.error('GitHub upload error:', _err);
-                showToast('⚠️ GitHub upload failed: ' + _err.message, 'error');
-                /* Still approve locally even if GitHub upload fails */
+              } catch (_err2) {
+                console.error('GitHub upload error:', _err2);
+                showToast('⚠️ GitHub upload failed: ' + _err2.message, 'error');
               }
             }
           }
         }
 
-        await dbUpdateStatus(db, id, newStatus, newFolder);
+        /* ── Persist to local IDB ── */
+        if (item && item._source === 'github' && !localItemIds.has(id)) {
+          /* First time admin acts on this GitHub item — add it to local IDB */
+          var _clean = {
+            id:           item.id,
+            title:        item.title        || '',
+            description:  item.description  || '',
+            uploaderName: item.uploaderName || '',
+            location:     item.location     || '',
+            fileType:     item.fileType     || '',
+            fileName:     item.fileName     || '',
+            fileUrl:      item.fileUrl      || '',
+            status:       newStatus,
+            folder:       newFolder,
+            uploadedAt:   item.uploadedAt   || Date.now(),
+            reviewedAt:   Date.now(),
+            inSlider:     false
+          };
+          await dbAddGitHub(db, _clean);
+          localItemIds.add(id);
+        } else {
+          await dbUpdateStatus(db, id, newStatus, newFolder);
+        }
         if (newStatus !== 'approved') await dbToggleSlider(db, id, false);
-        // Update local array
-        allItems.forEach(function(item) {
-          if (item.id === id) {
-            item.status     = newStatus;
-            item.folder     = newFolder;
-            item.reviewedAt = Date.now();
-            if (newStatus !== 'approved') item.inSlider = false;
+
+        /* ── Delete from GitHub pending/ after any admin action ── */
+        if (item && item._source === 'github') {
+          try { await deleteGitHubPendingItem(item); } catch (e) { console.warn('GitHub pending cleanup failed:', e); }
+          delete item._source;
+        }
+
+        /* ── Update in-memory array ── */
+        allItems.forEach(function(i) {
+          if (i.id === id) {
+            i.status     = newStatus;
+            i.folder     = newFolder;
+            i.reviewedAt = Date.now();
+            if (newStatus !== 'approved') i.inSlider = false;
+            delete i._source;
           }
         });
         updateStats();
@@ -1220,8 +1298,18 @@
       document.getElementById('confirmOverlay').classList.remove('open');
       if (!pendingDeleteId) return;
       try {
-        var db = await openDB();
-        await dbDelete(db, pendingDeleteId);
+        var db      = await openDB();
+        var delItem = allItems.find(function(i) { return i.id === pendingDeleteId; });
+
+        /* Clean up GitHub pending/ files if this came from GitHub */
+        if (delItem && delItem._source === 'github') {
+          try { await deleteGitHubPendingItem(delItem); } catch (e) { console.warn('GitHub delete on remove failed:', e); }
+        }
+
+        if (localItemIds.has(pendingDeleteId)) {
+          await dbDelete(db, pendingDeleteId);
+          localItemIds.delete(pendingDeleteId);
+        }
         allItems = allItems.filter(function(i) { return i.id !== pendingDeleteId; });
         pendingDeleteId = null;
         updateStats();
@@ -1381,6 +1469,95 @@
         ? cfg.siteUrl.replace(/\/$/, '')
         : 'https://raw.githubusercontent.com/' + cfg.owner + '/' + cfg.repo + '/' + (cfg.branch || 'main');
       return base + '/' + path;
+    }
+
+    /* ── GitHub Pending — cross-device sync ─────────────────────── */
+
+    /* Reads the pending/ folder from GitHub and returns item objects.
+       Each object has extra _source / _githubXxxSha / _githubXxxPath fields
+       used for cleanup when the admin acts on the item. */
+    async function loadGitHubPending() {
+      var cfg = loadGitHubConfig();
+      if (!cfg.token || !cfg.owner || !cfg.repo) return [];
+      try {
+        var listRes = await fetch(
+          'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/pending',
+          {
+            headers: {
+              'Authorization':        'Bearer ' + cfg.token,
+              'Accept':               'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+          }
+        );
+        if (listRes.status === 404) return []; /* folder not yet created */
+        if (!listRes.ok) return [];
+        var files     = await listRes.json();
+        var jsonFiles = files.filter(function(f) { return f.name.endsWith('.json'); });
+
+        var items = [];
+        for (var fi = 0; fi < jsonFiles.length; fi++) {
+          var f = jsonFiles[fi];
+          try {
+            var metaRes = await fetch(f.download_url);
+            if (!metaRes.ok) continue;
+            var meta = await metaRes.json();
+            meta._source         = 'github';
+            meta._githubJsonSha  = f.sha;
+            meta._githubJsonPath = f.path;
+            /* Find the matching image/video file by id prefix */
+            var imgFile = files.find(function(f2) {
+              return !f2.name.endsWith('.json') && f2.name.indexOf(meta.id) === 0;
+            });
+            if (imgFile) {
+              meta._githubImgSha  = imgFile.sha;
+              meta._githubImgPath = imgFile.path;
+            }
+            items.push(meta);
+          } catch (e) { /* skip malformed metadata */ }
+        }
+        return items;
+      } catch (e) {
+        console.error('loadGitHubPending error:', e);
+        return [];
+      }
+    }
+
+    /* Deletes the image and metadata JSON from GitHub pending/ after admin acts. */
+    async function deleteGitHubPendingItem(item) {
+      var cfg = loadGitHubConfig();
+      if (!cfg.token || !item._githubJsonPath) return;
+
+      async function ghDel(path, sha) {
+        var r = await fetch(
+          'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + path,
+          {
+            method: 'DELETE',
+            headers: {
+              'Authorization':        'Bearer ' + cfg.token,
+              'Content-Type':         'application/json',
+              'Accept':               'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28'
+            },
+            body: JSON.stringify({
+              message: 'Remove pending submission: ' + (item.id || path),
+              sha:     sha,
+              branch:  cfg.branch || 'main'
+            })
+          }
+        );
+        if (!r.ok) {
+          var e = await r.json().catch(function() { return {}; });
+          console.warn('GitHub delete failed for', path, ':', e.message);
+        }
+      }
+
+      if (item._githubJsonPath && item._githubJsonSha) {
+        await ghDel(item._githubJsonPath, item._githubJsonSha);
+      }
+      if (item._githubImgPath && item._githubImgSha) {
+        await ghDel(item._githubImgPath, item._githubImgSha);
+      }
     }
 
     /* ── Helpers ───────────────────────────────────────────────── */
