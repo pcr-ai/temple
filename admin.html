@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery Admin Panel | ChariDham Central</title>
+  <!-- Prevent search engines from indexing the admin panel -->
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Variables ────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --saffron:   #e07b39;
+      --saffron-d: #c45e1e;
+      --maroon:    #8b1a1a;
+      --gold:      #d4a017;
+      --dark:      #1a1a1a;
+      --text:      #444;
+      --light:     #f8f5f0;
+      --border:    #e0d9cf;
+      --white:     #ffffff;
+      --radius:    8px;
+      --shadow:    0 2px 12px rgba(0,0,0,.10);
+      --green:     #1e8449;
+      --green-bg:  #eafaf1;
+      --red:       #c0392b;
+      --red-bg:    #fdecea;
+      --amber:     #b7950b;
+      --amber-bg:  #fef9e7;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      color: var(--text);
+      background: #f0ece4;
+      min-height: 100vh;
+    }
+    a { color: var(--saffron); text-decoration: none; }
+    a:hover { color: var(--saffron-d); }
+
+    /* ─── Login Screen ──────────────────────────────────────────── */
+    #loginScreen {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--maroon) 0%, #3d0a0a 100%);
+      padding: 20px;
+    }
+    .login-box {
+      background: white; border-radius: 14px;
+      padding: 40px 44px; width: 100%; max-width: 420px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.4);
+      text-align: center;
+    }
+    .login-logo { font-size: 2.8rem; margin-bottom: 8px; }
+    .login-box h2 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.35rem; color: var(--maroon); margin-bottom: 4px;
+    }
+    .login-box p { font-size: .85rem; color: #888; margin-bottom: 28px; }
+    .login-field { margin-bottom: 16px; text-align: left; }
+    .login-field label { display: block; font-size: .82rem; font-weight: 600; color: #555; margin-bottom: 5px; }
+    .login-field input {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid #ccc; border-radius: 6px;
+      font-size: .92rem; font-family: inherit; color: var(--dark);
+      transition: border-color .2s;
+    }
+    .login-field input:focus { outline: none; border-color: var(--saffron); }
+    .btn-login {
+      width: 100%; background: var(--maroon); color: white;
+      border: none; padding: 12px; border-radius: 6px;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      transition: background .2s; font-family: inherit; margin-top: 4px;
+    }
+    .btn-login:hover { background: var(--saffron-d); }
+    .login-error {
+      background: var(--red-bg); color: var(--red);
+      border: 1px solid #f5b7b1; border-radius: 6px;
+      padding: 10px 14px; font-size: .87rem;
+      margin-top: 12px; display: none;
+    }
+    .login-error.visible { display: block; }
+    .login-note { font-size: .75rem; color: #aaa; margin-top: 18px; }
+    .login-note strong { color: #888; }
+
+    /* ─── Admin App Shell ────────────────────────────────────────── */
+    #adminApp { display: none; min-height: 100vh; flex-direction: column; }
+    #adminApp.visible { display: flex; }
+
+    .admin-header {
+      background: var(--maroon);
+      color: white;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 62px; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .admin-brand {
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Merriweather', serif;
+    }
+    .admin-brand-icon { font-size: 1.5rem; }
+    .admin-brand-text { font-size: 1rem; font-weight: 700; }
+    .admin-brand-sub  { font-size: .72rem; color: rgba(255,255,255,.6); display: block; }
+
+    .admin-header-right { display: flex; align-items: center; gap: 14px; }
+    .admin-user-badge {
+      background: rgba(255,255,255,.15); border-radius: 20px;
+      padding: 4px 14px; font-size: .82rem;
+    }
+    .btn-logout {
+      background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+      color: white; padding: 6px 16px; border-radius: 5px;
+      font-size: .82rem; font-weight: 600; cursor: pointer;
+      transition: background .2s; font-family: inherit;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,.3); }
+
+    /* ─── Stats Bar ─────────────────────────────────────────────── */
+    .stats-bar {
+      background: var(--dark); color: white;
+      padding: 14px 28px;
+      display: flex; gap: 24px; flex-wrap: wrap;
+      align-items: center;
+    }
+    .stat-chip {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .88rem;
+    }
+    .stat-num {
+      font-size: 1.3rem; font-weight: 700;
+      font-family: 'Merriweather', serif;
+    }
+    .stat-chip.pending  .stat-num { color: var(--gold); }
+    .stat-chip.approved .stat-num { color: #55d68a; }
+    .stat-chip.rejected .stat-num { color: #ff7675; }
+    .stat-chip.total    .stat-num { color: #74b9ff; }
+    .stat-divider { width: 1px; height: 32px; background: rgba(255,255,255,.15); }
+
+    .view-gallery-link {
+      margin-left: auto; color: var(--gold);
+      font-size: .83rem; font-weight: 600;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .view-gallery-link:hover { color: white; }
+
+    /* ─── Tab Bar ───────────────────────────────────────────────── */
+    .tab-bar {
+      background: white; border-bottom: 2px solid var(--border);
+      padding: 0 28px;
+      display: flex; gap: 4px;
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 14px 18px; font-size: .9rem; font-weight: 600;
+      color: #999; border-bottom: 3px solid transparent;
+      margin-bottom: -2px; transition: color .2s, border-color .2s;
+      font-family: inherit; display: flex; align-items: center; gap: 6px;
+    }
+    .tab-btn:hover { color: var(--saffron); }
+    .tab-btn.active { color: var(--maroon); border-bottom-color: var(--maroon); }
+    .tab-count {
+      background: var(--saffron); color: white;
+      font-size: .7rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 10px;
+      min-width: 20px; text-align: center;
+    }
+    .tab-btn.active .tab-count { background: var(--maroon); }
+
+    /* ─── Main Area ─────────────────────────────────────────────── */
+    .admin-main { flex: 1; padding: 28px; overflow-y: auto; }
+
+    /* Search & filter bar */
+    .list-toolbar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1; min-width: 200px; padding: 8px 14px;
+      border: 1px solid var(--border); border-radius: 6px;
+      font-size: .88rem; font-family: inherit; color: var(--dark);
+    }
+    .search-input:focus { outline: none; border-color: var(--saffron); }
+    .sort-select {
+      padding: 8px 12px; border: 1px solid var(--border);
+      border-radius: 6px; font-size: .85rem; color: var(--dark);
+      background: white; cursor: pointer; font-family: inherit;
+    }
+    .sort-select:focus { outline: none; border-color: var(--saffron); }
+    .result-count { font-size: .82rem; color: #888; }
+
+    /* Item list */
+    .item-list { display: flex; flex-direction: column; gap: 16px; }
+
+    .admin-item {
+      background: white; border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+      display: flex; gap: 0; transition: box-shadow .2s;
+    }
+    .admin-item:hover { box-shadow: 0 4px 20px rgba(0,0,0,.14); }
+
+    /* Status stripe on left */
+    .status-stripe {
+      width: 5px; flex-shrink: 0;
+    }
+    .stripe-pending  { background: var(--gold); }
+    .stripe-approved { background: var(--green); }
+    .stripe-rejected { background: var(--red); }
+
+    /* Thumbnail */
+    .item-thumb-wrap {
+      width: 130px; flex-shrink: 0; overflow: hidden;
+      background: #eee; cursor: pointer;
+      position: relative;
+    }
+    .item-thumb {
+      width: 130px; height: 100%; min-height: 100px;
+      object-fit: cover; display: block;
+    }
+    .item-video-icon {
+      position: absolute; inset: 0; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 2.2rem; color: white;
+      background: rgba(0,0,0,.35);
+      cursor: pointer;
+    }
+
+    /* Details */
+    .item-details {
+      flex: 1; padding: 16px 18px; min-width: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .item-title { font-weight: 700; font-size: 1rem; color: var(--dark); margin-bottom: 4px; }
+    .item-desc  { font-size: .85rem; color: #666; margin-bottom: 8px; }
+    .item-meta  {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      font-size: .79rem; color: #888; margin-bottom: 12px;
+    }
+    .item-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .72rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 10px; text-transform: uppercase; white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-pending  { background: var(--amber-bg); color: var(--amber); border: 1px solid #f9e79f; }
+    .badge-approved { background: var(--green-bg); color: var(--green); border: 1px solid #a9dfbf; }
+    .badge-rejected { background: var(--red-bg);   color: var(--red);   border: 1px solid #f5b7b1; }
+
+    /* Action buttons */
+    .item-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .btn-action {
+      padding: 7px 18px; border-radius: 5px; font-size: .85rem;
+      font-weight: 600; cursor: pointer; border: none;
+      transition: background .18s, transform .1s; font-family: inherit;
+    }
+    .btn-action:active { transform: scale(.97); }
+    .btn-approve { background: var(--green-bg); color: var(--green); border: 1px solid #a9dfbf; }
+    .btn-approve:hover { background: var(--green); color: white; }
+    .btn-reject  { background: var(--red-bg);   color: var(--red);   border: 1px solid #f5b7b1; }
+    .btn-reject:hover  { background: var(--red);   color: white; }
+    .btn-pending { background: var(--amber-bg); color: var(--amber); border: 1px solid #f9e79f; }
+    .btn-pending:hover { background: #c9a227; color: white; }
+    .btn-delete  { background: #f5f5f5; color: #777; border: 1px solid #ddd; }
+    .btn-delete:hover  { background: #c0392b; color: white; border-color: #c0392b; }
+    .btn-preview { background: var(--light); color: var(--saffron); border: 1px solid var(--border); }
+    .btn-preview:hover { background: var(--saffron); color: white; }
+    .btn-slide        { background: #eaf4fb; color: #1a6fa8; border: 1px solid #aed6f1; }
+    .btn-slide:hover  { background: #1a6fa8; color: white; }
+    .btn-slide-remove { background: #f0e6ff; color: #6c3483; border: 1px solid #d2b4de; }
+    .btn-slide-remove:hover { background: #6c3483; color: white; }
+    .stat-chip.slider .stat-num { color: #a29bfe; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: #aaa; background: white; border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 1rem; }
+
+    /* ─── Lightbox ───────────────────────────────────────────────── */
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,.93);
+      z-index: 9999; display: none; align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner { position: relative; max-width: 92vw; max-height: 92vh; }
+    .lightbox-img  { max-width: 92vw; max-height: 82vh; border-radius: 6px; display: block; }
+    .lightbox-vid  { max-width: 92vw; max-height: 80vh; border-radius: 6px; display: block; }
+    .lightbox-close {
+      position: fixed; top: 18px; right: 24px;
+      color: white; font-size: 2.2rem; cursor: pointer;
+      background: none; border: none; line-height: 1; z-index: 10000;
+    }
+    .lightbox-close:hover { color: var(--gold); }
+    .lightbox-caption { color: #ddd; text-align: center; margin-top: 12px; font-size: .9rem; }
+
+    /* ─── Confirm dialog ─────────────────────────────────────────── */
+    .confirm-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.6);
+      z-index: 8888; display: none; align-items: center; justify-content: center;
+    }
+    .confirm-overlay.open { display: flex; }
+    .confirm-box {
+      background: white; border-radius: 12px; padding: 32px 36px;
+      max-width: 400px; width: 90%; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    }
+    .confirm-box h3 { font-family: 'Merriweather', serif; color: var(--maroon); margin-bottom: 10px; }
+    .confirm-box p  { font-size: .9rem; color: #555; margin-bottom: 22px; }
+    .confirm-btns   { display: flex; gap: 10px; justify-content: center; }
+    .btn-confirm-yes {
+      background: var(--red); color: white; border: none;
+      padding: 10px 28px; border-radius: 6px; font-size: .9rem;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+    .btn-confirm-yes:hover { background: #a93226; }
+    .btn-confirm-no {
+      background: var(--light); color: var(--dark); border: 1px solid var(--border);
+      padding: 10px 24px; border-radius: 6px; font-size: .9rem;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-confirm-no:hover { background: var(--border); }
+
+    /* ─── Toast notification ─────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--dark); color: white;
+      padding: 12px 24px; border-radius: 8px;
+      font-size: .9rem; font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      transition: transform .3s ease; z-index: 9998;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.toast-success { background: var(--green); }
+    .toast.toast-error   { background: var(--red); }
+
+    /* ─── Change password modal ──────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.55);
+      z-index: 7777; display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white; border-radius: 12px; padding: 32px 36px;
+      max-width: 380px; width: 92%;
+      box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    }
+    .modal-box h3 {
+      font-family: 'Merriweather', serif; color: var(--maroon);
+      margin-bottom: 18px; font-size: 1.15rem;
+    }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field label { display: block; font-size: .82rem; font-weight: 600; color: #555; margin-bottom: 4px; }
+    .modal-field input {
+      width: 100%; padding: 9px 12px; border: 1px solid #ccc;
+      border-radius: 5px; font-size: .88rem; font-family: inherit;
+    }
+    .modal-field input:focus { outline: none; border-color: var(--saffron); }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .btn-modal-save {
+      flex: 1; background: var(--maroon); color: white; border: none;
+      padding: 10px; border-radius: 5px; font-size: .9rem;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+    .btn-modal-save:hover { background: var(--saffron-d); }
+    .btn-modal-cancel {
+      background: var(--light); color: var(--dark);
+      border: 1px solid var(--border); padding: 10px 18px;
+      border-radius: 5px; font-size: .9rem; cursor: pointer; font-family: inherit;
+    }
+    .modal-msg { font-size: .83rem; margin-top: 8px; padding: 8px 12px; border-radius: 5px; display: none; }
+    .modal-msg.visible { display: block; }
+    .modal-msg-error   { background: var(--red-bg); color: var(--red); border: 1px solid #f5b7b1; }
+    .modal-msg-success { background: var(--green-bg); color: var(--green); border: 1px solid #a9dfbf; }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .admin-item { flex-direction: column; }
+      .item-thumb-wrap { width: 100%; height: 180px; }
+      .item-thumb { width: 100%; height: 180px; }
+      .stats-bar { gap: 14px; }
+      .admin-main { padding: 16px; }
+      .tab-bar { padding: 0 12px; }
+      .tab-btn { padding: 12px 10px; font-size: .82rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ LOGIN SCREEN ══════════════════════════════════════════ -->
+  <div id="loginScreen">
+    <div class="login-box">
+      <div class="login-logo">🛕</div>
+      <h2>Gallery Admin Panel</h2>
+      <p id="loginSubtext">Sign in to manage photo &amp; video submissions</p>
+
+      <div class="login-field">
+        <label for="loginPassword" id="loginPasswordLabel">Password</label>
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+        />
+      </div>
+
+      <div class="login-field" id="confirmPasswordWrap" style="display:none">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm new password" autocomplete="new-password" />
+      </div>
+
+      <button class="btn-login" id="btnLogin">Sign In</button>
+
+      <div class="login-error" id="loginError"></div>
+
+      <p class="login-note" id="loginNote">
+        <strong>ChariDham Central</strong> — Admin access only.<br/>
+        Contact the site administrator for credentials.
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══ ADMIN APP ═════════════════════════════════════════════ -->
+  <div id="adminApp">
+
+    <!-- Header -->
+    <div class="admin-header">
+      <div class="admin-brand">
+        <div class="admin-brand-icon">🛕</div>
+        <div>
+          <div class="admin-brand-text">ChariDham Gallery Admin</div>
+          <span class="admin-brand-sub">Media Review &amp; Approval Panel</span>
+        </div>
+      </div>
+      <div class="admin-header-right">
+        <span class="admin-user-badge">🔐 Admin</span>
+        <button class="btn-logout" onclick="showChangePwModal()">Change Password</button>
+        <button class="btn-logout" id="btnLogout">Logout</button>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-chip pending">
+        <div class="stat-num" id="statPending">0</div>
+        <div>⏳ Pending Review</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-chip approved">
+        <div class="stat-num" id="statApproved">0</div>
+        <div>✅ Approved</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-chip rejected">
+        <div class="stat-num" id="statRejected">0</div>
+        <div>❌ Rejected</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-chip total">
+        <div class="stat-num" id="statTotal">0</div>
+        <div>📁 Total Submissions</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-chip slider">
+        <div class="stat-num" id="statSlider">0</div>
+        <div>🎞️ In Slideshow</div>
+      </div>
+      <a href="gallery.html" class="view-gallery-link" target="_blank">
+        🔗 View Public Gallery
+      </a>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-pending"  onclick="switchTab('pending')">
+        ⏳ Pending <span class="tab-count" id="tc-pending">0</span>
+      </button>
+      <button class="tab-btn" id="tab-approved" onclick="switchTab('approved')">
+        ✅ Approved <span class="tab-count" id="tc-approved">0</span>
+      </button>
+      <button class="tab-btn" id="tab-rejected" onclick="switchTab('rejected')">
+        ❌ Rejected <span class="tab-count" id="tc-rejected">0</span>
+      </button>
+      <button class="tab-btn" id="tab-all"      onclick="switchTab('all')">
+        📁 All <span class="tab-count" id="tc-all">0</span>
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-main">
+
+      <!-- Toolbar -->
+      <div class="list-toolbar">
+        <input
+          type="search"
+          class="search-input"
+          id="searchInput"
+          placeholder="Search by title, uploader name, or location…"
+          oninput="applySearch()"
+        />
+        <select class="sort-select" id="sortSelect" onchange="applySearch()">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="title">Title A→Z</option>
+          <option value="uploader">Uploader A→Z</option>
+        </select>
+        <span class="result-count" id="resultCount"></span>
+      </div>
+
+      <!-- Item List -->
+      <div class="item-list" id="itemList"></div>
+
+    </div>
+  </div>
+
+  <!-- ═══ LIGHTBOX ═════════════════════════════════════════════ -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+    <div class="lightbox-inner">
+      <img id="lbImg" class="lightbox-img" src="" alt="" style="display:none" />
+      <video id="lbVid" class="lightbox-vid" controls style="display:none"></video>
+      <div class="lightbox-caption" id="lbCap"></div>
+    </div>
+  </div>
+
+  <!-- ═══ CONFIRM DIALOG ════════════════════════════════════════ -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <h3 id="confirmTitle">Confirm Delete</h3>
+      <p id="confirmMsg">Are you sure you want to permanently delete this item?</p>
+      <div class="confirm-btns">
+        <button class="btn-confirm-yes" id="btnConfirmYes">Yes, Delete</button>
+        <button class="btn-confirm-no"  id="btnConfirmNo">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CHANGE PASSWORD MODAL ════════════════════════════════ -->
+  <div class="modal-overlay" id="changePwModal">
+    <div class="modal-box">
+      <h3>🔑 Change Admin Password</h3>
+      <div class="modal-field">
+        <label>Current Password</label>
+        <input type="password" id="pwCurrent" placeholder="Current password" autocomplete="current-password" />
+      </div>
+      <div class="modal-field">
+        <label>New Password <small style="color:#aaa">(min 8 chars)</small></label>
+        <input type="password" id="pwNew" placeholder="New password" autocomplete="new-password" />
+      </div>
+      <div class="modal-field">
+        <label>Confirm New Password</label>
+        <input type="password" id="pwConfirm" placeholder="Confirm new password" autocomplete="new-password" />
+      </div>
+      <div class="modal-msg" id="pwMsg"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-save"   id="btnSavePw">Save Password</button>
+        <button class="btn-modal-cancel" onclick="hidePwModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═════════════════════════════════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══ JAVASCRIPT ════════════════════════════════════════════ -->
+  <script>
+    'use strict';
+
+    /* ── IndexedDB ─────────────────────────────────────────────── */
+    var DB_NAME = 'charidham_gallery_v1';
+    var DB_VER  = 1;
+    var STORE   = 'submissions';
+
+    function openDB() {
+      return new Promise(function(resolve, reject) {
+        var req = indexedDB.open(DB_NAME, DB_VER);
+        req.onupgradeneeded = function(e) {
+          var db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE)) {
+            var s = db.createObjectStore(STORE, { keyPath: 'id' });
+            s.createIndex('status',     'status',     { unique: false });
+            s.createIndex('uploadedAt', 'uploadedAt', { unique: false });
+          }
+        };
+        req.onsuccess = function(e) { resolve(e.target.result); };
+        req.onerror   = function()  { reject(req.error); };
+      });
+    }
+
+    function dbGetAll(db) {
+      return new Promise(function(resolve, reject) {
+        var tx  = db.transaction(STORE, 'readonly');
+        var req = tx.objectStore(STORE).getAll();
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror   = function() { reject(req.error); };
+      });
+    }
+
+    function dbUpdateStatus(db, id, newStatus, newFolder) {
+      return new Promise(function(resolve, reject) {
+        var tx    = db.transaction(STORE, 'readwrite');
+        var store = tx.objectStore(STORE);
+        var getReq = store.get(id);
+        getReq.onsuccess = function() {
+          var obj = getReq.result;
+          if (obj) {
+            obj.status     = newStatus;
+            obj.folder     = newFolder;
+            obj.reviewedAt = Date.now();
+            store.put(obj);
+          }
+        };
+        tx.oncomplete = resolve;
+        tx.onerror    = function() { reject(tx.error); };
+      });
+    }
+
+    function dbDelete(db, id) {
+      return new Promise(function(resolve, reject) {
+        var tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).delete(id);
+        tx.oncomplete = resolve;
+        tx.onerror    = function() { reject(tx.error); };
+      });
+    }
+
+    function dbToggleSlider(db, id, value) {
+      return new Promise(function(resolve, reject) {
+        var tx    = db.transaction(STORE, 'readwrite');
+        var store = tx.objectStore(STORE);
+        var getReq = store.get(id);
+        getReq.onsuccess = function() {
+          var obj = getReq.result;
+          if (obj) { obj.inSlider = value; store.put(obj); }
+        };
+        tx.oncomplete = resolve;
+        tx.onerror    = function() { reject(tx.error); };
+      });
+    }
+
+    /* ── Password management ───────────────────────────────────── */
+    var SESSION_KEY = 'cdgallery_admin_session';
+    var PW_KEY      = 'cdgallery_admin_hash';
+
+    async function sha256(str) {
+      var buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(function(b) {
+        return b.toString(16).padStart(2, '0');
+      }).join('');
+    }
+
+    function isFirstRun() {
+      return !localStorage.getItem(PW_KEY);
+    }
+
+    async function setPassword(pw) {
+      var hash = await sha256(pw);
+      localStorage.setItem(PW_KEY, hash);
+    }
+
+    async function checkPassword(pw) {
+      var stored = localStorage.getItem(PW_KEY);
+      if (!stored) return false;
+      var hash = await sha256(pw);
+      return hash === stored;
+    }
+
+    function createSession() {
+      sessionStorage.setItem(SESSION_KEY, '1');
+    }
+
+    function destroySession() {
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+
+    function hasSession() {
+      return sessionStorage.getItem(SESSION_KEY) === '1';
+    }
+
+    /* ── Login UI ──────────────────────────────────────────────── */
+    var firstRun = isFirstRun();
+
+    if (firstRun) {
+      document.getElementById('loginSubtext').textContent =
+        'First-time setup: create your admin password';
+      document.getElementById('loginPasswordLabel').textContent = 'Set New Password (min 8 characters)';
+      document.getElementById('confirmPasswordWrap').style.display = 'block';
+      document.getElementById('btnLogin').textContent = 'Create Password & Sign In';
+      document.getElementById('loginNote').textContent =
+        'This is the first admin setup. Your password will be securely stored on this device.';
+    }
+
+    document.getElementById('btnLogin').addEventListener('click', handleLogin);
+    document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleLogin();
+    });
+    document.getElementById('confirmPassword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleLogin();
+    });
+
+    async function handleLogin() {
+      var pw      = document.getElementById('loginPassword').value;
+      var errEl   = document.getElementById('loginError');
+      errEl.classList.remove('visible');
+      errEl.textContent = '';
+
+      if (!pw) {
+        errEl.textContent = 'Please enter a password.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      if (firstRun) {
+        if (pw.length < 8) {
+          errEl.textContent = 'Password must be at least 8 characters.';
+          errEl.classList.add('visible');
+          return;
+        }
+        var confirm = document.getElementById('confirmPassword').value;
+        if (pw !== confirm) {
+          errEl.textContent = 'Passwords do not match.';
+          errEl.classList.add('visible');
+          return;
+        }
+        await setPassword(pw);
+        firstRun = false;
+        createSession();
+        showAdminApp();
+        return;
+      }
+
+      var ok = await checkPassword(pw);
+      if (ok) {
+        createSession();
+        showAdminApp();
+      } else {
+        errEl.textContent = 'Incorrect password. Please try again.';
+        errEl.classList.add('visible');
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('loginPassword').focus();
+      }
+    }
+
+    function showAdminApp() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminApp').classList.add('visible');
+      loadAll();
+    }
+
+    document.getElementById('btnLogout').addEventListener('click', function() {
+      destroySession();
+      document.getElementById('loginPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminApp').classList.remove('visible');
+    });
+
+    /* ── Change password modal ─────────────────────────────────── */
+    function showChangePwModal() {
+      document.getElementById('changePwModal').classList.add('open');
+      document.getElementById('pwCurrent').value = '';
+      document.getElementById('pwNew').value     = '';
+      document.getElementById('pwConfirm').value = '';
+      hidePwMsg();
+    }
+    function hidePwModal() {
+      document.getElementById('changePwModal').classList.remove('open');
+    }
+    function showPwMsg(type, text) {
+      var el = document.getElementById('pwMsg');
+      el.textContent = text;
+      el.className   = 'modal-msg visible modal-msg-' + type;
+    }
+    function hidePwMsg() {
+      document.getElementById('pwMsg').className = 'modal-msg';
+    }
+
+    document.getElementById('btnSavePw').addEventListener('click', async function() {
+      var cur     = document.getElementById('pwCurrent').value;
+      var nw      = document.getElementById('pwNew').value;
+      var confirm = document.getElementById('pwConfirm').value;
+      hidePwMsg();
+
+      if (!cur || !nw || !confirm) { showPwMsg('error', 'All fields are required.'); return; }
+      if (nw.length < 8)           { showPwMsg('error', 'New password must be at least 8 characters.'); return; }
+      if (nw !== confirm)          { showPwMsg('error', 'New passwords do not match.'); return; }
+
+      var ok = await checkPassword(cur);
+      if (!ok) { showPwMsg('error', 'Current password is incorrect.'); return; }
+
+      await setPassword(nw);
+      showPwMsg('success', '✅ Password changed successfully!');
+      setTimeout(hidePwModal, 1800);
+    });
+
+    /* ── Check session on load ─────────────────────────────────── */
+    if (hasSession()) {
+      showAdminApp();
+    }
+
+    /* ── Data & rendering ──────────────────────────────────────── */
+    var allItems    = [];
+    var currentTab  = 'pending';
+    var objectURLs  = [];
+
+    async function loadAll() {
+      try {
+        var db = await openDB();
+        allItems = await dbGetAll(db);
+        updateStats();
+        renderTab();
+      } catch (err) {
+        console.error('Load error:', err);
+        showToast('Failed to load submissions.', 'error');
+      }
+    }
+
+    function updateStats() {
+      var counts = { pending: 0, approved: 0, rejected: 0 };
+      allItems.forEach(function(i) {
+        if (counts[i.status] !== undefined) counts[i.status]++;
+      });
+      var total = allItems.length;
+      var sliderCount = allItems.filter(function(i) { return i.inSlider && i.status === 'approved'; }).length;
+
+      document.getElementById('statPending').textContent  = counts.pending;
+      document.getElementById('statApproved').textContent = counts.approved;
+      document.getElementById('statRejected').textContent = counts.rejected;
+      document.getElementById('statTotal').textContent    = total;
+      document.getElementById('statSlider').textContent   = sliderCount;
+
+      document.getElementById('tc-pending').textContent  = counts.pending;
+      document.getElementById('tc-approved').textContent = counts.approved;
+      document.getElementById('tc-rejected').textContent = counts.rejected;
+      document.getElementById('tc-all').textContent      = total;
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      ['pending','approved','rejected','all'].forEach(function(t) {
+        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      });
+      document.getElementById('searchInput').value = '';
+      renderTab();
+    }
+
+    function applySearch() {
+      renderTab();
+    }
+
+    function renderTab() {
+      // Revoke old object URLs
+      objectURLs.forEach(function(u) { URL.revokeObjectURL(u); });
+      objectURLs = [];
+
+      var query  = document.getElementById('searchInput').value.trim().toLowerCase();
+      var sort   = document.getElementById('sortSelect').value;
+
+      // Filter by tab
+      var items = allItems.filter(function(i) {
+        return currentTab === 'all' || i.status === currentTab;
+      });
+
+      // Filter by search
+      if (query) {
+        items = items.filter(function(i) {
+          return (
+            i.title.toLowerCase().includes(query) ||
+            i.uploaderName.toLowerCase().includes(query) ||
+            i.location.toLowerCase().includes(query) ||
+            (i.description || '').toLowerCase().includes(query)
+          );
+        });
+      }
+
+      // Sort
+      items = items.slice();
+      if (sort === 'newest') {
+        items.sort(function(a, b) { return b.uploadedAt - a.uploadedAt; });
+      } else if (sort === 'oldest') {
+        items.sort(function(a, b) { return a.uploadedAt - b.uploadedAt; });
+      } else if (sort === 'title') {
+        items.sort(function(a, b) { return a.title.localeCompare(b.title); });
+      } else if (sort === 'uploader') {
+        items.sort(function(a, b) { return a.uploaderName.localeCompare(b.uploaderName); });
+      }
+
+      document.getElementById('resultCount').textContent =
+        items.length + ' item' + (items.length !== 1 ? 's' : '');
+
+      var list = document.getElementById('itemList');
+      list.innerHTML = '';
+
+      if (!items.length) {
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.innerHTML =
+          '<div class="empty-icon">' + getTabIcon(currentTab) + '</div>' +
+          '<p>No submissions found' + (query ? ' matching your search' : '') + '.</p>';
+        list.appendChild(empty);
+        return;
+      }
+
+      items.forEach(function(item) {
+        list.appendChild(buildAdminCard(item));
+      });
+    }
+
+    function getTabIcon(tab) {
+      var icons = { pending: '⏳', approved: '✅', rejected: '❌', all: '📁' };
+      return icons[tab] || '📁';
+    }
+
+    function buildAdminCard(item) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'admin-item';
+      wrapper.id = 'card-' + item.id;
+
+      // Status stripe
+      var stripe = document.createElement('div');
+      stripe.className = 'status-stripe stripe-' + item.status;
+      wrapper.appendChild(stripe);
+
+      // Thumbnail
+      var thumbWrap = document.createElement('div');
+      thumbWrap.className = 'item-thumb-wrap';
+
+      var blob = new Blob([item.fileData], { type: item.fileType });
+      var url  = URL.createObjectURL(blob);
+      objectURLs.push(url);
+
+      if (item.fileType.startsWith('image/')) {
+        var imgEl = document.createElement('img');
+        imgEl.className = 'item-thumb';
+        imgEl.src = url;
+        imgEl.alt = '';
+        imgEl.addEventListener('click', function() {
+          openLightbox(url, null, item.title);
+        });
+        thumbWrap.appendChild(imgEl);
+      } else {
+        var vidBg = document.createElement('div');
+        vidBg.style.cssText = 'width:100%;height:100%;background:#111;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;';
+        var vidIcon = document.createElement('div');
+        vidIcon.textContent = '▶';
+        vidIcon.style.cssText = 'font-size:2.6rem;color:white;user-select:none;';
+        vidBg.appendChild(vidIcon);
+        vidBg.addEventListener('click', function() {
+          openLightbox(null, url, item.title);
+        });
+        thumbWrap.appendChild(vidBg);
+      }
+
+      wrapper.appendChild(thumbWrap);
+
+      // Details
+      var details = document.createElement('div');
+      details.className = 'item-details';
+
+      // Top row
+      var topRow = document.createElement('div');
+      topRow.className = 'item-top';
+
+      var titleArea = document.createElement('div');
+      titleArea.style.flex = '1';
+
+      var titleEl = document.createElement('div');
+      titleEl.className   = 'item-title';
+      titleEl.textContent = item.title;
+      titleArea.appendChild(titleEl);
+
+      if (item.description) {
+        var descEl = document.createElement('div');
+        descEl.className   = 'item-desc';
+        descEl.textContent = item.description;
+        titleArea.appendChild(descEl);
+      }
+
+      topRow.appendChild(titleArea);
+
+      // Badge
+      var badge = document.createElement('span');
+      badge.className = 'status-badge badge-' + item.status;
+      var badgeLabels = { pending: '⏳ Pending', approved: '✅ Approved', rejected: '❌ Rejected' };
+      badge.textContent = badgeLabels[item.status] || item.status;
+      topRow.appendChild(badge);
+
+      details.appendChild(topRow);
+
+      // Meta
+      var meta = document.createElement('div');
+      meta.className = 'item-meta';
+
+      var metas = [
+        { icon: '👤', text: item.uploaderName },
+        { icon: '📍', text: item.location },
+        { icon: item.fileType.startsWith('image/') ? '📷' : '🎬',
+          text: item.fileType.startsWith('image/') ? 'Photo' : 'Video' },
+        { icon: '🗓️', text: formatDateAdmin(item.uploadedAt) },
+        { icon: '📄', text: item.fileName }
+      ];
+      if (item.reviewedAt) {
+        metas.push({ icon: '✔️', text: 'Reviewed: ' + formatDateAdmin(item.reviewedAt) });
+      }
+
+      metas.forEach(function(m) {
+        var span = document.createElement('span');
+        span.textContent = m.icon + ' ' + m.text;
+        meta.appendChild(span);
+      });
+      details.appendChild(meta);
+
+      // Actions
+      var actions = document.createElement('div');
+      actions.className = 'item-actions';
+
+      if (item.status !== 'approved') {
+        var btnApprove = makeActionBtn('✅ Approve', 'btn-action btn-approve', function() {
+          changeStatus(item.id, 'approved', 'approved');
+        });
+        actions.appendChild(btnApprove);
+      }
+
+      if (item.status !== 'rejected') {
+        var btnReject = makeActionBtn('❌ Reject', 'btn-action btn-reject', function() {
+          changeStatus(item.id, 'rejected', 'rejected');
+        });
+        actions.appendChild(btnReject);
+      }
+
+      if (item.status !== 'pending') {
+        var btnPend = makeActionBtn('⏳ Set Pending', 'btn-action btn-pending', function() {
+          changeStatus(item.id, 'pending', 'pending');
+        });
+        actions.appendChild(btnPend);
+      }
+
+      var btnPreview = makeActionBtn('🔍 Preview', 'btn-action btn-preview', function() {
+        if (item.fileType.startsWith('image/')) {
+          openLightbox(url, null, item.title);
+        } else {
+          openLightbox(null, url, item.title);
+        }
+      });
+      actions.appendChild(btnPreview);
+
+      if (item.status === 'approved' && item.fileType.startsWith('image/')) {
+        var isInSlider = !!item.inSlider;
+        var btnSlide = makeActionBtn(
+          isInSlider ? '🎞️ Remove from Slideshow' : '📽️ Add to Slideshow',
+          'btn-action ' + (isInSlider ? 'btn-slide-remove' : 'btn-slide'),
+          function() { toggleSlider(item.id, !item.inSlider); }
+        );
+        actions.appendChild(btnSlide);
+      }
+
+      var btnDel = makeActionBtn('🗑️ Delete', 'btn-action btn-delete', function() {
+        confirmDelete(item.id, item.title);
+      });
+      actions.appendChild(btnDel);
+
+      details.appendChild(actions);
+      wrapper.appendChild(details);
+
+      return wrapper;
+    }
+
+    function makeActionBtn(label, cls, onClick) {
+      var btn = document.createElement('button');
+      btn.className   = cls;
+      btn.textContent = label;
+      btn.addEventListener('click', onClick);
+      return btn;
+    }
+
+    /* ── Status change ─────────────────────────────────────────── */
+    async function changeStatus(id, newStatus, newFolder) {
+      try {
+        var db = await openDB();
+        await dbUpdateStatus(db, id, newStatus, newFolder);
+        if (newStatus !== 'approved') await dbToggleSlider(db, id, false);
+        // Update local array
+        allItems.forEach(function(item) {
+          if (item.id === id) {
+            item.status     = newStatus;
+            item.folder     = newFolder;
+            item.reviewedAt = Date.now();
+            if (newStatus !== 'approved') item.inSlider = false;
+          }
+        });
+        updateStats();
+        renderTab();
+        var msgs = { approved: '✅ Item approved and moved to gallery!',
+                     rejected: '❌ Item rejected.',
+                     pending:  '⏳ Item moved back to Pending.' };
+        showToast(msgs[newStatus] || 'Status updated.', newStatus === 'approved' ? 'success' : '');
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to update status.', 'error');
+      }
+    }
+
+    async function toggleSlider(id, value) {
+      try {
+        var db = await openDB();
+        await dbToggleSlider(db, id, value);
+        allItems.forEach(function(item) {
+          if (item.id === id) item.inSlider = value;
+        });
+        updateStats();
+        renderTab();
+        showToast(value ? '🎞️ Added to Hero Slideshow!' : '📽️ Removed from Slideshow.', value ? 'success' : '');
+      } catch(err) {
+        console.error(err);
+        showToast('Failed to update slideshow.', 'error');
+      }
+    }
+
+    /* ── Delete ────────────────────────────────────────────────── */
+    var pendingDeleteId = null;
+
+    function confirmDelete(id, title) {
+      pendingDeleteId = id;
+      document.getElementById('confirmTitle').textContent = 'Delete Submission';
+      document.getElementById('confirmMsg').textContent =
+        'Permanently delete "' + title + '"? This cannot be undone.';
+      document.getElementById('confirmOverlay').classList.add('open');
+    }
+
+    document.getElementById('btnConfirmYes').addEventListener('click', async function() {
+      document.getElementById('confirmOverlay').classList.remove('open');
+      if (!pendingDeleteId) return;
+      try {
+        var db = await openDB();
+        await dbDelete(db, pendingDeleteId);
+        allItems = allItems.filter(function(i) { return i.id !== pendingDeleteId; });
+        pendingDeleteId = null;
+        updateStats();
+        renderTab();
+        showToast('🗑️ Item permanently deleted.', '');
+      } catch (err) {
+        console.error(err);
+        showToast('Delete failed.', 'error');
+      }
+    });
+
+    document.getElementById('btnConfirmNo').addEventListener('click', function() {
+      document.getElementById('confirmOverlay').classList.remove('open');
+      pendingDeleteId = null;
+    });
+
+    /* ── Lightbox ──────────────────────────────────────────────── */
+    var lightbox = document.getElementById('lightbox');
+    var lbImg    = document.getElementById('lbImg');
+    var lbVid    = document.getElementById('lbVid');
+    var lbCap    = document.getElementById('lbCap');
+
+    function openLightbox(imgUrl, vidUrl, caption) {
+      lbCap.textContent = caption || '';
+      if (imgUrl) {
+        lbImg.src = imgUrl; lbImg.style.display = 'block';
+        lbVid.style.display = 'none'; lbVid.pause();
+      } else {
+        lbVid.src = vidUrl; lbVid.style.display = 'block';
+        lbImg.style.display = 'none'; lbImg.src = '';
+      }
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lbVid.pause(); lbVid.src = ''; lbImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
+
+    /* ── Toast ─────────────────────────────────────────────────── */
+    var toastTimer = null;
+    function showToast(msg, type) {
+      var el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className   = 'toast' + (type === 'success' ? ' toast-success' : type === 'error' ? ' toast-error' : '');
+      // Force reflow
+      void el.offsetWidth;
+      el.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+    }
+
+    /* ── Helpers ───────────────────────────────────────────────── */
+    function formatDateAdmin(ts) {
+      return new Date(ts).toLocaleString('en-IN', {
+        day: 'numeric', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+  </script>
+
+</body>
+</html>

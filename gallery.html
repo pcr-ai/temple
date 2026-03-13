@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photo &amp; Video Gallery | ChariDham Central</title>
+  <meta name="description" content="Share your pilgrimage memories from the Chari Dham journey. Upload photos and videos — reviewed and approved before publishing." />
+  <meta name="robots" content="index, follow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Variables (matches main site) ────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --saffron:   #e07b39;
+      --saffron-d: #c45e1e;
+      --maroon:    #8b1a1a;
+      --gold:      #d4a017;
+      --dark:      #1a1a1a;
+      --text:      #444;
+      --light:     #f8f5f0;
+      --border:    #e0d9cf;
+      --white:     #ffffff;
+      --radius:    8px;
+      --shadow:    0 2px 12px rgba(0,0,0,.10);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Open Sans', sans-serif; color: var(--text); background: var(--white); line-height: 1.7; }
+    a { text-decoration: none; color: var(--saffron); }
+    a:hover { color: var(--saffron-d); text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+
+    /* ─── Top Bar ───────────────────────────────────────────────── */
+    .top-bar {
+      background: var(--maroon); color: #f5d9a0; font-size: .78rem;
+      padding: 6px 20px; display: flex; justify-content: space-between;
+      align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .top-bar a { color: #f5d9a0; }
+    .top-bar a:hover { color: var(--gold); text-decoration: none; }
+    .top-bar .tb-left, .top-bar .tb-right { display: flex; align-items: center; gap: 16px; }
+
+    /* ─── Header ────────────────────────────────────────────────── */
+    header {
+      background: var(--white); border-bottom: 3px solid var(--saffron);
+      position: sticky; top: 0; z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between; height: 68px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 56px; height: 56px; border-radius: 50%; overflow: hidden;
+      flex-shrink: 0; border: 2px solid var(--saffron); background: white;
+    }
+    .logo-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-text { font-family: 'Merriweather', serif; }
+    .logo-text strong { display: block; font-size: 1.18rem; color: var(--maroon); line-height: 1.1; }
+    .logo-text span { font-size: .72rem; color: var(--saffron); letter-spacing: 1px; text-transform: uppercase; }
+    nav ul { list-style: none; display: flex; gap: 4px; }
+    nav ul li a {
+      display: block; padding: 8px 13px; font-size: .87rem; font-weight: 600;
+      color: var(--dark); border-radius: 4px; transition: background .2s, color .2s;
+    }
+    nav ul li a:hover,
+    nav ul li a.active { background: var(--saffron); color: white; text-decoration: none; }
+    .header-cta { background: var(--maroon); color: white !important; padding: 9px 18px !important; border-radius: 5px; }
+    .header-cta:hover { background: var(--saffron-d) !important; }
+    .hamburger { display: none; font-size: 26px; cursor: pointer; color: var(--dark); }
+
+    /* ─── Hero ──────────────────────────────────────────────────── */
+    /* ─── Hero Slideshow ──────────────────────────────────────── */
+    .hero {
+      position: relative; height: 280px; overflow: hidden;
+      background: linear-gradient(160deg, #1a0800 0%, #2d1810 55%, #0d0d0d 100%);
+    }
+
+    /* Marquee strip container */
+    .hero-slides {
+      position: absolute; bottom: 10px; left: 0; right: 0;
+      height: 178px; overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
+      mask-image:         linear-gradient(to right, transparent 0%, black 7%, black 93%, transparent 100%);
+    }
+    /* Scrolling track */
+    .hero-track {
+      display: flex; gap: 10px; padding: 6px 0;
+      width: max-content;
+      animation: hero-scroll 30s linear infinite;
+    }
+    .hero-track img {
+      height: 156px; width: auto; flex-shrink: 0;
+      border-radius: 8px; object-fit: contain;
+      box-shadow: 0 3px 14px rgba(0,0,0,.6);
+      border: 2px solid rgba(255,255,255,.12);
+      transition: transform .3s, border-color .3s;
+    }
+    .hero-track img:hover {
+      transform: scale(1.07); border-color: var(--gold);
+    }
+    @keyframes hero-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* Overlay (text + breadcrumb) */
+    .hero-overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 36px 40px;
+      background: linear-gradient(0deg, rgba(0,0,0,.65) 0%, transparent 60%);
+      z-index: 10;
+    }
+    .hero-overlay h1 {
+      font-family: 'Merriweather', serif; font-size: 2.2rem;
+      color: white; text-shadow: 0 2px 6px rgba(0,0,0,.5);
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: .82rem; color: #eee; margin-top: 6px;
+    }
+    .breadcrumb a { color: var(--gold); }
+
+    /* Dot indicators */
+    .hero-dots {
+      position: absolute; bottom: 12px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 7px; z-index: 20;
+    }
+    .hero-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,.45); border: none; cursor: pointer;
+      padding: 0; transition: background .3s, transform .3s;
+    }
+    .hero-dot.active {
+      background: white; transform: scale(1.3);
+    }
+
+    /* Prev / Next arrows */
+    .hero-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      z-index: 20; background: rgba(0,0,0,.35); border: none;
+      color: white; font-size: 1.3rem; width: 36px; height: 36px;
+      border-radius: 50%; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .hero-arrow:hover { background: rgba(0,0,0,.65); }
+    .hero-arrow.prev { left: 14px; }
+    .hero-arrow.next { right: 14px; }
+
+    /* Caption bar */
+    .hero-caption {
+      position: absolute; bottom: 32px; right: 18px;
+      z-index: 20; background: rgba(0,0,0,.45);
+      color: rgba(255,255,255,.85); font-size: .72rem;
+      padding: 3px 10px; border-radius: 10px;
+      max-width: 260px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+      pointer-events: none;
+    }
+
+    /* ─── Layout ────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .gallery-wrap { padding: 52px 0 70px; }
+
+    /* Section heading */
+    .section-title {
+      font-family: 'Merriweather', serif; font-size: 1.55rem;
+      color: var(--maroon); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title::before {
+      content: ''; display: inline-block;
+      width: 6px; height: 26px; background: var(--saffron);
+      border-radius: 3px; flex-shrink: 0;
+    }
+    .section-sub { color: #666; margin-bottom: 28px; font-size: .95rem; }
+
+    /* ─── Upload section heading/sub (scoped reductions) ────────── */
+    .upload-title { font-size: .95rem !important; }
+    .upload-title::before { height: 16px !important; }
+    .upload-sub { font-size: .78rem !important; margin-bottom: 16px !important; }
+
+    /* ─── Upload Card ────────────────────────────────────────────── */
+    .upload-card {
+      background: var(--light); border: 2px dashed var(--border);
+      border-radius: 10px; padding: 20px; margin-bottom: 34px;
+      transition: border-color .2s;
+    }
+    .upload-card.drag-over { border-color: var(--saffron); background: #fdf3ea; }
+
+    /* Drop zone */
+    .drop-zone {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 96px; cursor: pointer;
+      border-radius: 8px; transition: background .2s; gap: 5px; padding: 12px;
+    }
+    .drop-zone:hover { background: rgba(224,123,57,.07); }
+    .drop-icon { font-size: 1.7rem; }
+    .drop-text { font-size: .78rem; font-weight: 700; color: var(--maroon); }
+    .drop-sub { font-size: .7rem; color: #888; text-align: center; }
+    .btn-pick {
+      display: inline-block; background: var(--saffron); color: white;
+      padding: 6px 14px; border-radius: 5px; font-size: .76rem;
+      font-weight: 600; cursor: pointer; border: none;
+      transition: background .2s; margin-top: 2px; font-family: inherit;
+    }
+    .btn-pick:hover { background: var(--saffron-d); }
+
+    /* File preview */
+    .file-preview { margin-top: 12px; display: none; }
+    .file-preview.visible { display: block; }
+    .preview-inner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: white; border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px;
+    }
+    .preview-thumb, .preview-video-thumb {
+      width: 60px; height: 46px; object-fit: cover;
+      border-radius: 6px; flex-shrink: 0; background: #eee;
+    }
+    .preview-info { flex: 1; min-width: 0; }
+    .preview-fname { font-weight: 700; color: var(--dark); font-size: .78rem; margin-bottom: 2px; word-break: break-all; }
+    .preview-fsize { font-size: .7rem; color: #888; }
+    .btn-remove {
+      background: none; border: none; color: #c0392b;
+      font-size: 1rem; cursor: pointer; padding: 2px 6px;
+      border-radius: 4px; flex-shrink: 0;
+    }
+    .btn-remove:hover { background: #fdecea; }
+
+    /* Form fields */
+    .upload-fields { margin-top: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field-group { display: flex; flex-direction: column; gap: 3px; }
+    .field-group.full { grid-column: 1 / -1; }
+    .field-group label { font-size: .72rem; font-weight: 600; color: #555; }
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      width: 100%; padding: 6px 8px;
+      border: 1px solid #ccc; border-radius: 5px;
+      font-size: .78rem; font-family: inherit;
+      color: var(--dark); transition: border-color .2s; background: white;
+    }
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus { outline: none; border-color: var(--saffron); }
+    .field-group textarea { resize: vertical; min-height: 44px; }
+
+    .form-footer { display: flex; align-items: center; gap: 11px; flex-wrap: wrap; margin-top: 5px; }
+    .btn-upload {
+      background: var(--maroon); color: white; border: none;
+      padding: 7px 20px; border-radius: 5px; font-size: .85rem;
+      font-weight: 700; cursor: pointer; transition: background .2s; font-family: inherit;
+    }
+    .btn-upload:hover { background: var(--saffron-d); }
+    .btn-upload:disabled { background: #bbb; cursor: not-allowed; }
+    .upload-note { font-size: .7rem; color: #888; }
+
+    /* Messages */
+    .msg { padding: 8px 10px; border-radius: 6px; font-size: .78rem; margin-top: 8px; display: none; }
+    .msg.visible { display: block; }
+    .msg-success { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+    .msg-error   { background: #fdecea; color: #c0392b; border: 1px solid #f5b7b1; }
+
+    /* ─── Gallery Filter Bar ─────────────────────────────────────── */
+    .filter-bar {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .filter-bar span { font-size: .88rem; font-weight: 600; color: #555; }
+    .filter-btn {
+      background: var(--light); border: 1px solid var(--border);
+      color: var(--dark); padding: 6px 16px; border-radius: 20px;
+      font-size: .83rem; font-weight: 600; cursor: pointer;
+      transition: all .2s; font-family: inherit;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--saffron); color: white; border-color: var(--saffron); }
+
+    /* ─── Gallery Grid ───────────────────────────────────────────── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+    }
+    .gallery-item {
+      background: white; border-radius: var(--radius);
+      overflow: hidden; box-shadow: var(--shadow);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .gallery-item:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.14); }
+    .gallery-media-wrap { position: relative; overflow: hidden; height: 200px; }
+    .gallery-media, .gallery-media-video {
+      width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer;
+    }
+    .gallery-type-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(0,0,0,.55); color: white;
+      font-size: .72rem; font-weight: 700; padding: 3px 8px;
+      border-radius: 10px; letter-spacing: .4px;
+    }
+    .gallery-body { padding: 14px 16px; }
+    .gallery-body-title { font-weight: 700; font-size: .95rem; color: var(--dark); margin-bottom: 4px; }
+    .gallery-body-desc { font-size: .83rem; color: #666; margin-bottom: 8px; }
+    .gallery-meta {
+      font-size: .75rem; color: #999;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;
+    }
+    .gallery-date { font-size: .72rem; color: #bbb; margin-top: 5px; }
+
+    /* Empty state */
+    .gallery-empty {
+      text-align: center; padding: 60px 20px;
+      color: #aaa; grid-column: 1 / -1;
+    }
+    .gallery-empty .empty-icon { font-size: 3.2rem; margin-bottom: 12px; }
+    .gallery-empty p { font-size: 1rem; }
+
+    /* ─── Lightbox ───────────────────────────────────────────────── */
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,.93);
+      z-index: 9999; display: none; align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner { position: relative; max-width: 92vw; max-height: 92vh; }
+    .lightbox-img { max-width: 92vw; max-height: 84vh; border-radius: 6px; display: block; }
+    .lightbox-video { max-width: 92vw; max-height: 80vh; border-radius: 6px; display: block; }
+    .lightbox-close {
+      position: fixed; top: 18px; right: 24px; color: white;
+      font-size: 2.2rem; cursor: pointer; background: none;
+      border: none; line-height: 1; z-index: 10000;
+    }
+    .lightbox-close:hover { color: var(--gold); }
+    .lightbox-caption { color: #ddd; text-align: center; margin-top: 12px; font-size: .9rem; }
+
+    /* ─── Pending notice ─────────────────────────────────────────── */
+    .pending-notice {
+      background: #fef9e7; border: 1px solid #f9e79f;
+      border-radius: 8px; padding: 14px 18px;
+      font-size: .87rem; color: #7d6608; margin-bottom: 16px; display: none;
+    }
+    .pending-notice.visible { display: block; }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    footer { background: #111; color: #bbb; padding: 50px 0 0; }
+    .footer-grid {
+      max-width: 1200px; margin: 0 auto; padding: 0 20px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 36px;
+    }
+    .footer-about .logo-text strong { color: #f5d9a0; }
+    .footer-about .logo-text span { color: var(--saffron); }
+    .footer-about p { font-size: .88rem; margin-top: 14px; line-height: 1.7; }
+    .footer-contact { font-size: .85rem; margin-top: 14px; }
+    .footer-contact div { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+    .footer-contact .icon { color: var(--saffron); flex-shrink: 0; }
+    .footer-col h4 {
+      color: #f5d9a0; font-size: .9rem; font-weight: 700;
+      letter-spacing: .5px; text-transform: uppercase; margin-bottom: 14px;
+      padding-bottom: 8px; border-bottom: 2px solid var(--saffron); display: inline-block;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a { color: #bbb; font-size: .86rem; transition: color .2s; }
+    .footer-col ul li a:hover { color: var(--gold); text-decoration: none; }
+    .footer-col ul li a::before { content: '›  '; color: var(--saffron); }
+    .footer-bottom {
+      background: #0a0a0a; text-align: center;
+      padding: 16px 20px; margin-top: 40px; font-size: .8rem; color: #777;
+    }
+    .footer-bottom a { color: #999; }
+    .footer-bottom a:hover { color: var(--gold); }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav, .header-cta { display: none; }
+      .hamburger { display: block; }
+      .upload-fields { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .hero-overlay h1 { font-size: 1.55rem; }
+    }
+    @media (max-width: 500px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP BAR ═══════════════════════════════════════════════ -->
+  <div class="top-bar">
+    <div class="tb-left">
+      <span>📞 +91 1236 5656</span>
+      <span>✉ Charidhamcentral@gmail.com</span>
+    </div>
+    <div class="tb-right">
+      <a href="#">Chari Dham Registration</a>
+      <a href="#">Helicopter Tour</a>
+      <a href="#">Book Pooja Online</a>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ════════════════════════════════════════════════ -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon"><img src="Chardhamlogo.jpg" alt="CharDham Logo" /></div>
+        <div class="logo-text">
+          <strong>ChariDham Central</strong>
+          <span>Your Spiritual Journey Guide</span>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html">About Chari Dham</a></li>
+          <li><a href="index.html#packages">Packages</a></li>
+          <li><a href="gallery.html" class="active">Gallery</a></li>
+          <li><a href="#">Guide</a></li>
+          <li><a href="#" class="header-cta">Book Now</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger">☰</div>
+    </div>
+  </header>
+
+  <!-- ═══ HERO SLIDESHOW ════════════════════════════════════════ -->
+  <section class="hero" id="heroSection">
+
+    <!-- Slides (populated by JS from sliding/ folder list) -->
+    <div class="hero-slides" id="heroSlides"></div>
+
+    <!-- Prev / Next -->
+    <button class="hero-arrow prev" id="heroPrev" aria-label="Previous slide">&#8249;</button>
+    <button class="hero-arrow next" id="heroNext" aria-label="Next slide">&#8250;</button>
+
+    <!-- Dot indicators -->
+    <div class="hero-dots" id="heroDots"></div>
+
+    <!-- Caption -->
+    <div class="hero-caption" id="heroCaption"></div>
+
+    <!-- Overlay text (always on top) -->
+    <div class="hero-overlay">
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>›</span>
+        <span>Photo &amp; Video Gallery</span>
+      </nav>
+      <h1>🖼️ Pilgrimage Gallery</h1>
+    </div>
+
+  </section>
+
+  <!-- ═══ MAIN CONTENT ══════════════════════════════════════════ -->
+  <div class="container">
+    <div class="gallery-wrap">
+
+      <!-- ── Upload Section ──────────────────────────────────── -->
+      <h2 class="section-title upload-title">Share Your Memories</h2>
+      <p class="section-sub upload-sub">
+        Upload your photos and videos from the sacred Chari Dham journey.
+        Every submission is reviewed by our team before appearing in the public gallery.
+      </p>
+
+      <input type="file" id="fileInput" accept="image/*,video/*" style="display:none" aria-label="Select image or video" />
+
+      <div class="upload-card" id="uploadCard">
+        <!-- Drop zone -->
+        <div
+          class="drop-zone"
+          id="dropZone"
+          role="button"
+          tabindex="0"
+          aria-label="Click or drag files here to upload"
+          onclick="document.getElementById('fileInput').click()"
+          onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('fileInput').click()"
+        >
+          <div class="drop-icon">📸</div>
+          <div class="drop-text">Drag &amp; Drop or Click to Upload</div>
+          <div class="drop-sub">
+            Images: JPG, PNG, WEBP, GIF &nbsp;•&nbsp; Videos: MP4, MOV, WEBM<br/>
+            Maximum file size: 100 MB
+          </div>
+          <button
+            type="button"
+            class="btn-pick"
+            onclick="event.stopPropagation(); document.getElementById('fileInput').click()"
+          >Choose File</button>
+        </div>
+
+        <!-- Preview -->
+        <div class="file-preview" id="filePreview">
+          <div class="preview-inner">
+            <img id="previewThumb" class="preview-thumb" src="" alt="Preview" style="display:none" />
+            <video id="previewVideo" class="preview-video-thumb" muted style="display:none"></video>
+            <div class="preview-info">
+              <div class="preview-fname" id="previewName"></div>
+              <div class="preview-fsize" id="previewSize"></div>
+            </div>
+            <button class="btn-remove" id="btnRemove" title="Remove file" aria-label="Remove selected file">✕</button>
+          </div>
+        </div>
+
+        <!-- Upload form -->
+        <form id="uploadForm" novalidate>
+          <div class="upload-fields">
+            <div class="field-group">
+              <label for="uploaderName">Your Name</label>
+              <input type="text" id="uploaderName" placeholder="Full name" maxlength="100" autocomplete="name" />
+            </div>
+            <div class="field-group">
+              <label for="uploaderLocation">Dham / Location</label>
+              <select id="uploaderLocation">
+                <option value="">— Select a Dham —</option>
+                <option value="Rameswar">Rameswar (Tamil Nadu)</option>
+                <option value="Jagannath Temple, Puri">Jagannath Temple, Puri (Odisha)</option>
+                <option value="Badrinath">Badrinath (Uttarakhand)</option>
+                <option value="Dwaraka">Dwaraka (Gujarat)</option>
+                <option value="Chari Dham Circuit">Full Chari Dham Circuit</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label for="uploaderTitle">Title</label>
+              <input type="text" id="uploaderTitle" placeholder="e.g., Sunrise at Badrinath Temple" maxlength="150" />
+            </div>
+            <div class="field-group full">
+              <label for="uploaderDesc">Description <span style="color:#aaa;font-weight:400">(optional)</span></label>
+              <textarea id="uploaderDesc" placeholder="Share the story behind your photo or video… (max 500 characters)" maxlength="500"></textarea>
+            </div>
+          </div>
+
+          <div id="uploadMsg" class="msg" role="alert"></div>
+
+          <div class="form-footer">
+            <button type="submit" class="btn-upload" id="btnUpload" disabled>
+              🕊️ Submit for Review
+            </button>
+            <span class="upload-note">
+              ℹ️ Your upload will be placed in <strong>Pending</strong> until reviewed by an admin.
+            </span>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── Pending Notice ──────────────────────────────────── -->
+      <div class="pending-notice" id="pendingNotice">
+        ⏳ You have <strong id="pendingCount">0</strong> submission(s) awaiting admin review.
+        They will appear in the gallery once approved.
+      </div>
+
+      <!-- ── Public Gallery ──────────────────────────────────── -->
+      <h2 class="section-title" style="margin-bottom:8px">Community Gallery</h2>
+      <p class="section-sub">
+        Explore photos and videos shared by fellow pilgrims from all four sacred Dhams.
+      </p>
+
+      <!-- Filter buttons -->
+      <div class="filter-bar">
+        <span>Filter:</span>
+        <button class="filter-btn active" data-filter="all"  onclick="applyFilter('all',this)">All</button>
+        <button class="filter-btn" data-filter="image" onclick="applyFilter('image',this)">📷 Photos</button>
+        <button class="filter-btn" data-filter="video" onclick="applyFilter('video',this)">🎬 Videos</button>
+        <button class="filter-btn" data-filter="Rameswar"            onclick="applyFilter('Rameswar',this)">Rameswar</button>
+        <button class="filter-btn" data-filter="Jagannath Temple, Puri" onclick="applyFilter('Jagannath Temple, Puri',this)">Jagannath</button>
+        <button class="filter-btn" data-filter="Badrinath"           onclick="applyFilter('Badrinath',this)">Badrinath</button>
+        <button class="filter-btn" data-filter="Dwaraka"             onclick="applyFilter('Dwaraka',this)">Dwaraka</button>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid"></div>
+
+    </div>
+  </div>
+
+  <!-- ═══ LIGHTBOX ═════════════════════════════════════════════ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Media viewer">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close viewer">✕</button>
+    <div class="lightbox-inner">
+      <img id="lightboxImg"   class="lightbox-img"   src="" alt="" style="display:none" />
+      <video id="lightboxVid" class="lightbox-video" controls style="display:none"></video>
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="logo">
+          <div class="logo-icon"><img src="Chardhamlogo.jpg" alt="CharDham Logo" /></div>
+          <div class="logo-text">
+            <strong>ChariDham Central</strong>
+            <span>Your Spiritual Journey Guide</span>
+          </div>
+        </div>
+        <p>
+          ChariDham Central is your trusted guide for the Chari Dham Yatra.
+          We offer carefully crafted pilgrimage packages, expert guidance, and
+          comprehensive travel resources.
+        </p>
+        <div class="footer-contact">
+          <div><span class="icon">📍</span><span>Berhampur, Odisha 741524</span></div>
+          <div><span class="icon">✉</span><span>charidham@gmail.com</span></div>
+          <div><span class="icon">📞</span><span>+91 125125125</span></div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Chari Dham Packages</h4>
+        <ul>
+          <li><a href="#">Charidham Yatra Packages</a></li>
+          <li><a href="#">Chari Dham by Helicopter</a></li>
+          <li><a href="#">Do Dham Packages</a></li>
+          <li><a href="#">Badrinath Packages</a></li>
+          <li><a href="#">Dwaraka Packages</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="admin.html">Admin Panel</a></li>
+          <li><a href="#">Pooja Booking</a></li>
+          <li><a href="#">Route Map</a></li>
+          <li><a href="#">Yatra Registration</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Who We Are</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="#">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Copyrights &copy; 2026. All Rights Reserved. — ChariDhamCentral.com &nbsp;|&nbsp;
+      <a href="#">Privacy Policy</a> &nbsp;:&nbsp;
+      <a href="#">Terms &amp; Conditions</a>
+    </div>
+  </footer>
+
+  <!-- ═══ JAVASCRIPT ════════════════════════════════════════════ -->
+  <script>
+    'use strict';
+
+    /* ── IndexedDB ─────────────────────────────────────────────── */
+    const DB_NAME  = 'charidham_gallery_v1';
+    const DB_VER   = 1;
+    const STORE    = 'submissions';
+
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VER);
+        req.onupgradeneeded = function(e) {
+          var db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE)) {
+            var s = db.createObjectStore(STORE, { keyPath: 'id' });
+            s.createIndex('status',     'status',     { unique: false });
+            s.createIndex('uploadedAt', 'uploadedAt', { unique: false });
+          }
+        };
+        req.onsuccess = function(e) { resolve(e.target.result); };
+        req.onerror   = function()  { reject(req.error); };
+      });
+    }
+
+    function dbAdd(db, obj) {
+      return new Promise((resolve, reject) => {
+        var tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).add(obj);
+        tx.oncomplete = resolve;
+        tx.onerror    = function() { reject(tx.error); };
+      });
+    }
+
+    function dbGetByStatus(db, status) {
+      return new Promise((resolve, reject) => {
+        var tx  = db.transaction(STORE, 'readonly');
+        var idx = tx.objectStore(STORE).index('status');
+        var req = idx.getAll(status);
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror   = function() { reject(req.error); };
+      });
+    }
+
+    /* ── Utilities ─────────────────────────────────────────────── */
+    function escText(str) {
+      var d = document.createElement('div');
+      d.textContent = String(str);
+      return d.innerHTML;
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024)       return bytes + ' B';
+      if (bytes < 1048576)    return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function formatDate(ts) {
+      return new Date(ts).toLocaleDateString('en-IN', {
+        day: 'numeric', month: 'short', year: 'numeric'
+      });
+    }
+
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+    }
+
+    /* ── DOM refs ──────────────────────────────────────────────── */
+    var fileInput    = document.getElementById('fileInput');
+    var dropZone     = document.getElementById('dropZone');
+    var uploadCard   = document.getElementById('uploadCard');
+    var filePreview  = document.getElementById('filePreview');
+    var previewThumb = document.getElementById('previewThumb');
+    var previewVideo = document.getElementById('previewVideo');
+    var previewName  = document.getElementById('previewName');
+    var previewSize  = document.getElementById('previewSize');
+    var btnRemove    = document.getElementById('btnRemove');
+    var btnUpload    = document.getElementById('btnUpload');
+    var uploadMsg    = document.getElementById('uploadMsg');
+
+    /* ── File validation ───────────────────────────────────────── */
+    var MAX_FILE_SIZE  = 100 * 1024 * 1024; // 100 MB
+    var ALLOWED_MIME   = [
+      'image/jpeg','image/png','image/webp','image/gif',
+      'video/mp4','video/webm','video/ogg','video/quicktime'
+    ];
+
+    var selectedFile = null;
+    var previewObjectURL = null;
+
+    function setFile(file) {
+      if (!file) return;
+      if (!ALLOWED_MIME.includes(file.type)) {
+        showMsg('error', 'File type not supported. Please upload a JPG, PNG, WEBP, GIF, MP4, MOV or WEBM file.');
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        showMsg('error', 'File is too large (max 100 MB). Please choose a smaller file.');
+        return;
+      }
+
+      if (previewObjectURL) URL.revokeObjectURL(previewObjectURL);
+      selectedFile = file;
+      previewObjectURL = URL.createObjectURL(file);
+
+      previewName.textContent = file.name;
+      previewSize.textContent = formatSize(file.size) + ' · ' + file.type;
+
+      if (file.type.startsWith('image/')) {
+        previewThumb.src = previewObjectURL;
+        previewThumb.style.display  = 'block';
+        previewVideo.style.display  = 'none';
+        previewVideo.src = '';
+      } else {
+        previewVideo.src = previewObjectURL;
+        previewVideo.style.display  = 'block';
+        previewThumb.src = '';
+        previewThumb.style.display  = 'none';
+      }
+
+      filePreview.classList.add('visible');
+      btnUpload.disabled = false;
+      hideMsg();
+    }
+
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files[0]) setFile(fileInput.files[0]);
+    });
+
+    btnRemove.addEventListener('click', function() {
+      clearFile();
+    });
+
+    function clearFile() {
+      selectedFile = null;
+      fileInput.value = '';
+      if (previewObjectURL) { URL.revokeObjectURL(previewObjectURL); previewObjectURL = null; }
+      previewThumb.src = '';
+      previewVideo.src = '';
+      previewThumb.style.display = 'none';
+      previewVideo.style.display = 'none';
+      filePreview.classList.remove('visible');
+      btnUpload.disabled = true;
+    }
+
+    /* Drag-and-drop */
+    dropZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadCard.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', function() {
+      uploadCard.classList.remove('drag-over');
+    });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadCard.classList.remove('drag-over');
+      var f = e.dataTransfer.files[0];
+      if (f) setFile(f);
+    });
+
+    /* ── Upload submit ─────────────────────────────────────────── */
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      if (!selectedFile) {
+        showMsg('error', 'Please select a file before submitting.');
+        return;
+      }
+
+      var name  = document.getElementById('uploaderName').value.trim();
+      var loc   = document.getElementById('uploaderLocation').value;
+      var title = document.getElementById('uploaderTitle').value.trim();
+      var desc  = document.getElementById('uploaderDesc').value.trim();
+
+
+
+      btnUpload.disabled   = true;
+      btnUpload.textContent = '⏳ Uploading…';
+
+      try {
+        var buf = await selectedFile.arrayBuffer();
+        var db  = await openDB();
+        await dbAdd(db, {
+          id:           uid(),
+          title:        title,
+          description:  desc,
+          uploaderName: name,
+          location:     loc,
+          fileType:     selectedFile.type,
+          fileName:     selectedFile.name,
+          fileData:     buf,
+          status:       'pending',
+          folder:       'pending',
+          uploadedAt:   Date.now(),
+          reviewedAt:   null
+        });
+
+        showMsg('success',
+          '✅ Thank you! Your submission has been received and placed in the Pending folder. ' +
+          'It will appear in the gallery once approved by our admin.'
+        );
+        document.getElementById('uploadForm').reset();
+        clearFile();
+        updatePendingNotice();
+
+      } catch (err) {
+        console.error('Upload error:', err);
+        showMsg('error', 'Upload failed. Please try again.');
+      } finally {
+        btnUpload.disabled   = false;
+        btnUpload.textContent = '🕊️ Submit for Review';
+      }
+    });
+
+    function showMsg(type, text) {
+      uploadMsg.textContent = text;
+      uploadMsg.className   = 'msg visible msg-' + (type === 'success' ? 'success' : 'error');
+    }
+    function hideMsg() { uploadMsg.className = 'msg'; }
+
+    /* ── Pending notice ────────────────────────────────────────── */
+    async function updatePendingNotice() {
+      try {
+        var db      = await openDB();
+        var pending = await dbGetByStatus(db, 'pending');
+        var notice  = document.getElementById('pendingNotice');
+        if (pending.length > 0) {
+          document.getElementById('pendingCount').textContent = pending.length;
+          notice.classList.add('visible');
+        } else {
+          notice.classList.remove('visible');
+        }
+      } catch (_) {}
+    }
+
+    /* ── Gallery load ──────────────────────────────────────────── */
+    var allApprovedItems = [];
+    var currentFilter    = 'all';
+
+    async function loadGallery() {
+      var grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '<div class="gallery-empty"><div class="empty-icon">⏳</div><p>Loading gallery…</p></div>';
+
+      try {
+        var db    = await openDB();
+        var items = await dbGetByStatus(db, 'approved');
+        items.sort(function(a, b) { return b.uploadedAt - a.uploadedAt; });
+        allApprovedItems = items;
+        renderGallery(items);
+      } catch (err) {
+        console.error('Gallery load error:', err);
+        grid.innerHTML = '<div class="gallery-empty"><div class="empty-icon">⚠️</div><p>Could not load gallery.</p></div>';
+      }
+    }
+
+    function applyFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+
+      var filtered = allApprovedItems.filter(function(item) {
+        if (filter === 'all')   return true;
+        if (filter === 'image') return item.fileType.startsWith('image/');
+        if (filter === 'video') return item.fileType.startsWith('video/');
+        return item.location === filter;
+      });
+      renderGallery(filtered);
+    }
+
+    var objectURLs = [];
+
+    function renderGallery(items) {
+      // Revoke old object URLs
+      objectURLs.forEach(function(u) { URL.revokeObjectURL(u); });
+      objectURLs = [];
+
+      var grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+
+      if (!items.length) {
+        var empty = document.createElement('div');
+        empty.className = 'gallery-empty';
+        empty.innerHTML =
+          '<div class="empty-icon">🖼️</div>' +
+          '<p>No approved photos or videos yet. Be the first to share your pilgrimage memories!</p>';
+        grid.appendChild(empty);
+        return;
+      }
+
+      items.forEach(function(item) {
+        var blob = new Blob([item.fileData], { type: item.fileType });
+        var url  = URL.createObjectURL(blob);
+        objectURLs.push(url);
+        grid.appendChild(buildCard(item, url));
+      });
+    }
+
+    function buildCard(item, url) {
+      var card  = document.createElement('div');
+      card.className = 'gallery-item';
+
+      // Media wrap
+      var wrap = document.createElement('div');
+      wrap.className = 'gallery-media-wrap';
+
+      if (item.fileType.startsWith('image/')) {
+        var img = document.createElement('img');
+        img.className = 'gallery-media';
+        img.alt = '';
+        img.src = url;
+        img.addEventListener('click', function() {
+          openLightbox(url, null, item.title);
+        });
+        wrap.appendChild(img);
+      } else {
+        var vid = document.createElement('video');
+        vid.className   = 'gallery-media-video';
+        vid.muted       = true;
+        vid.preload     = 'metadata';
+        vid.src         = url;
+        vid.addEventListener('click', function() {
+          openLightbox(null, url, item.title);
+        });
+        wrap.appendChild(vid);
+      }
+
+      // Type badge
+      var badge = document.createElement('div');
+      badge.className   = 'gallery-type-badge';
+      badge.textContent = item.fileType.startsWith('image/') ? '📷 PHOTO' : '🎬 VIDEO';
+      wrap.appendChild(badge);
+
+      card.appendChild(wrap);
+
+      // Card body
+      var body = document.createElement('div');
+      body.className = 'gallery-body';
+
+      var titleEl = document.createElement('div');
+      titleEl.className   = 'gallery-body-title';
+      titleEl.textContent = item.title;
+      body.appendChild(titleEl);
+
+      if (item.description) {
+        var descEl = document.createElement('div');
+        descEl.className   = 'gallery-body-desc';
+        descEl.textContent = item.description;
+        body.appendChild(descEl);
+      }
+
+      var meta = document.createElement('div');
+      meta.className = 'gallery-meta';
+
+      var nameSpan = document.createElement('span');
+      nameSpan.textContent = '👤 ' + item.uploaderName;
+
+      var locSpan = document.createElement('span');
+      locSpan.textContent = '📍 ' + item.location;
+
+      meta.appendChild(nameSpan);
+      meta.appendChild(locSpan);
+      body.appendChild(meta);
+
+      var dateEl = document.createElement('div');
+      dateEl.className   = 'gallery-date';
+      dateEl.textContent = formatDate(item.uploadedAt);
+      body.appendChild(dateEl);
+
+      card.appendChild(body);
+      return card;
+    }
+
+    /* ── Lightbox ──────────────────────────────────────────────── */
+    var lightbox    = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightboxImg');
+    var lightboxVid = document.getElementById('lightboxVid');
+    var lightboxCap = document.getElementById('lightboxCaption');
+
+    function openLightbox(imgUrl, vidUrl, caption) {
+      lightboxCap.textContent = caption || '';
+      if (imgUrl) {
+        lightboxImg.src          = imgUrl;
+        lightboxImg.style.display = 'block';
+        lightboxVid.style.display = 'none';
+        lightboxVid.pause();
+      } else {
+        lightboxVid.src          = vidUrl;
+        lightboxVid.style.display = 'block';
+        lightboxImg.style.display = 'none';
+        lightboxImg.src = '';
+      }
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightboxVid.pause();
+      lightboxVid.src  = '';
+      lightboxImg.src  = '';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', function(e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    /* ── Hero Slideshow ────────────────────────────────────────── */
+    (async function() {
+      /*
+       * Add your images to the  sliding/  folder and list their
+       * filenames in the SLIDES array below.
+       * Format: { src: 'sliding/filename.jpg', caption: 'Your caption' }
+       */
+      var SLIDES = [
+        { src: 'sliding/slide1.jpg',  caption: 'Rameswar — Ramanathaswamy Temple, Tamil Nadu' },
+        { src: 'sliding/slide2.jpg',  caption: 'Jagannath Temple, Puri — Odisha' },
+        { src: 'sliding/slide3.jpg',  caption: 'Badrinath Temple — Garhwal Himalayas' },
+        { src: 'sliding/slide4.jpg',  caption: 'Dwarkadhish Temple — Dwaraka, Gujarat' },
+        {
+          src: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=1400&q=80',
+          caption: 'Sacred Chari Dham Circuit'
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1611604548018-d56bbd85d681?w=1400&q=80',
+          caption: 'Pilgrimage Gallery'
+        }
+      ];
+
+      var INTERVAL   = 4000;  // ms between auto-advances
+      var FADE_MS    = 1200;  // must match CSS transition duration
+
+      var slidesEl  = document.getElementById('heroSlides');
+      var dotsEl    = document.getElementById('heroDots');
+      var captionEl = document.getElementById('heroCaption');
+      var prevBtn   = document.getElementById('heroPrev');
+      var nextBtn   = document.getElementById('heroNext');
+
+      var current   = 0;
+      var timer     = null;
+      var isAnimating = false;
+
+      /* Filter to only slides whose image can actually load */
+      var validSlides = [];
+      var loaded      = 0;
+
+      function tryBuild() {
+        loaded++;
+        if (loaded === SLIDES.length) buildSlider();
+      }
+
+      /* Prepend admin-selected slideshow images from IndexedDB */
+      try {
+        var _db = await openDB();
+        var _approved = await dbGetByStatus(_db, 'approved');
+        var _sliderItems = _approved.filter(function(i) {
+          return i.inSlider && i.fileType && i.fileType.startsWith('image/');
+        });
+        var _dynSlides = _sliderItems.map(function(i) {
+          var _blob = new Blob([i.fileData], { type: i.fileType });
+          return {
+            src: URL.createObjectURL(_blob),
+            caption: i.title + (i.location ? ' — ' + i.location : '')
+          };
+        });
+        SLIDES = _dynSlides.concat(SLIDES);
+      } catch(e) { /* IndexedDB unavailable: use static slides only */ }
+
+      SLIDES.forEach(function(s) {
+        var probe = new Image();
+        probe.onload = function() {
+          validSlides.push(s);
+          tryBuild();
+        };
+        probe.onerror = function() {
+          /* skip missing local images — keep remote fallbacks */
+          tryBuild();
+        };
+        probe.src = s.src;
+      });
+
+      function buildSlider() {
+        /* Always hide controls — not needed for marquee */
+        prevBtn.style.display    = 'none';
+        nextBtn.style.display    = 'none';
+        dotsEl.style.display     = 'none';
+        captionEl.style.display  = 'none';
+
+        if (!validSlides.length) return; /* dark bg + overlay text shows naturally */
+
+        slidesEl.innerHTML = '';
+        var track = document.createElement('div');
+        track.className = 'hero-track';
+
+        /* Build images; duplicate set for seamless infinite loop */
+        function appendSet() {
+          validSlides.forEach(function(s) {
+            var img   = document.createElement('img');
+            img.src   = s.src;
+            img.alt   = s.caption || '';
+            img.title = s.caption || '';
+            track.appendChild(img);
+          });
+        }
+        appendSet();
+        appendSet();
+
+        /* Scale animation speed by number of slides */
+        var dur = Math.max(18, validSlides.length * 5);
+        track.style.animationDuration = dur + 's';
+
+        /* Pause on hover */
+        track.addEventListener('mouseenter', function() {
+          track.style.animationPlayState = 'paused';
+        });
+        track.addEventListener('mouseleave', function() {
+          track.style.animationPlayState = 'running';
+        });
+
+        slidesEl.appendChild(track);
+
+        /* Neutralise the old auto-advance helpers — not used in marquee mode */
+        startAuto = function() {};
+        next      = function() {};
+        prev      = function() {};
+      }
+
+      function goTo(index) {
+        if (isAnimating || index === current) return;
+        isAnimating = true;
+
+        var slides = slidesEl.querySelectorAll('.hero-slide');
+        var dots   = dotsEl.querySelectorAll('.hero-dot');
+
+        slides[current].classList.remove('active');
+        if (dots[current]) dots[current].classList.remove('active');
+
+        current = (index + validSlides.length) % validSlides.length;
+
+        slides[current].classList.add('active');
+        if (dots[current]) dots[current].classList.add('active');
+
+        updateCaption();
+
+        setTimeout(function() { isAnimating = false; }, FADE_MS);
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      function startAuto() {
+        clearInterval(timer);
+        timer = setInterval(next, INTERVAL);
+      }
+
+      function updateCaption() {
+        var cap = validSlides[current] && validSlides[current].caption;
+        captionEl.textContent = cap || '';
+        captionEl.style.display = cap ? 'block' : 'none';
+      }
+
+      nextBtn.addEventListener('click', function() { next(); startAuto(); });
+      prevBtn.addEventListener('click', function() { prev(); startAuto(); });
+
+      /* Pause on hover */
+      document.getElementById('heroSection').addEventListener('mouseenter', function() {
+        clearInterval(timer);
+      });
+      document.getElementById('heroSection').addEventListener('mouseleave', function() {
+        startAuto();
+      });
+
+      /* Keyboard (left / right when hero is in view) */
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft')  { prev(); startAuto(); }
+        if (e.key === 'ArrowRight') { next(); startAuto(); }
+      });
+    })();
+
+    /* ── Init ──────────────────────────────────────────────────── */
+    loadGallery();
+    updatePendingNotice();
+
+    // Refresh gallery when page regains focus (e.g., after admin approves)
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) {
+        loadGallery();
+        updatePendingNotice();
+      }
+    });
+  </script>
+
+</body>
+</html>
