@@ -716,6 +716,78 @@
       return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
     }
 
+    /* ── GitHub integration (reads same localStorage config as admin.html) ── */
+    function loadGitHubConfig() {
+      return {
+        token:   localStorage.getItem('cdgallery_gh_token')  || '',
+        owner:   localStorage.getItem('cdgallery_gh_owner')  || '',
+        repo:    localStorage.getItem('cdgallery_gh_repo')   || '',
+        branch:  localStorage.getItem('cdgallery_gh_branch') || 'main',
+        siteUrl: localStorage.getItem('cdgallery_gh_site')   || ''
+      };
+    }
+
+    function arrayBufferToBase64(buffer) {
+      var bytes  = new Uint8Array(buffer);
+      var binary = '';
+      var chunk  = 4096;
+      for (var i = 0; i < bytes.length; i += chunk) {
+        var slice = bytes.subarray(i, Math.min(i + chunk, bytes.length));
+        binary += String.fromCharCode.apply(null, slice);
+      }
+      return btoa(binary);
+    }
+
+    /* Uploads image + metadata JSON to GitHub pending/ folder.
+       Returns the raw image URL, or null if GitHub is not configured. */
+    async function submitToGitHub(itemId, buf, item) {
+      var cfg = loadGitHubConfig();
+      if (!cfg.token || !cfg.owner || !cfg.repo) return null;
+
+      var ext      = (item.fileName.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+      var imgPath  = 'pending/' + itemId + '.' + ext;
+      var jsonPath = 'pending/' + itemId + '.json';
+
+      async function ghPut(path, b64, msg) {
+        var r = await fetch('https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + path, {
+          method: 'PUT',
+          headers: {
+            'Authorization':        'Bearer ' + cfg.token,
+            'Content-Type':         'application/json',
+            'Accept':               'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          },
+          body: JSON.stringify({ message: msg, content: b64, branch: cfg.branch || 'main' })
+        });
+        if (!r.ok) {
+          var e = await r.json().catch(function() { return {}; });
+          throw new Error('GitHub (' + r.status + '): ' + (e.message || 'upload error'));
+        }
+      }
+
+      // Upload image
+      await ghPut(imgPath, arrayBufferToBase64(buf), 'Pending submission: ' + item.fileName);
+
+      var rawBase = 'https://raw.githubusercontent.com/' + cfg.owner + '/' + cfg.repo + '/' + (cfg.branch || 'main');
+      var fileUrl = rawBase + '/' + imgPath;
+
+      // Upload metadata JSON (no binary data)
+      var meta = {
+        id: itemId, title: item.title, description: item.description,
+        uploaderName: item.uploaderName, location: item.location,
+        fileType: item.fileType, fileName: item.fileName,
+        fileUrl: fileUrl, status: 'pending', folder: 'pending',
+        uploadedAt: item.uploadedAt, reviewedAt: null
+      };
+      var jsonBuf = new TextEncoder().encode(JSON.stringify(meta, null, 2));
+      try {
+        await ghPut(jsonPath, arrayBufferToBase64(jsonBuf.buffer), 'Pending metadata: ' + itemId);
+      } catch (e) {
+        console.warn('Metadata JSON upload failed (image was uploaded):', e);
+      }
+      return fileUrl;
+    }
+
     /* ── DOM refs ──────────────────────────────────────────────── */
     var fileInput    = document.getElementById('fileInput');
     var dropZone     = document.getElementById('dropZone');
@@ -825,14 +897,14 @@
 
 
 
-      btnUpload.disabled   = true;
+      btnUpload.disabled    = true;
       btnUpload.textContent = '⏳ Uploading…';
 
       try {
-        var buf = await selectedFile.arrayBuffer();
-        var db  = await openDB();
-        await dbAdd(db, {
-          id:           uid(),
+        var buf    = await selectedFile.arrayBuffer();
+        var submId = uid();
+        var submObj = {
+          id:           submId,
           title:        title,
           description:  desc,
           uploaderName: name,
@@ -844,11 +916,29 @@
           folder:       'pending',
           uploadedAt:   Date.now(),
           reviewedAt:   null
-        });
+        };
+
+        /* Try to submit to GitHub pending/ folder so any admin device sees it */
+        var usedGitHub = false;
+        var ghCfg = loadGitHubConfig();
+        if (ghCfg.token && ghCfg.owner && ghCfg.repo) {
+          btnUpload.textContent = '⬆️ Uploading to GitHub…';
+          try {
+            var ghUrl = await submitToGitHub(submId, buf, submObj);
+            if (ghUrl) { submObj.fileUrl = ghUrl; usedGitHub = true; }
+          } catch (ghErr) {
+            console.warn('GitHub submission failed, saving locally only:', ghErr);
+          }
+        }
+
+        /* Always save to local IndexedDB as backup */
+        var db = await openDB();
+        await dbAdd(db, submObj);
 
         showMsg('success',
-          '✅ Thank you! Your submission has been received and placed in the Pending folder. ' +
-          'It will appear in the gallery once approved by our admin.'
+          usedGitHub
+            ? '✅ Thank you! Your photo has been uploaded and is awaiting admin review.'
+            : '✅ Thank you! Your submission has been received and placed in the Pending folder. It will appear in the gallery once approved by our admin.'
         );
         document.getElementById('uploadForm').reset();
         clearFile();
@@ -858,7 +948,7 @@
         console.error('Upload error:', err);
         showMsg('error', 'Upload failed. Please try again.');
       } finally {
-        btnUpload.disabled   = false;
+        btnUpload.disabled    = false;
         btnUpload.textContent = '🕊️ Submit for Review';
       }
     });
