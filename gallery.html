@@ -716,7 +716,25 @@
       return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
     }
 
-    /* ── GitHub integration (reads same localStorage config as admin.html) ── */
+    /* ── GitHub integration ────────────────────────────────────────────── */
+    /*
+     * galleryConfig is loaded from gallery-config.json (published to the repo root by admin).
+     * This makes submissions work from ANY visitor's device — not just the admin's machine.
+     * Without it, submissions only save to the local browser and no other device can see them.
+     */
+    var galleryConfig = null;
+
+    async function fetchGalleryConfig() {
+      try {
+        var res = await fetch('./gallery-config.json?_=' + Date.now());
+        if (res.ok) {
+          var json = await res.json();
+          if (json && json.owner && json.repo && json.token) galleryConfig = json;
+        }
+      } catch (e) { /* gallery-config.json not yet published — running in local-only mode */ }
+    }
+
+    /* Fallback: reads admin localStorage (only works on the admin's own device) */
     function loadGitHubConfig() {
       return {
         token:   localStorage.getItem('cdgallery_gh_token')  || '',
@@ -739,10 +757,10 @@
     }
 
     /* Uploads image + metadata JSON to GitHub pending/ folder.
-       Returns the raw image URL, or null if GitHub is not configured. */
+       Uses gallery-config.json (works on ANY device) or admin localStorage fallback. */
     async function submitToGitHub(itemId, buf, item) {
-      var cfg = loadGitHubConfig();
-      if (!cfg.token || !cfg.owner || !cfg.repo) return null;
+      var cfg = galleryConfig || loadGitHubConfig();
+      if (!cfg || !cfg.token || !cfg.owner || !cfg.repo) return null;
 
       var ext      = (item.fileName.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
       var imgPath  = 'pending/' + itemId + '.' + ext;
@@ -983,8 +1001,17 @@
       grid.innerHTML = '<div class="gallery-empty"><div class="empty-icon">⏳</div><p>Loading gallery…</p></div>';
 
       try {
-        var db    = await openDB();
-        var items = await dbGetByStatus(db, 'approved');
+        var items = [];
+        /* Prefer GitHub-hosted approved items (visible from every device in the world) */
+        if (galleryConfig && galleryConfig.owner && galleryConfig.repo) {
+          try { items = await loadGitHubApproved(); } catch (e) { console.warn('GitHub gallery load failed:', e); }
+        }
+        /* Fall back to local IndexedDB (single-device only) */
+        if (!items.length) {
+          var db      = await openDB();
+          var dbItems = await dbGetByStatus(db, 'approved');
+          items       = dbItems;
+        }
         items.sort(function(a, b) { return b.uploadedAt - a.uploadedAt; });
         allApprovedItems = items;
         renderGallery(items);
@@ -992,6 +1019,30 @@
         console.error('Gallery load error:', err);
         grid.innerHTML = '<div class="gallery-empty"><div class="empty-icon">⚠️</div><p>Could not load gallery.</p></div>';
       }
+    }
+
+    /* Fetches approved/*.json metadata files from GitHub (no auth needed for public repos) */
+    async function loadGitHubApproved() {
+      var cfg  = galleryConfig;
+      var hdrs = { 'X-GitHub-Api-Version': '2022-11-28', 'Accept': 'application/vnd.github+json' };
+      if (cfg.token) hdrs['Authorization'] = 'Bearer ' + cfg.token;
+      var listRes = await fetch(
+        'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/approved?ref=' + (cfg.branch || 'main'),
+        { headers: hdrs }
+      );
+      if (listRes.status === 404 || !listRes.ok) return [];
+      var files     = await listRes.json();
+      var jsonFiles = files.filter(function(f) {
+        return typeof f.name === 'string' && f.name.endsWith('.json') && !f.name.startsWith('.');
+      });
+      var items = [];
+      for (var i = 0; i < jsonFiles.length; i++) {
+        try {
+          var r = await fetch(jsonFiles[i].download_url);
+          if (r.ok) { var m = await r.json(); if (m && m.id && m.status === 'approved') items.push(m); }
+        } catch (e) { /* skip malformed */ }
+      }
+      return items;
     }
 
     function applyFilter(filter, btn) {
@@ -1220,6 +1271,21 @@
         SLIDES = _dynSlides.concat(SLIDES);
       } catch(e) { /* IndexedDB unavailable: use static slides only */ }
 
+      /* Also load GitHub-approved slider images (cross-device, no local IDB needed) */
+      try {
+        if (!galleryConfig) await fetchGalleryConfig();
+        if (galleryConfig && galleryConfig.owner) {
+          var _ghAll     = await loadGitHubApproved();
+          var _ghSliders = _ghAll.filter(function(i) {
+            return i.inSlider && i.fileType && i.fileType.startsWith('image/');
+          });
+          var _ghSlides  = _ghSliders.map(function(i) {
+            return { src: i.fileUrl, caption: i.title + (i.location ? ' \u2014 ' + i.location : '') };
+          });
+          if (_ghSlides.length) SLIDES = _ghSlides.concat(SLIDES);
+        }
+      } catch(e) { /* skip if GitHub unavailable */ }
+
       SLIDES.forEach(function(s) {
         var probe = new Image();
         probe.onload = function() {
@@ -1332,8 +1398,14 @@
     })();
 
     /* ── Init ──────────────────────────────────────────────────── */
-    loadGallery();
-    updatePendingNotice();
+    (async function() {
+      // fetchGalleryConfig MUST run first — it loads gallery-config.json which
+      // provides the credentials that make submissions and gallery display work
+      // from any device anywhere in the world (not just the admin's machine).
+      await fetchGalleryConfig();
+      loadGallery();
+      updatePendingNotice();
+    })();
 
     // Refresh gallery when page regains focus (e.g., after admin approves)
     document.addEventListener('visibilitychange', function() {
