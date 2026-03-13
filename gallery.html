@@ -1021,7 +1021,11 @@
       }
     }
 
-    /* Fetches approved/*.json metadata files from GitHub (no auth needed for public repos) */
+    /* Fetches approved/ items from GitHub.
+       - Reads *.json metadata files (uploaded via admin panel / upload tab).
+       - Also picks up raw image/video files that were uploaded manually to approved/
+         directly through the GitHub web interface — no JSON companion needed.
+         These manual uploads are shown in the gallery AND added to the hero slideshow. */
     async function loadGitHubApproved() {
       var cfg  = galleryConfig;
       var hdrs = { 'X-GitHub-Api-Version': '2022-11-28', 'Accept': 'application/vnd.github+json' };
@@ -1031,17 +1035,64 @@
         { headers: hdrs }
       );
       if (listRes.status === 404 || !listRes.ok) return [];
-      var files     = await listRes.json();
+      var files = await listRes.json();
+      if (!Array.isArray(files)) return [];
+
+      /* ── 1. Load JSON-backed items (admin-panel uploads) ── */
       var jsonFiles = files.filter(function(f) {
         return typeof f.name === 'string' && f.name.endsWith('.json') && !f.name.startsWith('.');
       });
       var items = [];
+      var jsonItemIds = new Set();
       for (var i = 0; i < jsonFiles.length; i++) {
         try {
           var r = await fetch(jsonFiles[i].download_url);
-          if (r.ok) { var m = await r.json(); if (m && m.id && m.status === 'approved') items.push(m); }
+          if (r.ok) {
+            var m = await r.json();
+            if (m && m.id && m.status === 'approved') {
+              items.push(m);
+              jsonItemIds.add(m.id);
+              /* Also track the filename stem so we don't double-show its image */
+              var stem = jsonFiles[i].name.replace(/\.json$/, '');
+              jsonItemIds.add(stem);
+            }
+          }
         } catch (e) { /* skip malformed */ }
       }
+
+      /* ── 2. Pick up raw image/video files manually pushed to approved/ ── */
+      var imgExts = /\.(jpe?g|png|webp|gif|avif|bmp|mp4|mov|webm|ogg)$/i;
+      var mimeMap = {
+        jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
+        webp: 'image/webp', gif: 'image/gif', avif: 'image/avif',
+        bmp: 'image/bmp', mp4: 'video/mp4', mov: 'video/quicktime',
+        webm: 'video/webm', ogg: 'video/ogg'
+      };
+      files.forEach(function(f) {
+        if (!f.name || f.name.startsWith('.') || !imgExts.test(f.name)) return;
+        /* Skip if there is already a JSON metadata entry for this file */
+        var stem = f.name.replace(/\.[^.]+$/, '');
+        if (jsonItemIds.has(stem) || jsonItemIds.has(f.name)) return;
+        var ext  = f.name.split('.').pop().toLowerCase();
+        var mime = mimeMap[ext] || (ext === 'mp4' || ext === 'mov' || ext === 'webm' ? 'video/mp4' : 'image/jpeg');
+        var base = cfg.siteUrl
+          ? cfg.siteUrl.replace(/\/$/, '')
+          : 'https://raw.githubusercontent.com/' + cfg.owner + '/' + cfg.repo + '/' + (cfg.branch || 'main');
+        items.push({
+          id:           'manual_' + stem,
+          title:        stem.replace(/[_-]/g, ' ').replace(/^\d+\s*/, '') || f.name,
+          uploaderName: 'Admin',
+          location:     '',
+          description:  '',
+          fileType:     mime,
+          fileName:     f.name,
+          fileUrl:      base + '/approved/' + f.name,
+          status:       'approved',
+          inSlider:     true,   /* manual uploads always appear in hero slideshow */
+          uploadedAt:   f.size || Date.now()
+        });
+      });
+
       return items;
     }
 
