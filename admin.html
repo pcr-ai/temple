@@ -446,6 +446,7 @@
       <div class="admin-header-right">
         <span class="admin-user-badge">🔐 Admin</span>
         <button class="btn-logout" onclick="showChangePwModal()">Change Password</button>
+        <button class="btn-logout" onclick="showGhModal()">⚙️ GitHub</button>
         <button class="btn-logout" id="btnLogout">Logout</button>
       </div>
     </div>
@@ -570,6 +571,39 @@
     </div>
   </div>
 
+  <!-- ═══ GITHUB SETTINGS MODAL ═══════════════════════════════════ -->
+  <div class="modal-overlay" id="ghSettingsModal">
+    <div class="modal-box" style="max-width:460px">
+      <h3>⚙️ GitHub Storage Settings</h3>
+      <p style="font-size:.81rem;color:#888;margin:-6px 0 16px">Approved photos will be committed to your GitHub repo and served via your site URL. Requires a PAT with <strong>contents: write</strong> scope.</p>
+      <div class="modal-field">
+        <label>Personal Access Token (PAT) <small style="color:#aaa">— stored in browser localStorage</small></label>
+        <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+      </div>
+      <div class="modal-field">
+        <label>GitHub Username / Org</label>
+        <input type="text" id="ghOwner" placeholder="your-github-username" autocomplete="off" />
+      </div>
+      <div class="modal-field">
+        <label>Repository Name</label>
+        <input type="text" id="ghRepo" placeholder="temple-main" autocomplete="off" />
+      </div>
+      <div class="modal-field">
+        <label>Branch <small style="color:#aaa">(default: main)</small></label>
+        <input type="text" id="ghBranch" placeholder="main" autocomplete="off" />
+      </div>
+      <div class="modal-field">
+        <label>Site Base URL <small style="color:#aaa">(your GitHub Pages / custom domain)</small></label>
+        <input type="text" id="ghSiteUrl" placeholder="https://charidham.com" autocomplete="off" />
+      </div>
+      <div class="modal-msg" id="ghMsg"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-save" id="btnSaveGh">Save Settings</button>
+        <button class="btn-modal-cancel" onclick="hideGhModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ TOAST ═════════════════════════════════════════════════ -->
   <div class="toast" id="toast"></div>
 
@@ -643,6 +677,20 @@
         getReq.onsuccess = function() {
           var obj = getReq.result;
           if (obj) { obj.inSlider = value; store.put(obj); }
+        };
+        tx.oncomplete = resolve;
+        tx.onerror    = function() { reject(tx.error); };
+      });
+    }
+
+    function dbSetFileUrl(db, id, url) {
+      return new Promise(function(resolve, reject) {
+        var tx    = db.transaction(STORE, 'readwrite');
+        var store = tx.objectStore(STORE);
+        var getReq = store.get(id);
+        getReq.onsuccess = function() {
+          var obj = getReq.result;
+          if (obj) { obj.fileUrl = url; store.put(obj); }
         };
         tx.oncomplete = resolve;
         tx.onerror    = function() { reject(tx.error); };
@@ -936,9 +984,14 @@
       var thumbWrap = document.createElement('div');
       thumbWrap.className = 'item-thumb-wrap';
 
-      var blob = new Blob([item.fileData], { type: item.fileType });
-      var url  = URL.createObjectURL(blob);
-      objectURLs.push(url);
+      var url;
+      if (item.fileUrl) {
+        url = item.fileUrl;
+      } else {
+        var blob = new Blob([item.fileData], { type: item.fileType });
+        url = URL.createObjectURL(blob);
+        objectURLs.push(url);
+      }
 
       if (item.fileType.startsWith('image/')) {
         var imgEl = document.createElement('img');
@@ -1088,6 +1141,27 @@
     async function changeStatus(id, newStatus, newFolder) {
       try {
         var db = await openDB();
+
+        /* If approving — try to push file to GitHub first */
+        if (newStatus === 'approved') {
+          var _item = allItems.find(function(i) { return i.id === id; });
+          if (_item && _item.fileData && !_item.fileUrl) {
+            var _cfg = loadGitHubConfig();
+            if (_cfg.token && _cfg.owner && _cfg.repo) {
+              showToast('⬆️ Uploading to GitHub…', '');
+              try {
+                var _fileUrl = await uploadToGitHub(_item);
+                await dbSetFileUrl(db, id, _fileUrl);
+                allItems.forEach(function(i) { if (i.id === id) i.fileUrl = _fileUrl; });
+              } catch (_err) {
+                console.error('GitHub upload error:', _err);
+                showToast('⚠️ GitHub upload failed: ' + _err.message, 'error');
+                /* Still approve locally even if GitHub upload fails */
+              }
+            }
+          }
+        }
+
         await dbUpdateStatus(db, id, newStatus, newFolder);
         if (newStatus !== 'approved') await dbToggleSlider(db, id, false);
         // Update local array
@@ -1101,7 +1175,11 @@
         });
         updateStats();
         renderTab();
-        var msgs = { approved: '✅ Item approved and moved to gallery!',
+        var _ghCfg = loadGitHubConfig();
+        var _approvedMsg = (_ghCfg.token && _ghCfg.owner && _ghCfg.repo)
+          ? '✅ Approved and committed to GitHub!'
+          : '✅ Item approved and moved to gallery!';
+        var msgs = { approved: _approvedMsg,
                      rejected: '❌ Item rejected.',
                      pending:  '⏳ Item moved back to Pending.' };
         showToast(msgs[newStatus] || 'Status updated.', newStatus === 'approved' ? 'success' : '');
@@ -1200,6 +1278,109 @@
       el.classList.add('show');
       if (toastTimer) clearTimeout(toastTimer);
       toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+    }
+
+    /* ── GitHub Storage ─────────────────────────────────────────── */
+    function loadGitHubConfig() {
+      return {
+        token:   localStorage.getItem('cdgallery_gh_token')  || '',
+        owner:   localStorage.getItem('cdgallery_gh_owner')  || '',
+        repo:    localStorage.getItem('cdgallery_gh_repo')   || '',
+        branch:  localStorage.getItem('cdgallery_gh_branch') || 'main',
+        siteUrl: localStorage.getItem('cdgallery_gh_site')   || ''
+      };
+    }
+
+    function saveGitHubConfig(cfg) {
+      localStorage.setItem('cdgallery_gh_token',  cfg.token);
+      localStorage.setItem('cdgallery_gh_owner',  cfg.owner);
+      localStorage.setItem('cdgallery_gh_repo',   cfg.repo);
+      localStorage.setItem('cdgallery_gh_branch', cfg.branch);
+      localStorage.setItem('cdgallery_gh_site',   cfg.siteUrl);
+    }
+
+    function showGhModal() {
+      var cfg = loadGitHubConfig();
+      document.getElementById('ghToken').value   = cfg.token;
+      document.getElementById('ghOwner').value   = cfg.owner;
+      document.getElementById('ghRepo').value    = cfg.repo;
+      document.getElementById('ghBranch').value  = cfg.branch;
+      document.getElementById('ghSiteUrl').value = cfg.siteUrl;
+      document.getElementById('ghMsg').className = 'modal-msg';
+      document.getElementById('ghSettingsModal').classList.add('open');
+    }
+
+    function hideGhModal() {
+      document.getElementById('ghSettingsModal').classList.remove('open');
+    }
+
+    document.getElementById('btnSaveGh').addEventListener('click', function() {
+      var cfg = {
+        token:   document.getElementById('ghToken').value.trim(),
+        owner:   document.getElementById('ghOwner').value.trim(),
+        repo:    document.getElementById('ghRepo').value.trim(),
+        branch:  document.getElementById('ghBranch').value.trim() || 'main',
+        siteUrl: document.getElementById('ghSiteUrl').value.trim()
+      };
+      var ghMsgEl = document.getElementById('ghMsg');
+      if (!cfg.token || !cfg.owner || !cfg.repo) {
+        ghMsgEl.textContent = 'Token, username and repository name are required.';
+        ghMsgEl.className   = 'modal-msg visible modal-msg-error';
+        return;
+      }
+      saveGitHubConfig(cfg);
+      ghMsgEl.textContent = '✅ Settings saved!';
+      ghMsgEl.className   = 'modal-msg visible modal-msg-success';
+      setTimeout(hideGhModal, 1400);
+    });
+
+    function arrayBufferToBase64(buffer) {
+      var bytes  = new Uint8Array(buffer);
+      var binary = '';
+      var chunk  = 4096;
+      for (var i = 0; i < bytes.length; i += chunk) {
+        var slice = bytes.subarray(i, Math.min(i + chunk, bytes.length));
+        binary += String.fromCharCode.apply(null, slice);
+      }
+      return btoa(binary);
+    }
+
+    async function uploadToGitHub(item) {
+      var cfg = loadGitHubConfig();
+      if (!cfg.token || !cfg.owner || !cfg.repo) {
+        throw new Error('GitHub not configured. Click ⚙️ GitHub first.');
+      }
+      if (item.fileData && item.fileData.byteLength > 25 * 1024 * 1024) {
+        throw new Error('File exceeds 25 MB GitHub API limit.');
+      }
+      var safeName = item.fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+      var path     = 'approved/' + Date.now() + '_' + safeName;
+      var b64      = arrayBufferToBase64(item.fileData);
+      var apiUrl   = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + path;
+
+      var res = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization':        'Bearer ' + cfg.token,
+          'Content-Type':         'application/json',
+          'Accept':               'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        },
+        body: JSON.stringify({
+          message: 'Gallery approval: ' + (item.title || item.fileName),
+          content: b64,
+          branch:  cfg.branch || 'main'
+        })
+      });
+
+      if (!res.ok) {
+        var errData = await res.json().catch(function() { return {}; });
+        throw new Error('(' + res.status + ') ' + (errData.message || 'GitHub API error'));
+      }
+      var base = cfg.siteUrl
+        ? cfg.siteUrl.replace(/\/$/, '')
+        : 'https://raw.githubusercontent.com/' + cfg.owner + '/' + cfg.repo + '/' + (cfg.branch || 'main');
+      return base + '/' + path;
     }
 
     /* ── Helpers ───────────────────────────────────────────────── */
