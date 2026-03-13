@@ -941,9 +941,14 @@
       }
 
       items.forEach(function(item) {
-        var blob = new Blob([item.fileData], { type: item.fileType });
-        var url  = URL.createObjectURL(blob);
-        objectURLs.push(url);
+        var url;
+        if (item.fileUrl) {
+          url = item.fileUrl;
+        } else {
+          var blob = new Blob([item.fileData], { type: item.fileType });
+          url = URL.createObjectURL(blob);
+          objectURLs.push(url);
+        }
         grid.appendChild(buildCard(item, url));
       });
     }
@@ -1114,9 +1119,11 @@
           return i.inSlider && i.fileType && i.fileType.startsWith('image/');
         });
         var _dynSlides = _sliderItems.map(function(i) {
-          var _blob = new Blob([i.fileData], { type: i.fileType });
+          var src = i.fileUrl
+            ? i.fileUrl
+            : URL.createObjectURL(new Blob([i.fileData], { type: i.fileType }));
           return {
-            src: URL.createObjectURL(_blob),
+            src: src,
             caption: i.title + (i.location ? ' — ' + i.location : '')
           };
         });
