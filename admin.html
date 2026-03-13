@@ -496,6 +496,9 @@
       <button class="tab-btn" id="tab-all"      onclick="switchTab('all')">
         📁 All <span class="tab-count" id="tc-all">0</span>
       </button>
+      <button class="tab-btn" id="tab-upload" onclick="switchTab('upload')" style="margin-left:auto;color:var(--saffron);border-bottom-color:transparent">
+        📤 Upload to Gallery
+      </button>
     </div>
 
     <!-- Main Content -->
@@ -521,6 +524,71 @@
 
       <!-- Item List -->
       <div class="item-list" id="itemList"></div>
+
+      <!-- ═══ DIRECT UPLOAD PANEL ══════════════════════════════ -->
+      <div id="uploadPanel" style="display:none;max-width:680px">
+        <h3 style="font-family:'Merriweather',serif;color:var(--maroon);margin-bottom:6px;font-size:1.1rem">📤 Upload Directly to Gallery</h3>
+        <p style="font-size:.83rem;color:#888;margin-bottom:20px">Upload a photo or video directly as approved — no pending review needed. Committed to GitHub and immediately visible on the public site.</p>
+
+        <input type="file" id="duFileInput" accept="image/*,video/*" style="display:none" />
+        <div id="duDropZone" style="border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;background:var(--light);margin-bottom:14px;transition:border-color .2s">
+          <div style="font-size:1.8rem;margin-bottom:6px">📸</div>
+          <div style="font-weight:700;color:var(--maroon);font-size:.92rem">Click or drag &amp; drop a photo / video</div>
+          <div style="font-size:.76rem;color:#888;margin-top:4px">JPG, PNG, WEBP, GIF, MP4, MOV — max 25 MB (GitHub limit)</div>
+        </div>
+
+        <div id="duPreview" style="display:none;background:white;border:1px solid var(--border);border-radius:8px;padding:9px;align-items:center;gap:10px;margin-bottom:14px">
+          <img id="duThumb" style="width:58px;height:44px;object-fit:cover;border-radius:5px;flex-shrink:0" src="" alt="" />
+          <div id="duFileName" style="font-size:.8rem;font-weight:700;color:var(--dark);flex:1;word-break:break-all"></div>
+          <button onclick="duClearFile()" style="background:none;border:none;color:#c0392b;font-size:1.1rem;cursor:pointer;padding:4px 8px;line-height:1">✕</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:.78rem;font-weight:600;color:#555">Title</label>
+            <input type="text" id="duTitle" placeholder="e.g. Sunrise at Badrinath" maxlength="150"
+              style="padding:7px 10px;border:1px solid #ccc;border-radius:5px;font-size:.84rem;font-family:inherit;width:100%" />
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:.78rem;font-weight:600;color:#555">Uploader Name</label>
+            <input type="text" id="duName" placeholder="Name / ChariDham Admin" maxlength="100"
+              style="padding:7px 10px;border:1px solid #ccc;border-radius:5px;font-size:.84rem;font-family:inherit;width:100%" />
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:.78rem;font-weight:600;color:#555">Dham / Location</label>
+            <select id="duLocation" style="padding:7px 10px;border:1px solid #ccc;border-radius:5px;font-size:.84rem;font-family:inherit;background:white;width:100%">
+              <option value="">— Select —</option>
+              <option value="Rameswar">Rameswar</option>
+              <option value="Jagannath Temple, Puri">Jagannath Temple, Puri</option>
+              <option value="Badrinath">Badrinath</option>
+              <option value="Dwaraka">Dwaraka</option>
+              <option value="Chari Dham Circuit">Full Chari Dham Circuit</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:3px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;font-weight:600;color:#555">
+              <input type="checkbox" id="duInSlider" style="width:16px;height:16px;accent-color:var(--maroon)" />
+              🎞️ Add to Hero Slideshow
+            </label>
+          </div>
+          <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:.78rem;font-weight:600;color:#555">Description <span style="font-weight:400;color:#aaa">(optional)</span></label>
+            <textarea id="duDesc" placeholder="Share the story behind this photo…" maxlength="500" rows="2"
+              style="padding:7px 10px;border:1px solid #ccc;border-radius:5px;font-size:.84rem;font-family:inherit;resize:vertical;width:100%"></textarea>
+          </div>
+        </div>
+
+        <div id="duMsg" style="display:none;padding:9px 12px;border-radius:5px;font-size:.83rem;margin-bottom:10px"></div>
+
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button id="btnDuSubmit" disabled onclick="directUploadSubmit()"
+            style="background:var(--maroon);color:white;border:none;padding:10px 28px;border-radius:6px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;opacity:.5">
+            📤 Upload to Gallery
+          </button>
+          <span style="font-size:.74rem;color:#999">Requires ⚙️ GitHub configured in the header</span>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -596,10 +664,18 @@
         <label>Site Base URL <small style="color:#aaa">(your GitHub Pages / custom domain)</small></label>
         <input type="text" id="ghSiteUrl" placeholder="https://charidham.com" autocomplete="off" />
       </div>
+      <div class="modal-field" style="border-top:1px solid #eee;padding-top:14px;margin-top:6px">
+        <label>Gallery Submission Token <small style="color:#aaa">— lets visitors upload from ANY device</small></label>
+        <input type="password" id="ghGalleryToken" placeholder="ghp_xxxx (a separate write-only PAT)" autocomplete="off" />
+        <div style="font-size:.72rem;color:#c0392b;margin-top:4px">⚠️ Will be stored in a public gallery-config.json — create a fine-grained PAT with Contents:Write only</div>
+      </div>
       <div class="modal-msg" id="ghMsg"></div>
-      <div class="modal-actions">
-        <button class="btn-modal-save" id="btnSaveGh">Save Settings</button>
-        <button class="btn-modal-cancel" onclick="hideGhModal()">Cancel</button>
+      <div class="modal-actions" style="flex-direction:column;gap:8px;align-items:stretch">
+        <div style="display:flex;gap:8px">
+          <button class="btn-modal-save" id="btnSaveGh" style="flex:1">Save Settings</button>
+          <button class="btn-modal-cancel" onclick="hideGhModal()">Cancel</button>
+        </div>
+        <button class="btn-modal-save" id="btnPublishGallery" style="background:#1a6fa8;width:100%">📤 Publish Gallery Config (enables cross-device uploads)</button>
       </div>
     </div>
   </div>
@@ -918,11 +994,16 @@
 
     function switchTab(tab) {
       currentTab = tab;
-      ['pending','approved','rejected','all'].forEach(function(t) {
-        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      ['pending','approved','rejected','all','upload'].forEach(function(t) {
+        var _el = document.getElementById('tab-' + t);
+        if (_el) _el.classList.toggle('active', t === tab);
       });
       document.getElementById('searchInput').value = '';
-      renderTab();
+      var isUpload = (tab === 'upload');
+      document.querySelector('.list-toolbar').style.display = isUpload ? 'none' : '';
+      document.getElementById('itemList').style.display     = isUpload ? 'none' : '';
+      document.getElementById('uploadPanel').style.display  = isUpload ? 'block' : 'none';
+      if (!isUpload) renderTab();
     }
 
     function applySearch() {
@@ -1371,30 +1452,33 @@
     /* ── GitHub Storage ─────────────────────────────────────────── */
     function loadGitHubConfig() {
       return {
-        token:   localStorage.getItem('cdgallery_gh_token')  || '',
-        owner:   localStorage.getItem('cdgallery_gh_owner')  || '',
-        repo:    localStorage.getItem('cdgallery_gh_repo')   || '',
-        branch:  localStorage.getItem('cdgallery_gh_branch') || 'main',
-        siteUrl: localStorage.getItem('cdgallery_gh_site')   || ''
+        token:        localStorage.getItem('cdgallery_gh_token')         || '',
+        owner:        localStorage.getItem('cdgallery_gh_owner')         || '',
+        repo:         localStorage.getItem('cdgallery_gh_repo')          || '',
+        branch:       localStorage.getItem('cdgallery_gh_branch')        || 'main',
+        siteUrl:      localStorage.getItem('cdgallery_gh_site')          || '',
+        galleryToken: localStorage.getItem('cdgallery_gh_gallery_token') || ''
       };
     }
 
     function saveGitHubConfig(cfg) {
-      localStorage.setItem('cdgallery_gh_token',  cfg.token);
-      localStorage.setItem('cdgallery_gh_owner',  cfg.owner);
-      localStorage.setItem('cdgallery_gh_repo',   cfg.repo);
-      localStorage.setItem('cdgallery_gh_branch', cfg.branch);
-      localStorage.setItem('cdgallery_gh_site',   cfg.siteUrl);
+      localStorage.setItem('cdgallery_gh_token',         cfg.token);
+      localStorage.setItem('cdgallery_gh_owner',         cfg.owner);
+      localStorage.setItem('cdgallery_gh_repo',          cfg.repo);
+      localStorage.setItem('cdgallery_gh_branch',        cfg.branch);
+      localStorage.setItem('cdgallery_gh_site',          cfg.siteUrl);
+      localStorage.setItem('cdgallery_gh_gallery_token', cfg.galleryToken || '');
     }
 
     function showGhModal() {
       var cfg = loadGitHubConfig();
-      document.getElementById('ghToken').value   = cfg.token;
-      document.getElementById('ghOwner').value   = cfg.owner;
-      document.getElementById('ghRepo').value    = cfg.repo;
-      document.getElementById('ghBranch').value  = cfg.branch;
-      document.getElementById('ghSiteUrl').value = cfg.siteUrl;
-      document.getElementById('ghMsg').className = 'modal-msg';
+      document.getElementById('ghToken').value        = cfg.token;
+      document.getElementById('ghOwner').value        = cfg.owner;
+      document.getElementById('ghRepo').value         = cfg.repo;
+      document.getElementById('ghBranch').value       = cfg.branch;
+      document.getElementById('ghSiteUrl').value      = cfg.siteUrl;
+      document.getElementById('ghGalleryToken').value = cfg.galleryToken;
+      document.getElementById('ghMsg').className      = 'modal-msg';
       document.getElementById('ghSettingsModal').classList.add('open');
     }
 
@@ -1404,11 +1488,12 @@
 
     document.getElementById('btnSaveGh').addEventListener('click', function() {
       var cfg = {
-        token:   document.getElementById('ghToken').value.trim(),
-        owner:   document.getElementById('ghOwner').value.trim(),
-        repo:    document.getElementById('ghRepo').value.trim(),
-        branch:  document.getElementById('ghBranch').value.trim() || 'main',
-        siteUrl: document.getElementById('ghSiteUrl').value.trim()
+        token:        document.getElementById('ghToken').value.trim(),
+        owner:        document.getElementById('ghOwner').value.trim(),
+        repo:         document.getElementById('ghRepo').value.trim(),
+        branch:       document.getElementById('ghBranch').value.trim() || 'main',
+        siteUrl:      document.getElementById('ghSiteUrl').value.trim(),
+        galleryToken: document.getElementById('ghGalleryToken').value.trim()
       };
       var ghMsgEl = document.getElementById('ghMsg');
       if (!cfg.token || !cfg.owner || !cfg.repo) {
@@ -1417,10 +1502,11 @@
         return;
       }
       saveGitHubConfig(cfg);
-      ghMsgEl.textContent = '✅ Settings saved!';
+      ghMsgEl.textContent = '✅ Settings saved! Now enter a Gallery Token and click "Publish Gallery Config" to enable uploads from any device.';
       ghMsgEl.className   = 'modal-msg visible modal-msg-success';
-      setTimeout(hideGhModal, 1400);
     });
+
+    document.getElementById('btnPublishGallery').addEventListener('click', publishGalleryConfig);
 
     function arrayBufferToBase64(buffer) {
       var bytes  = new Uint8Array(buffer);
@@ -1557,6 +1643,162 @@
       }
       if (item._githubImgPath && item._githubImgSha) {
         await ghDel(item._githubImgPath, item._githubImgSha);
+      }
+    }
+
+    /* ── Direct Upload to Gallery ──────────────────────────────── */
+    var duFile          = null;
+    var duPreviewObjUrl = null;
+
+    document.getElementById('duFileInput').addEventListener('change', function() {
+      if (this.files[0]) duSetFile(this.files[0]);
+    });
+
+    (function() {
+      var dz = document.getElementById('duDropZone');
+      dz.addEventListener('click', function() { document.getElementById('duFileInput').click(); });
+      dz.addEventListener('dragover',  function(e) { e.preventDefault(); dz.style.borderColor = 'var(--saffron)'; });
+      dz.addEventListener('dragleave', function()  { dz.style.borderColor = ''; });
+      dz.addEventListener('drop', function(e) {
+        e.preventDefault(); dz.style.borderColor = '';
+        if (e.dataTransfer.files[0]) duSetFile(e.dataTransfer.files[0]);
+      });
+    })();
+
+    function duSetFile(file) {
+      if (file.size > 25 * 1024 * 1024) {
+        duShowMsg('error', 'File exceeds 25 MB — GitHub API limit. Please choose a smaller file.');
+        return;
+      }
+      if (duPreviewObjUrl) URL.revokeObjectURL(duPreviewObjUrl);
+      duFile          = file;
+      duPreviewObjUrl = URL.createObjectURL(file);
+
+      var preview  = document.getElementById('duPreview');
+      var thumb    = document.getElementById('duThumb');
+      document.getElementById('duFileName').textContent =
+        file.name + '  (' + (file.size / 1048576).toFixed(1) + ' MB · ' + file.type + ')';
+      if (file.type.startsWith('image/')) {
+        thumb.src = duPreviewObjUrl; thumb.style.display = 'block';
+      } else {
+        thumb.style.display = 'none';
+      }
+      preview.style.display = 'flex';
+      var btn = document.getElementById('btnDuSubmit');
+      btn.disabled = false; btn.style.opacity = '1';
+      document.getElementById('duMsg').style.display = 'none';
+    }
+
+    function duClearFile() {
+      duFile = null;
+      if (duPreviewObjUrl) { URL.revokeObjectURL(duPreviewObjUrl); duPreviewObjUrl = null; }
+      document.getElementById('duFileInput').value     = '';
+      document.getElementById('duPreview').style.display = 'none';
+      document.getElementById('duThumb').src            = '';
+      var btn = document.getElementById('btnDuSubmit');
+      btn.disabled = true; btn.style.opacity = '.5';
+    }
+
+    function duShowMsg(type, text) {
+      var el = document.getElementById('duMsg');
+      el.textContent   = text;
+      el.style.display = 'block';
+      el.style.background = type === 'success' ? '#eafaf1' : '#fdecea';
+      el.style.color      = type === 'success' ? '#1e8449' : '#c0392b';
+      el.style.border     = type === 'success' ? '1px solid #a9dfbf' : '1px solid #f5b7b1';
+    }
+
+    async function directUploadSubmit() {
+      if (!duFile) return;
+      var cfg = loadGitHubConfig();
+      if (!cfg.token || !cfg.owner || !cfg.repo) {
+        duShowMsg('error', '⚙️ GitHub not configured. Click the ⚙️ GitHub button in the header and save your settings first.');
+        return;
+      }
+      var btn = document.getElementById('btnDuSubmit');
+      btn.disabled = true; btn.textContent = '⏳ Uploading…'; btn.style.opacity = '.7';
+      try {
+        var buf      = await duFile.arrayBuffer();
+        var itemId   = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+        var safeName = duFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        var imgPath  = 'approved/' + Date.now() + '_' + safeName;
+        var apiBase  = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/';
+        var authHdrs = {
+          'Authorization':        'Bearer ' + cfg.token,
+          'Content-Type':         'application/json',
+          'Accept':               'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        };
+
+        /* 1 — Upload image/video file */
+        var imgRes = await fetch(apiBase + imgPath, {
+          method: 'PUT', headers: authHdrs,
+          body: JSON.stringify({
+            message: 'Direct gallery upload: ' + (document.getElementById('duTitle').value.trim() || duFile.name),
+            content: arrayBufferToBase64(buf),
+            branch:  cfg.branch || 'main'
+          })
+        });
+        if (!imgRes.ok) {
+          var _e = await imgRes.json().catch(function() { return {}; });
+          throw new Error('Image upload failed (' + imgRes.status + '): ' + (_e.message || ''));
+        }
+
+        var rawBase  = cfg.siteUrl
+          ? cfg.siteUrl.replace(/\/$/, '')
+          : 'https://raw.githubusercontent.com/' + cfg.owner + '/' + cfg.repo + '/' + (cfg.branch || 'main');
+        var fileUrl  = rawBase + '/' + imgPath;
+        var inSlider = document.getElementById('duInSlider').checked;
+        var metaObj  = {
+          id:           itemId,
+          title:        document.getElementById('duTitle').value.trim()    || duFile.name,
+          description:  document.getElementById('duDesc').value.trim()     || '',
+          uploaderName: document.getElementById('duName').value.trim()     || 'Admin',
+          location:     document.getElementById('duLocation').value        || '',
+          fileType:     duFile.type,
+          fileName:     duFile.name,
+          fileUrl:      fileUrl,
+          status:       'approved',
+          inSlider:     inSlider,
+          uploadedAt:   Date.now(),
+          reviewedAt:   Date.now()
+        };
+
+        /* 2 — Upload metadata JSON */
+        var jsonPath = 'approved/' + itemId + '.json';
+        await fetch(apiBase + jsonPath, {
+          method: 'PUT', headers: authHdrs,
+          body: JSON.stringify({
+            message: 'Gallery metadata: ' + metaObj.title,
+            content: arrayBufferToBase64(new TextEncoder().encode(JSON.stringify(metaObj, null, 2)).buffer),
+            branch:  cfg.branch || 'main'
+          })
+        });
+
+        /* 3 — Save to local IDB so it appears in the Approved tab now */
+        var db = await openDB();
+        await dbAddGitHub(db, metaObj);
+        localItemIds.add(itemId);
+        allItems.push(metaObj);
+        updateStats();
+
+        duShowMsg('success',
+          '✅ Photo uploaded and live on the public gallery!' +
+          (inSlider ? ' Also added to Hero Slideshow.' : '') +
+          ' (GitHub Pages may take ~1 min to reflect the change.)');
+        btn.textContent = '📤 Upload to Gallery';
+        btn.style.opacity = '.5';
+        duClearFile();
+        document.getElementById('duTitle').value      = '';
+        document.getElementById('duDesc').value       = '';
+        document.getElementById('duName').value       = '';
+        document.getElementById('duLocation').value   = '';
+        document.getElementById('duInSlider').checked = false;
+
+      } catch (err) {
+        console.error('Direct upload error:', err);
+        duShowMsg('error', '❌ Upload failed: ' + err.message);
+        btn.disabled = false; btn.textContent = '📤 Upload to Gallery'; btn.style.opacity = '1';
       }
     }
 
