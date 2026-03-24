@@ -184,6 +184,29 @@
     .upload-title::before { height: 16px !important; }
     .upload-sub { font-size: .78rem !important; margin-bottom: 16px !important; }
 
+    /* ─── Collapsible Upload Section ─────────────────────────────── */
+    .collapsible-header {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+      padding: 10px 14px; border-radius: 8px;
+      background: var(--light); border: 1px solid var(--border);
+      margin-bottom: 12px; transition: background .2s;
+    }
+    .collapsible-header:hover { background: #f0e8dd; }
+    .collapsible-header .section-title { margin-bottom: 0; }
+    .collapsible-toggle {
+      font-size: 1.3rem; font-weight: 700; color: var(--saffron);
+      transition: transform .3s; line-height: 1;
+    }
+    .collapsible-header.open .collapsible-toggle { transform: rotate(180deg); }
+    .collapsible-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height .4s ease;
+    }
+    .collapsible-body.open {
+      max-height: 2000px;
+    }
+
     /* ─── Upload Card ────────────────────────────────────────────── */
     .upload-card {
       background: var(--light); border: 2px dashed var(--border);
@@ -462,8 +485,12 @@
   <div class="container">
     <div class="gallery-wrap">
 
-      <!-- ── Upload Section ──────────────────────────────────── -->
-      <h2 class="section-title upload-title">Share Your Memories</h2>
+      <!-- ── Upload Section (Collapsible) ────────────────────── -->
+      <div class="collapsible-header" id="uploadToggle" onclick="toggleUploadSection()" role="button" tabindex="0" aria-expanded="false" aria-controls="uploadBody">
+        <h2 class="section-title upload-title" style="margin-bottom:0">Share Your Memories</h2>
+        <span class="collapsible-toggle" aria-hidden="true">▼</span>
+      </div>
+      <div class="collapsible-body" id="uploadBody">
       <p class="section-sub upload-sub">
         Upload your photos and videos from the sacred Chari Dham journey.
         Every submission is reviewed by our team before appearing in the public gallery.
@@ -549,6 +576,8 @@
           </div>
         </form>
       </div>
+
+      </div><!-- /collapsible-body -->
 
       <!-- ── Pending Notice ──────────────────────────────────── -->
       <div class="pending-notice" id="pendingNotice">
@@ -1405,6 +1434,17 @@
         }
       } catch(e) { /* skip if GitHub unavailable */ }
 
+      /* Load approved/ folder images (image1, image2, …) into the hero slideshow */
+      try {
+        var _localApproved = await loadLocalApproved();
+        var _localSlides = _localApproved.filter(function(i) {
+          return i.fileType && i.fileType.startsWith('image/');
+        }).map(function(i) {
+          return { src: i.fileUrl, caption: i.title };
+        });
+        if (_localSlides.length) SLIDES = _localSlides.concat(SLIDES);
+      } catch(e) { /* skip if local probe fails */ }
+
       SLIDES.forEach(function(s) {
         var probe = new Image();
         probe.onload = function() {
@@ -1515,6 +1555,18 @@
         if (e.key === 'ArrowRight') { next(); startAuto(); }
       });
     })();
+
+    /* ── Collapsible upload section ──────────────────────────── */
+    function toggleUploadSection() {
+      var header = document.getElementById('uploadToggle');
+      var body   = document.getElementById('uploadBody');
+      var isOpen = body.classList.toggle('open');
+      header.classList.toggle('open', isOpen);
+      header.setAttribute('aria-expanded', isOpen);
+    }
+    document.getElementById('uploadToggle').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleUploadSection(); }
+    });
 
     /* ── Init ──────────────────────────────────────────────────── */
     (async function() {
