@@ -996,22 +996,90 @@
     var allApprovedItems = [];
     var currentFilter    = 'all';
 
+    /* Auto-discovers approved photos by probing for files named
+       image1.jpg, image2.jpg, … in the approved/ folder.
+       Tries common extensions (jpg, jpeg, png, webp, gif) for each index.
+       Uses Image() loading so it works from file:// and any web server. */
+    async function loadLocalApproved() {
+      var extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+      var mimeMap = {
+        jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
+        webp: 'image/webp', gif: 'image/gif'
+      };
+
+      function probeImage(url) {
+        return new Promise(function(resolve) {
+          var img = new Image();
+          img.onload  = function() { resolve(true); };
+          img.onerror = function() { resolve(false); };
+          img.src = url;
+        });
+      }
+
+      var items = [];
+      var index = 1;
+      var consecutiveMisses = 0;
+
+      while (consecutiveMisses < 3) {
+        var found = false;
+        for (var e = 0; e < extensions.length; e++) {
+          var ext = extensions[e];
+          var fileName = 'image' + index + '.' + ext;
+          var url = 'approved/' + fileName;
+          var exists = await probeImage(url);
+          if (exists) {
+            items.push({
+              id:           'local_image' + index,
+              title:        'Image ' + index,
+              uploaderName: 'Pilgrim',
+              location:     '',
+              description:  '',
+              fileType:     mimeMap[ext] || 'image/jpeg',
+              fileName:     fileName,
+              fileUrl:      url,
+              status:       'approved',
+              uploadedAt:   Date.now() - (index * 60000)
+            });
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          consecutiveMisses = 0;
+        } else {
+          consecutiveMisses++;
+        }
+        index++;
+      }
+      return items;
+    }
+
     async function loadGallery() {
       var grid = document.getElementById('galleryGrid');
       grid.innerHTML = '<div class="gallery-empty"><div class="empty-icon">⏳</div><p>Loading gallery…</p></div>';
 
       try {
         var items = [];
-        /* Prefer GitHub-hosted approved items (visible from every device in the world) */
+
+        /* 1. Auto-discover images named image1, image2, … in approved/ */
+        try { items = await loadLocalApproved(); } catch (e) { console.warn('Local approved load failed:', e); }
+
+        /* 2. Merge GitHub-hosted approved items (visible from every device) */
         if (galleryConfig && galleryConfig.owner && galleryConfig.repo) {
-          try { items = await loadGitHubApproved(); } catch (e) { console.warn('GitHub gallery load failed:', e); }
+          try {
+            var ghItems = await loadGitHubApproved();
+            var existingIds = new Set(items.map(function(i) { return i.id; }));
+            ghItems.forEach(function(gi) { if (!existingIds.has(gi.id)) items.push(gi); });
+          } catch (e) { console.warn('GitHub gallery load failed:', e); }
         }
-        /* Fall back to local IndexedDB (single-device only) */
+
+        /* 3. Fall back to local IndexedDB (single-device only) */
         if (!items.length) {
           var db      = await openDB();
           var dbItems = await dbGetByStatus(db, 'approved');
           items       = dbItems;
         }
+
         items.sort(function(a, b) { return b.uploadedAt - a.uploadedAt; });
         allApprovedItems = items;
         renderGallery(items);
