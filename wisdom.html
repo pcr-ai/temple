@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wisdom &amp; Dharma | Sacred Teachings for a Better Society | ChariDham Central</title>
+  <meta name="description" content="A free knowledge corner sharing timeless wisdom from the Vedas, Upanishads, Bhagavad Gita and great saints — quotes, teachings and reflections on dharma, karma and self-realisation for the betterment of society." />
+  <meta name="keywords" content="dharma, shastra, vedas, upanishads, bhagavad gita quotes, sanatan wisdom, spiritual quotes, charidham wisdom" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="ChariDham Central" />
+  <link rel="canonical" href="https://www.charidham.com/wisdom.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.charidham.com/wisdom.html" />
+  <meta property="og:title" content="Wisdom &amp; Dharma | Sacred Teachings for a Better Society" />
+  <meta property="og:description" content="Timeless wisdom from the shastras and saints — for every seeker walking the path of dharma." />
+  <meta property="og:site_name" content="ChariDham Central" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Variables (matches main site) ────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --saffron:   #e07b39;
+      --saffron-d: #c45e1e;
+      --maroon:    #8b1a1a;
+      --gold:      #d4a017;
+      --dark:      #1a1a1a;
+      --text:      #444;
+      --light:     #f8f5f0;
+      --border:    #e0d9cf;
+      --white:     #ffffff;
+      --radius:    8px;
+      --shadow:    0 2px 12px rgba(0,0,0,.10);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Open Sans', sans-serif; color: var(--text); background: var(--white); line-height: 1.75; }
+    a { text-decoration: none; color: var(--saffron); }
+    a:hover { color: var(--saffron-d); text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+
+    /* ─── Top Bar ───────────────────────────────────────────────── */
+    .top-bar {
+      background: var(--maroon); color: #f5d9a0; font-size: .78rem;
+      padding: 6px 20px; display: flex; justify-content: space-between;
+      align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .top-bar a { color: #f5d9a0; }
+    .top-bar a:hover { color: var(--gold); text-decoration: none; }
+    .top-bar .tb-left, .top-bar .tb-right { display: flex; align-items: center; gap: 16px; }
+
+    /* ─── Header ────────────────────────────────────────────────── */
+    header {
+      background: var(--white); border-bottom: 3px solid var(--saffron);
+      position: sticky; top: 0; z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between; height: 88px;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+      flex-shrink: 0; border: 3px solid var(--saffron); background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+    .logo-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-text { font-family: 'Merriweather', serif; }
+    .logo-text strong { display: block; font-size: 1.25rem; color: var(--maroon); line-height: 1.2; font-weight: 700; }
+    .logo-text span { font-size: .74rem; color: var(--saffron-d); letter-spacing: 1.2px; text-transform: uppercase; font-weight: 600; }
+    nav ul { list-style: none; display: flex; gap: 4px; }
+    nav ul li a {
+      display: block; padding: 8px 13px; font-size: .87rem; font-weight: 600;
+      color: var(--dark); border-radius: 4px; transition: background .2s, color .2s;
+    }
+    nav ul li a:hover, nav ul li a.active { background: var(--saffron); color: white; text-decoration: none; }
+    .header-cta { background: var(--maroon); color: white !important; padding: 9px 18px !important; border-radius: 5px; }
+    .header-cta:hover { background: var(--saffron-d) !important; }
+    .hamburger { display: none; font-size: 26px; cursor: pointer; color: var(--dark); }
+
+    /* ─── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      position: relative; min-height: 360px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+      background: #2d0a0a;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      filter: brightness(.45) saturate(1.1);
+      z-index: 0;
+    }
+    .hero-tint {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(212,160,23,.28) 0%, transparent 55%),
+        radial-gradient(circle at 80% 70%, rgba(224,123,57,.28) 0%, transparent 55%),
+        linear-gradient(135deg, rgba(45,10,10,.55) 0%, rgba(94,13,13,.55) 60%, rgba(139,26,26,.55) 100%);
+    }
+    .hero::before, .hero::after {
+      content: '🕉'; position: absolute; color: rgba(245,217,160,.10);
+      font-size: 24rem; line-height: 1; pointer-events: none; z-index: 0;
+    }
+    .hero::before { top: -40px; left: -30px; }
+    .hero::after  { bottom: -120px; right: -20px; transform: rotate(15deg); }
+    .hero-inner { position: relative; z-index: 1; max-width: 820px; }
+    .hero-eyebrow {
+      display: inline-block; font-size: .8rem; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--gold); font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .hero-inner h1 {
+      font-family: 'Merriweather', serif; font-size: 2.6rem; color: white;
+      line-height: 1.2; text-shadow: 0 2px 6px rgba(0,0,0,.4); margin-bottom: 14px;
+    }
+    .hero-sanskrit {
+      font-family: 'Merriweather', serif; font-style: italic;
+      font-size: 1.15rem; color: #f5d9a0; margin-bottom: 8px;
+    }
+    .hero-translation { font-size: .95rem; color: #e9dfc8; max-width: 640px; margin: 0 auto; }
+    .breadcrumb {
+      position: absolute; top: 18px; left: 24px; z-index: 2;
+      display: flex; align-items: center; gap: 6px;
+      font-size: .82rem; color: #eee;
+    }
+    .breadcrumb a { color: var(--gold); }
+    .breadcrumb span { color: #bbb; }
+
+    /* ─── Layout ──────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .content-grid {
+      display: grid; grid-template-columns: 1fr 300px;
+      gap: 36px; padding: 50px 0 60px; align-items: start;
+    }
+    .main-content > * + * { margin-top: 2.4rem; }
+
+    /* Intro */
+    .intro-card {
+      background: var(--light); border-left: 5px solid var(--saffron);
+      border-radius: var(--radius); padding: 26px 30px; font-size: 1.02rem;
+    }
+    .intro-card p + p { margin-top: .9rem; }
+
+    /* Section block */
+    .section-block { padding: 30px 0; border-top: 1px solid var(--border); }
+    .section-block:first-child { border-top: none; padding-top: 0; }
+    .section-block > h2 {
+      font-family: 'Merriweather', serif; font-size: 1.55rem; color: var(--maroon);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .section-block > h2::before {
+      content: ''; display: inline-block; width: 6px; height: 28px;
+      background: var(--saffron); border-radius: 3px; flex-shrink: 0;
+    }
+    .section-block p + p { margin-top: .85rem; }
+
+    /* Featured quote (Quote of the Day) */
+    .featured-quote {
+      position: relative;
+      background: linear-gradient(135deg, #fff8ec 0%, #fdeeda 100%);
+      border: 1px solid #f0d8b0; border-radius: 12px;
+      padding: 38px 44px 32px;
+      box-shadow: 0 6px 22px rgba(139,26,26,.08);
+      overflow: hidden;
+    }
+    .featured-quote::before {
+      content: '“'; position: absolute; top: -40px; left: 14px;
+      font-family: 'Merriweather', serif; font-size: 12rem;
+      color: rgba(224,123,57,.18); line-height: 1; pointer-events: none;
+    }
+    .featured-quote .label {
+      display: inline-block; background: var(--maroon); color: white;
+      padding: 4px 12px; border-radius: 20px; font-size: .72rem;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .featured-quote .sanskrit {
+      font-family: 'Merriweather', serif; font-style: italic;
+      font-size: 1.25rem; color: var(--maroon); margin-bottom: 10px; line-height: 1.5;
+    }
+    .featured-quote .meaning {
+      font-size: 1.05rem; color: var(--dark); margin-bottom: 14px;
+    }
+    .featured-quote .source {
+      font-size: .85rem; color: var(--saffron-d); font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    /* Quotes grid */
+    .quote-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px; margin-top: 1rem;
+    }
+    .quote-card {
+      background: white; border: 1px solid var(--border);
+      border-left: 4px solid var(--saffron);
+      border-radius: var(--radius); padding: 20px 22px;
+      box-shadow: var(--shadow); position: relative;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .quote-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,.12); }
+    .quote-card .qmark {
+      position: absolute; top: 6px; right: 14px;
+      font-family: 'Merriweather', serif; font-size: 3.6rem;
+      color: rgba(224,123,57,.18); line-height: 1;
+    }
+    .quote-card blockquote {
+      font-style: italic; color: var(--dark); font-size: .98rem;
+      margin-bottom: 10px; position: relative; z-index: 1;
+    }
+    .quote-card cite {
+      font-style: normal; font-weight: 700; font-size: .82rem;
+      color: var(--maroon); letter-spacing: .4px;
+    }
+
+    /* Teaching cards */
+    .teach-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px; margin-top: 1.2rem;
+    }
+    .teach-card {
+      background: var(--light); border-radius: var(--radius);
+      padding: 22px 20px; text-align: center;
+      border-top: 4px solid var(--saffron);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .teach-card:hover { transform: translateY(-4px); box-shadow: 0 8px 22px rgba(0,0,0,.10); }
+    .teach-card .tc-icon {
+      font-size: 2.2rem; margin-bottom: 10px;
+      color: var(--saffron);
+    }
+    .teach-card h3 {
+      font-family: 'Merriweather', serif; color: var(--maroon);
+      font-size: 1.05rem; margin-bottom: 8px;
+    }
+    .teach-card p { font-size: .88rem; color: #555; }
+
+    /* Verse blocks */
+    .verse-block {
+      background: var(--light); border-radius: var(--radius);
+      padding: 22px 26px; margin-top: 1rem;
+      border-left: 4px solid var(--gold);
+    }
+    .verse-block .sanskrit {
+      font-family: 'Merriweather', serif; font-style: italic;
+      color: var(--maroon); font-size: 1.08rem; margin-bottom: 8px; line-height: 1.6;
+    }
+    .verse-block .meaning { font-size: .95rem; color: var(--dark); margin-bottom: 8px; }
+    .verse-block .ref {
+      font-size: .8rem; color: var(--saffron-d); font-weight: 700;
+      letter-spacing: .5px; text-transform: uppercase;
+    }
+
+    /* Feature image */
+    .feature-image {
+      margin: 1.4rem 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 6px 22px rgba(0,0,0,.15);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .feature-image img {
+      width: 100%; height: auto; display: block;
+    }
+    .feature-image .caption {
+      background: linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.45) 70%, transparent 100%);
+      color: #f5d9a0; font-family: 'Merriweather', serif; font-style: italic;
+      font-size: .95rem; text-align: center;
+      padding: 22px 16px 14px;
+      position: absolute; bottom: 0; left: 0; right: 0;
+    }
+
+    /* Saints/Sages cards */
+    .sage-list { margin-top: 1rem; }
+    .sage-item {
+      display: flex; gap: 18px; align-items: flex-start;
+      padding: 18px 0; border-bottom: 1px solid var(--border);
+    }
+    .sage-item:last-child { border-bottom: none; }
+    .sage-avatar {
+      flex-shrink: 0; width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--maroon) 100%);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: white; font-family: 'Merriweather', serif; font-size: 1.6rem;
+      font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    .sage-content h4 {
+      font-family: 'Merriweather', serif; color: var(--maroon);
+      font-size: 1.05rem; margin-bottom: 4px;
+    }
+    .sage-content .sage-era {
+      font-size: .78rem; color: var(--saffron-d);
+      text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px;
+    }
+    .sage-content p { font-size: .92rem; }
+
+    /* Society / call to action */
+    .pledge {
+      background: linear-gradient(135deg, var(--maroon) 0%, #5e0d0d 100%);
+      color: white; border-radius: var(--radius);
+      padding: 32px 36px; text-align: center;
+    }
+    .pledge h2 {
+      font-family: 'Merriweather', serif; font-size: 1.6rem;
+      color: #f5d9a0; margin-bottom: 10px;
+    }
+    .pledge p { font-size: 1rem; color: #f0e3c8; max-width: 700px; margin: 0 auto 20px; }
+    .pledge-points {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px; margin-top: 22px; text-align: left;
+    }
+    .pledge-pt {
+      background: rgba(255,255,255,.08); border-radius: var(--radius);
+      padding: 14px 16px; font-size: .9rem;
+      border-left: 3px solid var(--gold);
+    }
+    .pledge-pt strong { color: var(--gold); display: block; margin-bottom: 4px; font-size: .88rem; }
+
+    /* ─── Sidebar ─────────────────────────────────────────────── */
+    .sidebar > * + * { margin-top: 24px; }
+    .sidebar-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
+    }
+    .sidebar-card-head {
+      background: var(--maroon); color: white;
+      padding: 13px 18px; font-family: 'Merriweather', serif; font-size: .98rem;
+    }
+    .sidebar-card-body { padding: 18px; }
+
+    /* TOC */
+    .toc-list { list-style: none; }
+    .toc-list li { border-bottom: 1px dashed var(--border); }
+    .toc-list li:last-child { border-bottom: none; }
+    .toc-list li a {
+      display: block; padding: 9px 4px; font-size: .88rem;
+      color: var(--dark); font-weight: 500;
+    }
+    .toc-list li a:hover { color: var(--saffron); text-decoration: none; padding-left: 8px; transition: padding .2s; }
+
+    /* Daily mantra */
+    .mantra-card {
+      background: linear-gradient(135deg, #fff8ec 0%, #fdeeda 100%);
+      border-radius: var(--radius); padding: 22px 20px; text-align: center;
+      border: 1px solid #f0d8b0;
+    }
+    .mantra-card .om-symbol {
+      font-size: 2.6rem; color: var(--saffron); line-height: 1; margin-bottom: 6px;
+    }
+    .mantra-card h3 {
+      font-family: 'Merriweather', serif; color: var(--maroon);
+      font-size: 1rem; margin-bottom: 10px;
+    }
+    .mantra-card .mantra-text {
+      font-family: 'Merriweather', serif; font-style: italic;
+      color: var(--dark); font-size: .95rem; margin-bottom: 8px;
+    }
+    .mantra-card .mantra-meaning { font-size: .82rem; color: #666; }
+
+    /* Share/contribute card */
+    .share-card { background: var(--light); padding: 18px; border-radius: var(--radius); }
+    .share-card h3 {
+      font-family: 'Merriweather', serif; color: var(--maroon);
+      font-size: 1rem; margin-bottom: 8px;
+    }
+    .share-card p { font-size: .85rem; margin-bottom: 12px; }
+    .share-btn {
+      display: inline-block; background: var(--saffron); color: white !important;
+      padding: 9px 18px; border-radius: 5px; font-weight: 700; font-size: .85rem;
+    }
+    .share-btn:hover { background: var(--saffron-d); text-decoration: none; }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    footer { background: #1a0800; color: #cfc7b8; padding: 50px 20px 0; margin-top: 30px; }
+    .footer-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 36px;
+    }
+    .footer-about p { font-size: .85rem; margin-top: 14px; line-height: 1.7; }
+    .footer-about .logo-text strong { color: #f5d9a0; }
+    .footer-about .logo-text span { color: var(--gold); }
+    .footer-contact { margin-top: 14px; font-size: .82rem; }
+    .footer-contact div { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
+    .footer-contact .icon { color: var(--gold); flex-shrink: 0; }
+    .footer-col h4 {
+      font-family: 'Merriweather', serif; color: #f5d9a0;
+      font-size: 1rem; margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid #4a2200;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 7px; }
+    .footer-col a { color: #cfc7b8; font-size: .85rem; }
+    .footer-col a:hover { color: var(--gold); text-decoration: none; }
+    .footer-bottom {
+      max-width: 1200px; margin: 30px auto 0; padding: 16px 0;
+      border-top: 1px solid #4a2200; font-size: .78rem; text-align: center; color: #9c917f;
+    }
+    .footer-bottom a { color: #cfc7b8; }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      nav { display: none; }
+      .hamburger { display: block; }
+      nav.active {
+        display: block; position: absolute; top: 88px; left: 0; right: 0;
+        background: white; box-shadow: 0 4px 12px rgba(0,0,0,.12); padding: 10px 20px;
+      }
+      nav.active ul { flex-direction: column; gap: 0; }
+      nav.active ul li a { padding: 12px 8px; border-bottom: 1px solid var(--border); }
+    }
+    @media (max-width: 560px) {
+      .hero { min-height: 280px; padding: 70px 20px 40px; }
+      .hero-inner h1 { font-size: 1.8rem; }
+      .hero-sanskrit { font-size: 1rem; }
+      .featured-quote { padding: 30px 22px 24px; }
+      .featured-quote .sanskrit { font-size: 1.05rem; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .header-inner { height: 72px; }
+      .logo-icon { width: 56px; height: 56px; }
+      .logo-text strong { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP BAR ═══════════════════════════════════════════════ -->
+  <div class="top-bar">
+    <div class="tb-left">
+      <span>📞 +91 125125125</span>
+      <span>✉ charidham@gmail.com</span>
+    </div>
+    <div class="tb-right">
+      <a href="#">Yatra Registration</a>
+      <a href="admin.html">Admin</a>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ════════════════════════════════════════════════ -->
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><img src="Chardhamsmalllogo.jpg" alt="ChariDham Logo" /></div>
+        <div class="logo-text">
+          <strong>ChariDham Central</strong>
+          <span>Your Spiritual Journey Guide</span>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#about">About Chari Dham</a></li>
+          <li><a href="wisdom.html" class="active">Wisdom &amp; Dharma</a></li>
+          <li><a href="#">Packages</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="#" class="header-cta">Book Now</a></li>
+        </ul>
+      </nav>
+      <div class="hamburger" id="hamburger">☰</div>
+    </div>
+  </header>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════ -->
+  <section class="hero">
+    <nav class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <span>Wisdom &amp; Dharma</span>
+    </nav>
+    <div class="hero-inner">
+      <span class="hero-eyebrow">Sacred Knowledge for Society</span>
+      <h1>Wisdom &amp; Dharma</h1>
+      <p class="hero-sanskrit">“धर्मो रक्षति रक्षितः”</p>
+      <p class="hero-translation">Dharma protects those who protect it. — Manusmriti 8.15</p>
+    </div>
+  </section>
+
+  <!-- ═══ MAIN LAYOUT ═══════════════════════════════════════════ -->
+  <div class="container">
+    <div class="content-grid">
+
+      <!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+      <main class="main-content">
+
+        <!-- Intro -->
+        <div class="intro-card">
+          <p>
+            Welcome to a quiet corner of timeless wisdom. The teachings of our
+            <strong>Sanatan Dharma</strong> — preserved in the Vedas, Upanishads, the
+            Bhagavad Gita and the words of countless saints — are not bound to any
+            era or person. They are a gift to humanity, meant to bring clarity, peace
+            and right action into everyday life.
+          </p>
+          <p>
+            This page is a free, open offering from <strong>ChariDham Central</strong> to
+            everyone who walks the spiritual path. Read, reflect, and share — for the
+            true purpose of dharma is the upliftment of all.
+          </p>
+        </div>
+
+        <!-- Featured / Quote of the Day -->
+        <section class="section-block" id="quote-of-day">
+          <div class="featured-quote">
+            <span class="label">✨ Thought of the Day</span>
+            <p class="sanskrit">“कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।”</p>
+            <p class="meaning">
+              You have the right to perform your prescribed duties, but you are not
+              entitled to the fruits of your actions. Never consider yourself the cause
+              of the results, nor be attached to inaction.
+            </p>
+            <p class="source">— Bhagavad Gita 2.47</p>
+          </div>
+        </section>
+
+        <!-- Pillars of Dharma -->
+        <section class="section-block" id="pillars">
+          <h2>The Four Pillars of Dharma</h2>
+          <p>
+            Manusmriti describes dharma as resting on four eternal pillars. When society
+            cultivates these qualities, peace and prosperity naturally follow.
+          </p>
+          <div class="teach-grid">
+            <div class="teach-card">
+              <div class="tc-icon">🕊️</div>
+              <h3>Satya · Truth</h3>
+              <p>Speaking and living the truth — in thought, word, and action.</p>
+            </div>
+            <div class="teach-card">
+              <div class="tc-icon">🙏</div>
+              <h3>Ahimsa · Non-Violence</h3>
+              <p>Causing no harm to any living being through deed, word or thought.</p>
+            </div>
+            <div class="teach-card">
+              <div class="tc-icon">🧘</div>
+              <h3>Tapas · Self-Discipline</h3>
+              <p>Inner austerity that purifies the mind and strengthens the will.</p>
+            </div>
+            <div class="teach-card">
+              <div class="tc-icon">🤲</div>
+              <h3>Daana · Selfless Giving</h3>
+              <p>Sharing without expectation — the highest form of love and service.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Wisdom from Shastras -->
+        <section class="section-block" id="shastras">
+          <h2>Wisdom from the Shastras</h2>
+          <p>A few timeless verses to reflect upon:</p>
+
+          <figure class="feature-image">
+            <img src="guide/guide1.jpg" alt="Sacred shastras and dharma" />
+            <figcaption class="caption">“Where there is dharma, there is victory.” — Mahabharata</figcaption>
+          </figure>
+
+          <div class="verse-block">
+            <p class="sanskrit">“वसुधैव कुटुम्बकम्”</p>
+            <p class="meaning">The whole world is one family. May we treat every being as our own.</p>
+            <p class="ref">Maha Upanishad 6.71</p>
+          </div>
+
+          <div class="verse-block">
+            <p class="sanskrit">“सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः।<br>सर्वे भद्राणि पश्यन्तु मा कश्चित् दुःखभाग् भवेत्॥”</p>
+            <p class="meaning">May all beings be happy, may all be free from illness, may all see what is auspicious — let no one suffer.</p>
+            <p class="ref">Brihadaranyaka Upanishad 1.4.14</p>
+          </div>
+
+          <div class="verse-block">
+            <p class="sanskrit">“अहिंसा परमो धर्मः, धर्म हिंसा तथैव च”</p>
+            <p class="meaning">Non-violence is the highest dharma — and so is dharma in defense of righteousness.</p>
+            <p class="ref">Mahabharata, Anushasana Parva</p>
+          </div>
+
+          <div class="verse-block">
+            <p class="sanskrit">“उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।”</p>
+            <p class="meaning">Lift yourself by your own self; do not let your self be degraded. The self alone is the friend of the self, and the self alone is its enemy.</p>
+            <p class="ref">Bhagavad Gita 6.5</p>
+          </div>
+        </section>
+
+        <!-- Quotes from Saints -->
+        <section class="section-block" id="quotes">
+          <h2>Voices of the Saints</h2>
+          <p>Words that continue to light the path for every seeker.</p>
+          <div class="quote-grid">
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“Arise! Awake! and stop not until the goal is reached.”</blockquote>
+              <cite>— Swami Vivekananda</cite>
+            </div>
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“The mind is everything. What you think, you become.”</blockquote>
+              <cite>— Gautama Buddha</cite>
+            </div>
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“Be the change that you wish to see in the world.”</blockquote>
+              <cite>— Mahatma Gandhi</cite>
+            </div>
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“Love all, serve all. Help ever, hurt never.”</blockquote>
+              <cite>— Sri Sathya Sai Baba</cite>
+            </div>
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“God dwells in the heart of every being. Seek Him within.”</blockquote>
+              <cite>— Adi Shankaracharya</cite>
+            </div>
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“Let your life be a worship; every action, an offering.”</blockquote>
+              <cite>— Sri Ramakrishna Paramahamsa</cite>
+            </div>
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“Truth is one; the wise call it by many names.”</blockquote>
+              <cite>— Rig Veda 1.164.46</cite>
+            </div>
+            <div class="quote-card">
+              <span class="qmark">”</span>
+              <blockquote>“Silence is the language of God; all else is poor translation.”</blockquote>
+              <cite>— Sant Jalaluddin Rumi</cite>
+            </div>
+          </div>
+        </section>
+
+        <!-- Saints & Sages -->
+        <section class="section-block" id="sages">
+          <h2>Great Sages &amp; Their Message</h2>
+          <div class="sage-list">
+            <div class="sage-item">
+              <div class="sage-avatar">वे</div>
+              <div class="sage-content">
+                <h4>Maharshi Veda Vyasa</h4>
+                <div class="sage-era">Compiler of the Vedas &amp; Mahabharata</div>
+                <p>“Of all duties, the greatest is to live without enmity towards any being. Charity, austerity, and truthfulness — these are the eternal pillars of human life.”</p>
+              </div>
+            </div>
+            <div class="sage-item">
+              <div class="sage-avatar">आ</div>
+              <div class="sage-content">
+                <h4>Adi Shankaracharya</h4>
+                <div class="sage-era">8th Century · Advaita Vedanta</div>
+                <p>“The world is fleeting like a drop of water on a lotus leaf. Realising this, devote your mind to the Supreme — that is the wisest use of human birth.”</p>
+              </div>
+            </div>
+            <div class="sage-item">
+              <div class="sage-avatar">वि</div>
+              <div class="sage-content">
+                <h4>Swami Vivekananda</h4>
+                <div class="sage-era">19th Century · Karma &amp; Service</div>
+                <p>“They alone live who live for others; the rest are more dead than alive. Serve man as if you are serving God Himself.”</p>
+              </div>
+            </div>
+            <div class="sage-item">
+              <div class="sage-avatar">रा</div>
+              <div class="sage-content">
+                <h4>Sri Ramana Maharshi</h4>
+                <div class="sage-era">20th Century · Self-Inquiry</div>
+                <p>“Your own Self-realisation is the greatest service you can render the world. Ask yourself: ‘Who am I?’ — and the answer will set you free.”</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Society pledge -->
+        <section class="section-block" id="society">
+          <div class="pledge">
+            <h2>Dharma for Society</h2>
+            <p>
+              True spirituality is not confined to temples — it lives in the way we treat
+              our family, neighbours, animals and earth. Let us pledge to bring a little
+              dharma into every act of daily life.
+            </p>
+            <div class="pledge-points">
+              <div class="pledge-pt"><strong>Speak Truthfully</strong>Honesty is the first prayer.</div>
+              <div class="pledge-pt"><strong>Respect All Life</strong>Every being is a spark of the divine.</div>
+              <div class="pledge-pt"><strong>Serve the Needy</strong>Seva is the highest sadhana.</div>
+              <div class="pledge-pt"><strong>Honour Elders</strong>Their blessings light our path.</div>
+              <div class="pledge-pt"><strong>Protect Nature</strong>Mother Earth is sacred.</div>
+              <div class="pledge-pt"><strong>Share Knowledge</strong>Wisdom doubles when given.</div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- ── SIDEBAR ───────────────────────────────────────────── -->
+      <aside class="sidebar">
+
+        <!-- Daily mantra -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">🪔 Daily Mantra</div>
+          <div class="sidebar-card-body">
+            <div class="mantra-card">
+              <div class="om-symbol">ॐ</div>
+              <h3>Gayatri Mantra</h3>
+              <p class="mantra-text">
+                ॐ भूर्भुवः स्वः<br>
+                तत्सवितुर्वरेण्यं<br>
+                भर्गो देवस्य धीमहि<br>
+                धियो यो नः प्रचोदयात्॥
+              </p>
+              <p class="mantra-meaning">May the divine light of the Supreme illumine our intellect.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOC -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">📖 On This Page</div>
+          <div class="sidebar-card-body">
+            <ul class="toc-list">
+              <li><a href="#quote-of-day">Thought of the Day</a></li>
+              <li><a href="#pillars">Four Pillars of Dharma</a></li>
+              <li><a href="#shastras">Wisdom from Shastras</a></li>
+              <li><a href="#quotes">Voices of the Saints</a></li>
+              <li><a href="#sages">Great Sages</a></li>
+              <li><a href="#society">Dharma for Society</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Share -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">🤝 Share Wisdom</div>
+          <div class="sidebar-card-body">
+            <div class="share-card">
+              <h3>Spread the Light</h3>
+              <p>If a verse on this page touched your heart, share it with someone who needs it today. Knowledge grows when given freely.</p>
+              <a href="#" class="share-btn" onclick="navigator.share && navigator.share({title:'Wisdom & Dharma', url:location.href}); return false;">Share This Page</a>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="logo">
+          <div class="logo-icon"><img src="Chardhamsmalllogo.jpg" alt="ChariDham Logo" /></div>
+          <div class="logo-text">
+            <strong>ChariDham Central</strong>
+            <span>Your Spiritual Journey Guide</span>
+          </div>
+        </div>
+        <p>
+          ChariDham Central is your trusted guide for the Chari Dham Yatra. We offer
+          carefully crafted pilgrimage packages, expert guidance, and a free knowledge
+          corner to share the wisdom of Sanatan Dharma with all.
+        </p>
+        <div class="footer-contact">
+          <div><span class="icon">📍</span><span>Berhampur, Odisha 741524</span></div>
+          <div><span class="icon">✉</span><span>charidham@gmail.com</span></div>
+          <div><span class="icon">📞</span><span>+91 125125125</span></div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Wisdom &amp; Dharma</h4>
+        <ul>
+          <li><a href="#quote-of-day">Thought of the Day</a></li>
+          <li><a href="#pillars">Pillars of Dharma</a></li>
+          <li><a href="#shastras">Verses from Shastras</a></li>
+          <li><a href="#quotes">Saint Quotes</a></li>
+          <li><a href="#sages">Great Sages</a></li>
+          <li><a href="#society">Dharma for Society</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Book Now</h4>
+        <ul>
+          <li><a href="#">Charidham Pooja Booking</a></li>
+          <li><a href="#">Chari Dham Route Map</a></li>
+          <li><a href="#">Hotels for 4 Dham</a></li>
+          <li><a href="#">Taxi for Yatra</a></li>
+          <li><a href="#">Yatra Registration</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Who We Are</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Disclaimer</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="#">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Copyrights © 2026. All Rights Reserved. — ChariDhamCentral.com &nbsp;|&nbsp;
+      <a href="#">Privacy Policy</a> &nbsp;:&nbsp;
+      <a href="#">Disclaimer</a> &nbsp;:&nbsp;
+      <a href="#">Terms &amp; Conditions</a>
+    </div>
+  </footer>
+
+  <!-- ═══ JAVASCRIPT ════════════════════════════════════════════ -->
+  <script>
+    // Mobile nav toggle
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.querySelector('header nav');
+    if (hamburger && nav) {
+      hamburger.addEventListener('click', () => nav.classList.toggle('active'));
+    }
+  </script>
+
+</body>
+</html>

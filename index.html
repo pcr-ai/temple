@@ -649,12 +649,67 @@
     .footer-bottom a { color: #999; }
     .footer-bottom a:hover { color: var(--gold); }
 
+    /* ─── Trust Strip ────────────────────────────────────────── */
+    .trust-strip {
+      background: var(--white);
+      border-top: 4px solid var(--maroon);
+      padding: 52px 0;
+    }
+    .trust-strip .strip-head p { color: #555; }
+    .trust-docs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 32px;
+    }
+    .trust-doc-card {
+      background: var(--light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: box-shadow .25s;
+    }
+    .trust-doc-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.14); }
+    .trust-doc-label {
+      background: var(--maroon);
+      color: white;
+      padding: 11px 18px;
+      font-family: 'Merriweather', serif;
+      font-size: .9rem;
+      letter-spacing: .3px;
+    }
+    .trust-doc-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      padding: 16px;
+    }
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eafaf1;
+      color: #1e8449;
+      border: 1px solid #a9dfbf;
+      border-radius: 20px;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      margin-top: 14px;
+      margin-bottom: 4px;
+    }
+
     /* ─── Responsive ──────────────────────────────────────────── */
     @media (max-width: 900px) {
       .content-grid { grid-template-columns: 1fr; }
       .sidebar { order: -1; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .dham-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .trust-docs { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
       nav, .header-cta { display: none; }
@@ -759,9 +814,10 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="#" class="active">About Chari Dham</a></li>
+          <li><a href="wisdom.html">Wisdom &amp; Dharma</a></li>
           <li><a href="#">Packages</a></li>
           <li><a href="gallery.html">Gallery</a></li>
-          <li><a href="#guide">Guide</a></li>
+          <li><a href="#trust-section">About Trust</a></li>
           <li><a href="#" class="header-cta">Book Now</a></li>
         </ul>
       </nav>
@@ -1155,12 +1211,7 @@
           </div>
         </div>
 
-        <!-- Guide Section -->
-        <div class="section-block" id="guide" style="display:none;">
-          <h2>🙏 ଚାରିଧାମ ଓଡ଼ିଶା ଟ୍ରଷ୍ଟ — Charidham Odisha Trust</h2>
-          <img src="images/odi_trust.jpg" alt="ଚାରିଧାମ ଓଡ଼ିଶା ଟ୍ରଷ୍ଟ" style="width:100%; max-width:680px; margin:18px auto; border-radius:var(--radius); box-shadow:var(--shadow); display:block;" />
-          <img src="images/Eng_trust.jpg" alt="Charidham Odisha Trust" style="width:100%; max-width:680px; margin:18px auto; border-radius:var(--radius); box-shadow:var(--shadow); display:block;" />
-        </div>
+
 
       </main>
       <!-- ── END MAIN CONTENT ──────────────────────────────────── -->
@@ -1170,7 +1221,7 @@
 
         <!-- Enquiry Form -->
         <div class="sidebar-card">
-          <details open>
+          <details>
           <summary class="sidebar-card-head" style="cursor:pointer; list-style:none;">🙏 Plan Your Yatra <span style="float:right;">▼</span></summary>
           <div class="sidebar-card-body">
             <form class="enquiry-form" onsubmit="return false;">
@@ -1203,54 +1254,9 @@
 
         <!-- Temple Events -->
         <div class="sidebar-card">
-          <div class="sidebar-card-head">🗓️ Temple Events &amp; Festivals</div>
+          <details>
+          <summary class="sidebar-card-head" style="cursor:pointer; list-style:none;">🗓️ Temple Events &amp; Festivals <span style="float:right;">▼</span></summary>
           <div class="sidebar-card-body" style="padding:14px 16px;">
-
-            <!-- Current Event -->
-            <div class="ev-badge ev-live">🔴 LIVE NOW</div>
-            <div class="ev-item ev-item--current">
-              <div class="ev-date">Feb 18 – Feb 26, 2026</div>
-              <h4 class="ev-title">Shivaratri Mahotsav</h4>
-              <div class="ev-location">📍 Rameswar, Tamil Nadu</div>
-              <p class="ev-desc">Grand Maha Shivaratri celebrations with special abhishek of the sacred Jyotirlinga, overnight jagaran, and temple festivities at Rameshwaram.</p>
-              <a href="#" class="btn-detail">More Info</a>
-            </div>
-
-            <div class="ev-divider"></div>
-
-            <!-- Akshaya Tritiya Special -->
-            <div class="ev-badge ev-upcoming">🙏 ଅକ୍ଷୟ ତୃତୀୟା</div>
-            <div class="ev-item">
-              <h4 class="ev-title">ଅକ୍ଷୟ ତୃତୀୟା ଦିବସର ମହତ୍ତ୍ଵ</h4>
-              <p class="ev-desc" style="white-space:pre-line; line-height:1.9;">
-🕉 ବ୍ରହ୍ମାଙ୍କ ପୁତ୍ର ଅକ୍ଷୟ କୁମାର ଙ୍କ ଅବତରଣ
-🕉 ମା ଅନ୍ନପୂର୍ଣ୍ଣା ଙ୍କ ଜନ୍ମ ।
-🕉 ଚିରଞ୍ଜିବୀ ମହର୍ଷି ପର୍ଶୁରାମ ଙ୍କ ଜନ୍ମ ।
-🕉 କୁବେର ଙ୍କୁ ଧନର ଭଣ୍ଡାର ମିଳିଥିଲା ।
-🕉 ମା ଗଙ୍ଗା ଙ୍କର ପୃଥିବୀ ଅବତରଣ ହୋଇଥିଲା
-🕉 ସୂର୍ଯ୍ୟ ଭଗବାନ ପାଣ୍ଡବ ମାନଙ୍କୁ ଅକ୍ଷୟ ପାତ୍ର ପ୍ରଦାନ କରିଥଲେ ।
-🕉 ମହାଭାରତ ଯୁଦ୍ଧ ସମାପ୍ତ ହୋଇଥିଲା ।
-🕉 ବ୍ୟାସଦେବ ଗଣେଶଙ୍କ ସହ ମିଶି ମହାକାବ୍ୟ "ମହାଭାରତ" ରଚନା ପ୍ରାରମ୍ଭ କରିଥିଲେ ।
-🕉 ପ୍ରସିଦ୍ଧ ତୀର୍ଥକ୍ଷେତ୍ର ବଦ୍ରିନାରାୟଣ ଙ୍କ ମନ୍ଦିର କବାଟ ଖୋଲାଯାଇଥାଏ
-🕉 ବୃନ୍ଦାବନ ରେ ବାଙ୍କେବିହାରି ମନ୍ଦିରରେ ଶ୍ରୀକୃଷ୍ଣ ଙ୍କ ଚରଣ ଦର୍ଶନ ହୋଇଥାଏ ।
-🕉 ମହାପ୍ରଭୁ ଭଗବାନ ଶ୍ରୀଜଗନ୍ନାଥଙ୍କ ତିନି ରଥର ନିର୍ମାଣ କାର୍ଯ୍ୟ ଆରମ୍ଭ ହୋଇଥାଏ
-🕉 ମହାପ୍ରଭୁ ଶ୍ରଜଗନ୍ନାଥଙ୍କର ୨୧ଦିନ ବ୍ୟାପୀ ଚନ୍ଦନ ଯାତ୍ରା ଆଜିଠୁ ଆରମ୍ଭ ହୁଏ ।
-🕉 ଆଦି ଶଙ୍କରାଚାର୍ଯ୍ୟ " କନକଧାରା ସ୍ତୋତ୍ର " ରଚନା କରିଥିଲେ ।
-🕉 ଅକ୍ଷୟ ତୃତୀୟା ରେ ସମସ୍ତ ପ୍ରକାର ଶୁଭ କାର୍ଯ୍ୟର ଶୁଭାରମ୍ଭ ହୋଇଥାଏ ।
-🕉 ଓଡ଼ିଶା ରେ ଚାଷୀମାନେ ଆଜି ଜମିରେ ଅକ୍ଷିମୁଠି ଅନୁକୂଳ କରିଥାଆନ୍ତି ।
-
-✨ ଆପଣଙ୍କ "ସୁଖ" ଅକ୍ଷୟ ରହୁ ।
-✨ ଆପଣଙ୍କ "ଧନ" ଅକ୍ଷୟ ରହୁ ।
-✨ ଆପଣଙ୍କ "ପ୍ରେମ" ଅକ୍ଷୟ ରହୁ ।
-✨ ଆପଣଙ୍କ "ସ୍ନେହ" ଅକ୍ଷୟ ରହୁ ।
-✨ ଆପଣଙ୍କ "ସ୍ୱାସ୍ଥ୍ୟ" ଅକ୍ଷୟ ରହୁ ।
-✨ ଆପଣଙ୍କ "ସମ୍ପର୍କ" ଅକ୍ଷୟ ରହୁ ।
-
-💐 ପବିତ୍ର ଅକ୍ଷୟ ତୃତୀୟା ର ଶୁଭ ଅଭିନନ୍ଦନ 🙏
-              </p>
-            </div>
-
-            <div class="ev-divider"></div>
 
             <!-- Upcoming Events -->
             <div class="ev-badge ev-upcoming">📅 UPCOMING</div>
@@ -1292,6 +1298,80 @@
             </div>
 
           </div>
+          </details>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="sidebar-card">
+          <details>
+          <summary class="sidebar-card-head" style="cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center;">📜 Temple Events &amp; Festivals History <span>▼</span></summary>
+          <div class="sidebar-card-body" style="padding:14px 16px;">
+
+            <div class="ev-badge ev-upcoming">🙏 ଅକ୍ଷୟ ତୃତୀୟା</div>
+            <div class="ev-item">
+              <h4 class="ev-title">ଅକ୍ଷୟ ତୃତୀୟା ଦିବସର ମହତ୍ତ୍ଵ</h4>
+              <p class="ev-desc" style="white-space:pre-line; line-height:1.9;">
+🕉 ବ୍ରହ୍ମାଙ୍କ ପୁତ୍ର ଅକ୍ଷୟ କୁମାର ଙ୍କ ଅବତରଣ
+🕉 ମା ଅନ୍ନପୂର୍ଣ୍ଣା ଙ୍କ ଜନ୍ମ ।
+🕉 ଚିରଞ୍ଜିବୀ ମହର୍ଷି ପର୍ଶୁରାମ ଙ୍କ ଜନ୍ମ ।
+🕉 କୁବେର ଙ୍କୁ ଧନର ଭଣ୍ଡାର ମିଳିଥିଲା ।
+🕉 ମା ଗଙ୍ଗା ଙ୍କର ପୃଥିବୀ ଅବତରଣ ହୋଇଥିଲା
+🕉 ସୂର୍ଯ୍ୟ ଭଗବାନ ପାଣ୍ଡବ ମାନଙ୍କୁ ଅକ୍ଷୟ ପାତ୍ର ପ୍ରଦାନ କରିଥଲେ ।
+🕉 ମହାଭାରତ ଯୁଦ୍ଧ ସମାପ୍ତ ହୋଇଥିଲା ।
+🕉 ବ୍ୟାସଦେବ ଗଣେଶଙ୍କ ସହ ମିଶି ମହାକାବ୍ୟ "ମହାଭାରତ" ରଚନା ପ୍ରାରମ୍ଭ କରିଥିଲେ ।
+🕉 ପ୍ରସିଦ୍ଧ ତୀର୍ଥକ୍ଷେତ୍ର ବଦ୍ରିନାରାୟଣ ଙ୍କ ମନ୍ଦିର କବାଟ ଖୋଲାଯାଇଥାଏ
+🕉 ବୃନ୍ଦାବନ ରେ ବାଙ୍କେବିହାରି ମନ୍ଦିରରେ ଶ୍ରୀକୃଷ୍ଣ ଙ୍କ ଚରଣ ଦର୍ଶନ ହୋଇଥାଏ ।
+🕉 ମହାପ୍ରଭୁ ଭଗବାନ ଶ୍ରୀଜଗନ୍ନାଥଙ୍କ ତିନି ରଥର ନିର୍ମାଣ କାର୍ଯ୍ୟ ଆରମ୍ଭ ହୋଇଥାଏ
+🕉 ମହାପ୍ରଭୁ ଶ୍ରଜଗନ୍ନାଥଙ୍କର ୨୧ଦିନ ବ୍ୟାପୀ ଚନ୍ଦନ ଯାତ୍ରା ଆଜିଠୁ ଆରମ୍ଭ ହୁଏ ।
+🕉 ଆଦି ଶଙ୍କରାଚାର୍ଯ୍ୟ " କନକଧାରା ସ୍ତୋତ୍ର " ରଚନା କରିଥିଲେ ।
+🕉 ଅକ୍ଷୟ ତୃତୀୟା ରେ ସମସ୍ତ ପ୍ରକାର ଶୁଭ କାର୍ଯ୍ୟର ଶୁଭାରମ୍ଭ ହୋଇଥାଏ ।
+🕉 ଓଡ଼ିଶା ରେ ଚାଷୀମାନେ ଆଜି ଜମିରେ ଅକ୍ଷିମୁଠି ଅନୁକୂଳ କରିଥାଆନ୍ତି ।
+
+✨ ଆପଣଙ୍କ "ସୁଖ" ଅକ୍ଷୟ ରହୁ ।
+✨ ଆପଣଙ୍କ "ଧନ" ଅକ୍ଷୟ ରହୁ ।
+✨ ଆପଣଙ୍କ "ପ୍ରେମ" ଅକ୍ଷୟ ରହୁ ।
+✨ ଆପଣଙ୍କ "ସ୍ନେହ" ଅକ୍ଷୟ ରହୁ ।
+✨ ଆପଣଙ୍କ "ସ୍ୱାସ୍ଥ୍ୟ" ଅକ୍ଷୟ ରହୁ ।
+✨ ଆପଣଙ୍କ "ସମ୍ପର୍କ" ଅକ୍ଷୟ ରହୁ ।
+
+💐 ପବିତ୍ର ଅକ୍ଷୟ ତୃତୀୟା ର ଶୁଭ ଅଭିନନ୍ଦନ 🙏
+              </p>
+            </div>
+
+            <div class="ev-divider"></div>
+
+            <div class="ev-badge ev-regular">🛕 RAMESWAR</div>
+            <div class="ev-item">
+              <h4 class="ev-title">Ramanathaswamy Temple — Ancient Legacy</h4>
+              <p class="ev-desc">Established over 2,000 years ago, the Ramanathaswamy Temple at Rameshwaram is one of India's oldest Jyotirlinga shrines. The magnificent corridor — the longest in any Hindu temple at 1,220 metres — was added in the 12th–17th centuries by Pandya and Nayak kings. The annual Brahmotsavam festival, celebrated over 10 days, traces back centuries and draws millions seeking the sacred waters of the 22 theerthams.</p>
+            </div>
+
+            <div class="ev-divider"></div>
+
+            <div class="ev-badge ev-regular">🛕 JAGANNATH PURI</div>
+            <div class="ev-item">
+              <h4 class="ev-title">Rath Yatra — 2,000+ Year Tradition</h4>
+              <p class="ev-desc">The Rath Yatra of Puri, documented since the 4th century CE, is among the world's oldest and largest religious processions. The three massive chariots — Nandighosa (Lord Jagannath), Taladhwaja (Lord Balabhadra), and Darpadalana (Devi Subhadra) — are rebuilt fresh every year from specific sacred wood. Medieval records show that European traveller Marco Polo referenced this festival, and it inspired the English word "juggernaut."</p>
+            </div>
+
+            <div class="ev-divider"></div>
+
+            <div class="ev-badge ev-regular">🛕 BADRINATH</div>
+            <div class="ev-item">
+              <h4 class="ev-title">Badrinath Temple — Himalayan Heritage</h4>
+              <p class="ev-desc">The Badrinath Temple, revered since Vedic times, was rediscovered and reinstated by Adi Shankaracharya in the 8th century CE after a period of Buddhist influence. The Mata Murti Mela (August–September), celebrating the goddess who is believed to be the mother of Nara-Narayana, has been observed for over 1,200 years. The annual opening ceremony (Kapat Utsav) each April–May follows precise astronomical calculations set by the Rawal (chief priest) centuries ago.</p>
+            </div>
+
+            <div class="ev-divider"></div>
+
+            <div class="ev-badge ev-regular">🛕 DWARAKA</div>
+            <div class="ev-item">
+              <h4 class="ev-title">Dwarkadhish Temple — Krishna's Legacy</h4>
+              <p class="ev-desc">The Dwarkadhish Temple, dating to the 2nd–3rd century BCE in its earliest form, was rebuilt several times — most notably in the 15th–16th centuries during the reign of the Solanki and Vaghela dynasties. The Janmashtami celebration at Dwaraka, marking Lord Krishna's birth, has been observed for over 5,000 years according to scriptural accounts. The submerged ancient city, discovered by the Marine Archaeology Unit of India in 1988, has validated the historical accounts of Krishna's Dwaraka.</p>
+            </div>
+
+          </div>
+          </details>
         </div>
 
         <!-- Quick Links -->
@@ -1317,6 +1397,27 @@
     </div>
   </div>
   <!-- ═══ END MAIN LAYOUT ═══════════════════════════════════════ -->
+
+  <!-- ═══ ABOUT THE TRUST ═══════════════════════════════════════ -->
+  <section class="trust-strip" id="trust-section">
+    <div class="container">
+      <div class="strip-head">
+        <h2>🙏 About Charidham Odisha Trust</h2>
+        <p>Charidham Central is governed by a legally registered trust dedicated to promoting pilgrimage, spiritual welfare, and cultural heritage across India's sacred Chari Dham circuit. Below are the official trust registration documents for your reference.</p>
+        <span class="trust-badge">✔ Officially Registered Trust</span>
+      </div>
+      <div class="trust-docs">
+        <div class="trust-doc-card">
+          <div class="trust-doc-label">🪷 ଓଡ଼ିଆ — ଚାରିଧାମ ଓଡ଼ିଶା ଟ୍ରଷ୍ଟ</div>
+          <img src="images/odi_trust.jpg" alt="ଚାରିଧାମ ଓଡ଼ିଶା ଟ୍ରଷ୍ଟ — Official Odia Trust Document" />
+        </div>
+        <div class="trust-doc-card">
+          <div class="trust-doc-label">📄 English — Charidham Odisha Trust</div>
+          <img src="images/Eng_trust.jpg" alt="Charidham Odisha Trust — Official English Trust Document" />
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ═══ TOUR PACKAGES STRIP ══════════════════════════════════ -->
   <section class="packages-strip">
@@ -1409,6 +1510,7 @@
       <div class="footer-col">
         <h4>Book Now</h4>
         <ul>
+          <li><a href="wisdom.html">Wisdom &amp; Dharma</a></li>
           <li><a href="#">Charidham Pooja Booking</a></li>
           <li><a href="#">Chari Dham Route Map</a></li>
           <li><a href="#">Hotels for 4 Dham</a></li>
@@ -1448,16 +1550,10 @@
       });
     });
 
-    // Guide section toggle
-    document.querySelector('a[href="#guide"]').addEventListener('click', function(e) {
+    // About Trust nav scroll
+    document.querySelector('a[href="#trust-section"]').addEventListener('click', function(e) {
       e.preventDefault();
-      var guide = document.getElementById('guide');
-      if (guide.style.display === 'none') {
-        guide.style.display = 'block';
-        guide.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        guide.style.display = 'none';
-      }
+      document.getElementById('trust-section').scrollIntoView({ behavior: 'smooth' });
     });
   </script>
 
