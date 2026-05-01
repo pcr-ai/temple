@@ -375,6 +375,86 @@
     }
     .share-btn:hover { background: var(--saffron-d); text-decoration: none; }
 
+    /* ─── Devotional Bhajans ──────────────────────────────────── */
+    .bhajan-group { margin-top: 18px; }
+    .bhajan-group + .bhajan-group { margin-top: 34px; }
+    .bhajan-group-title {
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Merriweather', serif; font-size: 1.18rem;
+      color: var(--maroon); margin-bottom: 6px; font-weight: 700;
+    }
+    .bhajan-group-title .bhajan-emoji {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 100%);
+      color: white; font-size: 1.05rem; box-shadow: 0 2px 8px rgba(139,26,26,.18);
+    }
+    .bhajan-group-sub {
+      font-size: .88rem; color: var(--text); margin-bottom: 16px;
+      padding-left: 50px;
+    }
+    .bhajan-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+    }
+    .bhajan-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform .25s ease, box-shadow .25s ease;
+      display: flex; flex-direction: column;
+    }
+    .bhajan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(139,26,26,.18);
+    }
+    .bhajan-thumb {
+      position: relative; display: block;
+      aspect-ratio: 16 / 9; overflow: hidden;
+      background: #000;
+    }
+    .bhajan-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .35s ease, opacity .25s ease;
+    }
+    .bhajan-card:hover .bhajan-thumb img { transform: scale(1.06); opacity: .85; }
+    .bhajan-play {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 58px; height: 58px; border-radius: 50%;
+      background: rgba(224,123,57,.92);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.4rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,.45);
+      transition: background .2s ease, transform .2s ease;
+    }
+    .bhajan-card:hover .bhajan-play {
+      background: var(--maroon); transform: translate(-50%, -50%) scale(1.08);
+    }
+    .bhajan-meta {
+      padding: 12px 14px 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+      border-top: 3px solid var(--saffron);
+    }
+    .bhajan-icon {
+      flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+      background: #fff3e3; color: var(--saffron-d);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; border: 1px solid #f0d8b0;
+    }
+    .bhajan-info { flex: 1; min-width: 0; }
+    .bhajan-info h4 {
+      font-family: 'Merriweather', serif; font-size: .95rem;
+      color: var(--dark); margin-bottom: 2px; line-height: 1.35;
+    }
+    .bhajan-info span {
+      font-size: .76rem; color: var(--saffron-d);
+      letter-spacing: .5px; text-transform: uppercase; font-weight: 600;
+    }
+    @media (max-width: 480px) {
+      .bhajan-group-sub { padding-left: 0; }
+    }
+
     /* ─── Footer ──────────────────────────────────────────────── */
     footer { background: #1a0800; color: #cfc7b8; padding: 50px 20px 0; margin-top: 30px; }
     .footer-grid {
@@ -691,6 +771,121 @@
           </div>
         </section>
 
+        <!-- Devotional Bhajans -->
+        <section class="section-block" id="bhajans">
+          <h2>🎶 Devotional Bhajans</h2>
+          <p>
+            Sacred songs that carry the heart straight to the Lord. Listen, sing along
+            and let these melodies fill your home with bhakti.
+          </p>
+
+          <div class="bhajan-group">
+            <div class="bhajan-group-title">
+              <span class="bhajan-emoji" aria-hidden="true">🕉️</span>
+              Charidham Bhajans — Hindi &amp; Odia
+            </div>
+            <p class="bhajan-group-sub">Devotional songs glorifying the four sacred Dhams 🙏</p>
+            <div class="bhajan-grid">
+
+              <div class="bhajan-card">
+                <a class="bhajan-thumb" href="https://youtu.be/9HX3OGujr5c?si=_WvydNZsit6d3iRU" target="_blank" rel="noopener">
+                  <img src="https://img.youtube.com/vi/9HX3OGujr5c/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
+                  <span class="bhajan-play" aria-hidden="true">▶</span>
+                </a>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">📿</div>
+                  <div class="bhajan-info">
+                    <h4>Charidham Bhajan — I</h4>
+                    <span>Hindi / Odia</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bhajan-card">
+                <a class="bhajan-thumb" href="https://youtu.be/NtZQXHQlLlA?si=IrUbXqx4_1str5HK" target="_blank" rel="noopener">
+                  <img src="https://img.youtube.com/vi/NtZQXHQlLlA/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
+                  <span class="bhajan-play" aria-hidden="true">▶</span>
+                </a>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">📿</div>
+                  <div class="bhajan-info">
+                    <h4>Charidham Bhajan — II</h4>
+                    <span>Hindi / Odia</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bhajan-card">
+                <a class="bhajan-thumb" href="https://youtu.be/o1uhd8OYaSc?si=mT6Wbpu9cbLyEpzo" target="_blank" rel="noopener">
+                  <img src="https://img.youtube.com/vi/o1uhd8OYaSc/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
+                  <span class="bhajan-play" aria-hidden="true">▶</span>
+                </a>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">📿</div>
+                  <div class="bhajan-info">
+                    <h4>Charidham Bhajan — III</h4>
+                    <span>Hindi / Odia</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bhajan-card">
+                <a class="bhajan-thumb" href="https://youtu.be/4fviz3tHlHY?si=CKF-cNjIt2tcDlK4" target="_blank" rel="noopener">
+                  <img src="https://img.youtube.com/vi/4fviz3tHlHY/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
+                  <span class="bhajan-play" aria-hidden="true">▶</span>
+                </a>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">📿</div>
+                  <div class="bhajan-info">
+                    <h4>Charidham Bhajan — IV</h4>
+                    <span>Hindi / Odia</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="bhajan-group">
+            <div class="bhajan-group-title">
+              <span class="bhajan-emoji" aria-hidden="true">🌺</span>
+              Maa Santoshi Bhajans
+            </div>
+            <p class="bhajan-group-sub">Sweet bhajans dedicated to Maa Santoshi — the Mother of Contentment 💖</p>
+            <div class="bhajan-grid">
+
+              <div class="bhajan-card">
+                <a class="bhajan-thumb" href="https://youtu.be/U5-8J3uiY54?si=_1s2Wunsyy5uQUps" target="_blank" rel="noopener">
+                  <img src="https://img.youtube.com/vi/U5-8J3uiY54/hqdefault.jpg" alt="Maa Santoshi bhajan video" loading="lazy" />
+                  <span class="bhajan-play" aria-hidden="true">▶</span>
+                </a>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">🪔</div>
+                  <div class="bhajan-info">
+                    <h4>Maa Santoshi Bhajan — I</h4>
+                    <span>Devotional</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bhajan-card">
+                <a class="bhajan-thumb" href="https://youtu.be/E3Z32RRjVEQ?si=Mxcr5GWw8Cw07eDu" target="_blank" rel="noopener">
+                  <img src="https://img.youtube.com/vi/E3Z32RRjVEQ/hqdefault.jpg" alt="Maa Santoshi bhajan video" loading="lazy" />
+                  <span class="bhajan-play" aria-hidden="true">▶</span>
+                </a>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">🪔</div>
+                  <div class="bhajan-info">
+                    <h4>Maa Santoshi Bhajan — II</h4>
+                    <span>Devotional</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
       </main>
 
       <!-- ── SIDEBAR ───────────────────────────────────────────── -->
@@ -725,6 +920,7 @@
               <li><a href="#quotes">Voices of the Saints</a></li>
               <li><a href="#sages">Great Sages</a></li>
               <li><a href="#society">Dharma for Society</a></li>
+              <li><a href="#bhajans">Devotional Bhajans</a></li>
             </ul>
           </div>
         </div>
