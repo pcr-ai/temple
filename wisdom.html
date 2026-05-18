@@ -412,11 +412,15 @@
       position: relative; display: block;
       aspect-ratio: 16 / 9; overflow: hidden;
       background: #000;
+      width: 100%; padding: 0; border: 0; cursor: pointer;
     }
-    .bhajan-thumb img {
+    button.bhajan-thumb { font: inherit; color: inherit; }
+    .bhajan-thumb img,
+    .bhajan-thumb video {
       width: 100%; height: 100%; object-fit: cover;
       transition: transform .35s ease, opacity .25s ease;
     }
+    .bhajan-thumb video { background: #000; }
     .bhajan-card:hover .bhajan-thumb img { transform: scale(1.06); opacity: .85; }
     .bhajan-play {
       position: absolute; top: 50%; left: 50%;
@@ -781,17 +785,41 @@
 
           <div class="bhajan-group">
             <div class="bhajan-group-title">
-              <span class="bhajan-emoji" aria-hidden="true">🕉️</span>
+              <span class="bhajan-emoji" aria-hidden="true">�</span>
+              Temple Bhajan
+            </div>
+            <p class="bhajan-group-sub">A special devotional video from our temple 🙏</p>
+            <div class="bhajan-grid">
+
+              <div class="bhajan-card">
+                <div class="bhajan-thumb">
+                  <video src="video/video1.mp4" controls preload="metadata" playsinline></video>
+                </div>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">🪔</div>
+                  <div class="bhajan-info">
+                    <h4>Temple Devotional Video</h4>
+                    <span>Bhajan</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="bhajan-group">
+            <div class="bhajan-group-title">
+              <span class="bhajan-emoji" aria-hidden="true">�🕉️</span>
               Charidham Bhajans — Hindi &amp; Odia
             </div>
             <p class="bhajan-group-sub">Devotional songs glorifying the four sacred Dhams 🙏</p>
             <div class="bhajan-grid">
 
               <div class="bhajan-card">
-                <a class="bhajan-thumb" href="https://youtu.be/9HX3OGujr5c?si=_WvydNZsit6d3iRU" target="_blank" rel="noopener">
+                <button type="button" class="bhajan-thumb" data-yt="9HX3OGujr5c" aria-label="Play: Karlo Karlo Charon Dham">
                   <img src="https://img.youtube.com/vi/9HX3OGujr5c/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
                   <span class="bhajan-play" aria-hidden="true">▶</span>
-                </a>
+                </button>
                 <div class="bhajan-meta">
                   <div class="bhajan-icon" aria-hidden="true">📿</div>
                   <div class="bhajan-info">
@@ -802,10 +830,10 @@
               </div>
 
               <div class="bhajan-card">
-                <a class="bhajan-thumb" href="https://youtu.be/NtZQXHQlLlA?si=IrUbXqx4_1str5HK" target="_blank" rel="noopener">
+                <button type="button" class="bhajan-thumb" data-yt="NtZQXHQlLlA" aria-label="Play: Srikhetra Dhama">
                   <img src="https://img.youtube.com/vi/NtZQXHQlLlA/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
                   <span class="bhajan-play" aria-hidden="true">▶</span>
-                </a>
+                </button>
                 <div class="bhajan-meta">
                   <div class="bhajan-icon" aria-hidden="true">📿</div>
                   <div class="bhajan-info">
@@ -816,10 +844,10 @@
               </div>
 
               <div class="bhajan-card">
-                <a class="bhajan-thumb" href="https://youtu.be/o1uhd8OYaSc?si=mT6Wbpu9cbLyEpzo" target="_blank" rel="noopener">
+                <button type="button" class="bhajan-thumb" data-yt="o1uhd8OYaSc" aria-label="Play: Gaao Re Gaao Milke Mahima Charon Dham Ki">
                   <img src="https://img.youtube.com/vi/o1uhd8OYaSc/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
                   <span class="bhajan-play" aria-hidden="true">▶</span>
-                </a>
+                </button>
                 <div class="bhajan-meta">
                   <div class="bhajan-icon" aria-hidden="true">📿</div>
                   <div class="bhajan-info">
@@ -830,10 +858,10 @@
               </div>
 
               <div class="bhajan-card">
-                <a class="bhajan-thumb" href="https://youtu.be/4fviz3tHlHY?si=CKF-cNjIt2tcDlK4" target="_blank" rel="noopener">
+                <button type="button" class="bhajan-thumb" data-yt="4fviz3tHlHY" aria-label="Play: Srestha Dhama Chari Dhama">
                   <img src="https://img.youtube.com/vi/4fviz3tHlHY/hqdefault.jpg" alt="Charidham bhajan video" loading="lazy" />
                   <span class="bhajan-play" aria-hidden="true">▶</span>
-                </a>
+                </button>
                 <div class="bhajan-meta">
                   <div class="bhajan-icon" aria-hidden="true">📿</div>
                   <div class="bhajan-info">
@@ -1013,6 +1041,23 @@
     if (hamburger && nav) {
       hamburger.addEventListener('click', () => nav.classList.toggle('active'));
     }
+
+    // Click-to-play YouTube embeds via privacy-enhanced domain (reduces ads/tracking)
+    document.querySelectorAll('.bhajan-thumb[data-yt]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-yt');
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3`;
+        iframe.title = btn.getAttribute('aria-label') || 'YouTube video';
+        iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        iframe.style.cssText = 'width:100%;height:100%;border:0;display:block;';
+        btn.innerHTML = '';
+        btn.appendChild(iframe);
+        btn.style.cursor = 'default';
+      }, { once: true });
+    });
   </script>
 
 </body>
