@@ -1648,6 +1648,12 @@
       const FOLDER    = 'trust-upload';
       const VALID_RE  = /\.(pdf|jpe?g|png|webp)$/i;
 
+      // Inline label overrides (filename → display title).
+      // These always win over the auto-prettified filename and the manifest.
+      const LABEL_OVERRIDES = {
+        'DOC-20260522-WA0002.pdf': 'CHARIDHAM ODISHA'
+      };
+
       function openLightbox(src) { lbImg.src = src; lightbox.classList.add('open'); }
       function closeLightbox()   { lightbox.classList.remove('open'); lbImg.src = ''; }
       lbClose.addEventListener('click', closeLightbox);
@@ -1671,7 +1677,7 @@
       function renderDoc(file, label) {
         const src   = FOLDER + '/' + file;
         const isPdf = /\.pdf$/i.test(file);
-        const title = label || prettyLabel(file);
+        const title = LABEL_OVERRIDES[file] || label || prettyLabel(file);
 
         if (isPdf) {
           const a = document.createElement('a');
@@ -1683,7 +1689,6 @@
             '<div class="trust-doc-label" title="' + title.replace(/"/g, '&quot;') + '">📄 ' + title + '</div>' +
             '<div class="pdf-thumb">' +
               '<span class="pdf-ico">📕</span>' +
-              '<span class="pdf-tag">VIEW PDF</span>' +
             '</div>';
           grid.appendChild(a);
         } else {
