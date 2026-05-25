@@ -760,6 +760,203 @@
       user-select: none;
     }
 
+    /* ─── Proposed Temple Showcase ───────────────────────────── */
+    .proposed-temple-block {
+      margin-top: 36px;
+      position: relative;
+      padding: 30px 26px 34px;
+      background:
+        radial-gradient(circle at top right, rgba(212, 175, 55, .12), transparent 55%),
+        radial-gradient(circle at bottom left, rgba(140, 0, 0, .08), transparent 50%),
+        linear-gradient(180deg, #fffaf2 0%, #fff 100%);
+      border: 1px solid #ead7b3;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(140, 0, 0, .08);
+      overflow: hidden;
+    }
+    .proposed-temple-block::before,
+    .proposed-temple-block::after {
+      content: '';
+      position: absolute;
+      width: 140px; height: 140px;
+      background: radial-gradient(circle, rgba(212,175,55,.25), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .proposed-temple-block::before { top: -50px; right: -50px; }
+    .proposed-temple-block::after  { bottom: -50px; left: -50px; }
+
+    .pt-header {
+      text-align: center;
+      margin-bottom: 22px;
+      position: relative;
+    }
+    .pt-eyebrow {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--maroon), #d4a72c);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      padding: 5px 16px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(140, 0, 0, .25);
+    }
+    .pt-header h2 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.55rem;
+      color: var(--maroon);
+      margin: 4px 0 8px;
+      line-height: 1.25;
+    }
+    .pt-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 10px 0 14px;
+      color: #d4a72c;
+      font-size: .9rem;
+    }
+    .pt-divider::before,
+    .pt-divider::after {
+      content: '';
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, #d4a72c);
+    }
+    .pt-divider::after {
+      background: linear-gradient(90deg, #d4a72c, transparent);
+    }
+    .pt-header p {
+      max-width: 640px;
+      margin: 0 auto;
+      color: #555;
+      font-size: .95rem;
+    }
+
+    .proposed-temple-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 22px;
+      margin-top: 8px;
+    }
+    .proposed-temple-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      background: #fff;
+      border: 1px solid #ead7b3;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,.08);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .proposed-temple-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 38px rgba(140, 0, 0, .22);
+    }
+    .ptc-ribbon {
+      position: absolute;
+      top: 16px; left: -42px;
+      transform: rotate(-35deg);
+      background: linear-gradient(135deg, #d4a72c, #b8860b);
+      color: #fff;
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      padding: 5px 52px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.25);
+      z-index: 3;
+      text-transform: uppercase;
+      animation: ribbonGlow 2.6s ease-in-out infinite;
+    }
+    @keyframes ribbonGlow {
+      0%, 100% { box-shadow: 0 3px 10px rgba(212,167,44,.4); }
+      50%      { box-shadow: 0 3px 18px rgba(212,167,44,.9); }
+    }
+    .proposed-temple-card .ptc-img-wrap {
+      position: relative;
+      overflow: hidden;
+      background: #f3eee6;
+      aspect-ratio: 4 / 3;
+    }
+    .proposed-temple-card .ptc-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .5s ease;
+    }
+    .proposed-temple-card:hover .ptc-img-wrap img { transform: scale(1.06); }
+    .proposed-temple-card .ptc-img-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 65%, rgba(0,0,0,.45) 100%);
+      pointer-events: none;
+    }
+    .proposed-temple-card .ptc-zoom {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(255,255,255,.95);
+      color: var(--maroon);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      padding: 5px 12px;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.2);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .25s, transform .25s;
+      z-index: 2;
+    }
+    .proposed-temple-card:hover .ptc-zoom { opacity: 1; transform: translateY(0); }
+    .proposed-temple-card .ptc-caption {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: linear-gradient(180deg, #fff 0%, #fdf6e9 100%);
+      border-top: 1px solid #ead7b3;
+    }
+    .proposed-temple-card .ptc-tag {
+      align-self: flex-start;
+      background: linear-gradient(135deg, var(--maroon), #a83232);
+      color: #fff;
+      font-size: .66rem;
+      font-weight: 700;
+      letter-spacing: .8px;
+      padding: 3px 10px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+    .proposed-temple-card .ptc-title {
+      font-family: 'Merriweather', serif;
+      font-size: 1rem;
+      color: #2c2c2c;
+      font-weight: 700;
+    }
+    .proposed-temple-card .ptc-sub {
+      font-size: .8rem;
+      color: #777;
+    }
+    .pt-footer {
+      margin-top: 22px;
+      text-align: center;
+      font-size: .85rem;
+      color: #8a6d3b;
+      font-style: italic;
+    }
+    @media (max-width: 760px) {
+      .proposed-temple-grid { grid-template-columns: 1fr; }
+      .pt-header h2 { font-size: 1.3rem; }
+      .proposed-temple-block { padding: 24px 16px 26px; }
+    }
+
     /* ─── Responsive ──────────────────────────────────────────── */
     @media (max-width: 900px) {
       .content-grid { grid-template-columns: 1fr; }
@@ -930,6 +1127,47 @@
         <!-- Logo Feature -->
         <div class="logo-feature">
           <img src="Chardhamlogo.jpg" alt="Chari Dham Logo" />
+        </div>
+
+        <!-- ── Proposed Temple Showcase ──────────────────────── -->
+        <div class="section-block proposed-temple-block" id="proposed-temple">
+          <div class="pt-header">
+            <span class="pt-eyebrow">✨ Upcoming Project</span>
+            <h2>🕉️ Proposed Temple — Chari Dham Odisha</h2>
+            <div class="pt-divider"><span>🪷</span></div>
+            <p>A divine glimpse into our upcoming <strong>Chari Dham Odisha</strong> temple complex — designed to unite the spirit of all four sacred Dhams under one sanctified roof. View the official flex and detailed architectural blueprint below.</p>
+          </div>
+
+          <div class="proposed-temple-grid">
+            <a class="proposed-temple-card" href="images/proposed-temple/ChariDham-proposedFlex8x6feets.png" target="_blank" rel="noopener" title="View full image">
+              <span class="ptc-ribbon">Coming Soon</span>
+              <div class="ptc-img-wrap">
+                <img src="images/proposed-temple/ChariDham-proposedFlex8x6feets.png"
+                     alt="Chari Dham — Proposed Flex 8x6 ft" loading="lazy" />
+                <span class="ptc-zoom">🔍 Click to Enlarge</span>
+              </div>
+              <div class="ptc-caption">
+                <span class="ptc-tag">📐 Official Flex</span>
+                <span class="ptc-title">Proposed Temple Flex</span>
+                <span class="ptc-sub">Dimensions: 8 ft × 6 ft · Devotional artwork</span>
+              </div>
+            </a>
+            <a class="proposed-temple-card" href="images/proposed-temple/ChariDhamProposedFlex8x6feetsblueprints.png" target="_blank" rel="noopener" title="View full image">
+              <span class="ptc-ribbon">Blueprint</span>
+              <div class="ptc-img-wrap">
+                <img src="images/proposed-temple/ChariDhamProposedFlex8x6feetsblueprints.png"
+                     alt="Chari Dham — Proposed Blueprint" loading="lazy" />
+                <span class="ptc-zoom">🔍 Click to Enlarge</span>
+              </div>
+              <div class="ptc-caption">
+                <span class="ptc-tag">🧱 Architectural Plan</span>
+                <span class="ptc-title">Proposed Temple Blueprint</span>
+                <span class="ptc-sub">Layout, elevation &amp; structural details</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="pt-footer">🙏 With your blessings, may this sacred vision become a divine reality. 🙏</div>
         </div>
 
         <!-- The Four Dhams -->
@@ -1320,6 +1558,18 @@
             <!-- Upcoming Events -->
             <div class="ev-badge ev-upcoming">📅 UPCOMING</div>
 
+            <!-- Maa Santoshi Puja Invitation -->
+            <div class="ev-item ev-invite" style="text-align:center;">
+              <a href="puja-invitation/maasantosi-invitation1.jpeg" target="_blank" rel="noopener" title="Click to view full invitation">
+                <img src="puja-invitation/maasantosi-invitation1.jpeg"
+                     alt="Maa Santoshi Puja — Official Invitation"
+                     style="width:100%; max-width:100%; height:auto; border-radius:8px; border:1px solid var(--border); box-shadow:0 4px 14px rgba(0,0,0,.12); display:block; cursor:zoom-in;" />
+              </a>
+              <h4 class="ev-title" style="margin-top:10px;">🪷 Maa Santoshi Puja</h4>
+              <div class="ev-location">📍 Official Invitation</div>
+              <p class="ev-desc" style="font-size:.85rem;">Tap the invitation above to view it in full size.</p>
+            </div>
+
             <div class="ev-item">
               <div class="ev-date">Mar 14, 2026</div>
               <h4 class="ev-title">Dolotsav (Dol Purnima)</h4>
@@ -1664,6 +1914,15 @@
       grid.querySelectorAll('.trust-doc-card img').forEach(img => {
         img.classList.add('zoomable');
         img.addEventListener('click', () => openLightbox(img.src));
+      });
+
+      // Proposed Temple showcase — open in same lightbox
+      document.querySelectorAll('.proposed-temple-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          const img = card.querySelector('img');
+          if (img) openLightbox(img.src);
+        });
       });
 
       function prettyLabel(name) {
