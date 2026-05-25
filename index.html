@@ -701,6 +701,65 @@
       margin-bottom: 4px;
     }
 
+    /* ─── Extra Trust Documents (folder-driven) ──────────────── */
+    .trust-doc-card.pdf-card {
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .trust-doc-card .pdf-thumb {
+      padding: 36px 16px;
+      background: linear-gradient(135deg, #ffe1e1 0%, #ffd6b3 100%);
+      text-align: center;
+    }
+    .trust-doc-card .pdf-thumb .pdf-ico {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 3px 6px rgba(140,0,0,.25));
+    }
+    .trust-doc-card .pdf-thumb .pdf-tag {
+      background: var(--maroon);
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 3px 12px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    .trust-doc-card img.zoomable { cursor: zoom-in; }
+
+    /* Image Lightbox */
+    .trust-lightbox {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 24px;
+      animation: fadeIn .25s ease;
+    }
+    .trust-lightbox.open { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .trust-lightbox img {
+      max-width: 92vw;
+      max-height: 88vh;
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.5);
+    }
+    .trust-lightbox .lb-close {
+      position: absolute;
+      top: 18px; right: 24px;
+      font-size: 2.4rem;
+      color: #fff;
+      cursor: pointer;
+      line-height: 1;
+      user-select: none;
+    }
+
     /* ─── Responsive ──────────────────────────────────────────── */
     @media (max-width: 900px) {
       .content-grid { grid-template-columns: 1fr; }
@@ -790,8 +849,8 @@
   <!-- ═══ TOP BAR ═══════════════════════════════════════════════ -->
   <div class="top-bar">
     <div class="tb-left">
-      <span>📞 +91 1236 5656</span>
-      <span>✉ Charidhamcentral@gmail.com</span>
+      <span>📞 +91 7978900780, 9337540242</span>
+      <span>✉ rnpcharidham@gmail.com</span>
     </div>
     <div class="tb-right">
       <a href="#">Chari Dham Registration</a>
@@ -1376,7 +1435,8 @@
 
         <!-- Quick Links -->
         <div class="sidebar-card">
-          <div class="sidebar-card-head">🔗 Chari Dham Yatra 2026</div>
+          <details>
+          <summary class="sidebar-card-head" style="cursor:pointer; list-style:none;">🔗 Chari Dham Yatra 2026 <span style="float:right;">▼</span></summary>
           <div class="sidebar-card-body">
             <ul class="quick-links">
               <li><a href="#">Chari Dham Tour Packages</a></li>
@@ -1389,6 +1449,7 @@
               <li><a href="#">Taxi Services</a></li>
             </ul>
           </div>
+          </details>
         </div>
 
       </aside>
@@ -1406,7 +1467,7 @@
         <p>Charidham Central is governed by a legally registered trust dedicated to promoting pilgrimage, spiritual welfare, and cultural heritage across India's sacred Chari Dham circuit. Below are the official trust registration documents for your reference.</p>
         <span class="trust-badge">✔ Officially Registered Trust</span>
       </div>
-      <div class="trust-docs">
+      <div class="trust-docs" id="trustDocsGrid">
         <!--
         <div class="trust-doc-card">
           <div class="trust-doc-label">🪷 ଓଡ଼ିଆ — ଚାରିଧାମ ଓଡ଼ିଶା ଟ୍ରଷ୍ଟ</div>
@@ -1417,9 +1478,23 @@
           <div class="trust-doc-label">📄 English — Charidham Odisha Trust</div>
           <img src="images/Eng_trust.jpg" alt="Charidham Odisha Trust — Official English Trust Document" />
         </div>
+        <!--
+          Additional documents are auto-loaded from the temple/trust-upload/ folder.
+          To publish a new document:
+            1. Drop the file (PDF / JPG / PNG / WEBP) into temple/trust-upload/
+            2. Commit & push to GitHub — it will appear here automatically.
+          (When opened directly from the file system, the loader falls back to
+           trust-upload/docs.json for local previews.)
+        -->
       </div>
     </div>
   </section>
+
+  <!-- Image Lightbox (for enlarging trust document images) -->
+  <div class="trust-lightbox" id="trustLightbox" role="dialog" aria-modal="true" aria-label="Document preview">
+    <span class="lb-close" id="trustLightboxClose" aria-label="Close">&times;</span>
+    <img id="trustLightboxImg" alt="Document preview" />
+  </div>
 
   <!-- ═══ TOUR PACKAGES STRIP ══════════════════════════════════ -->
   <section class="packages-strip">
@@ -1557,6 +1632,105 @@
       e.preventDefault();
       document.getElementById('trust-section').scrollIntoView({ behavior: 'smooth' });
     });
+
+    // ── Trust Documents (auto-loaded from /trust-upload/) ────────
+    (function () {
+      const grid     = document.getElementById('trustDocsGrid');
+      const lightbox = document.getElementById('trustLightbox');
+      const lbImg    = document.getElementById('trustLightboxImg');
+      const lbClose  = document.getElementById('trustLightboxClose');
+      if (!grid || !lightbox) return;
+
+      // GitHub repo info — update if the repo or branch is renamed.
+      const GH_OWNER  = 'pcr-ai';
+      const GH_REPO   = 'temple';
+      const GH_BRANCH = 'main';
+      const FOLDER    = 'trust-upload';
+      const VALID_RE  = /\.(pdf|jpe?g|png|webp)$/i;
+
+      function openLightbox(src) { lbImg.src = src; lightbox.classList.add('open'); }
+      function closeLightbox()   { lightbox.classList.remove('open'); lbImg.src = ''; }
+      lbClose.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+      // Make existing static image(s) zoomable
+      grid.querySelectorAll('.trust-doc-card img').forEach(img => {
+        img.classList.add('zoomable');
+        img.addEventListener('click', () => openLightbox(img.src));
+      });
+
+      function prettyLabel(name) {
+        return name
+          .replace(/\.[^.]+$/, '')
+          .replace(/[_\-]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function renderDoc(file, label) {
+        const src   = FOLDER + '/' + file;
+        const isPdf = /\.pdf$/i.test(file);
+        const title = label || prettyLabel(file);
+
+        if (isPdf) {
+          const a = document.createElement('a');
+          a.className = 'trust-doc-card pdf-card';
+          a.href = src;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.innerHTML =
+            '<div class="trust-doc-label" title="' + title.replace(/"/g, '&quot;') + '">📄 ' + title + '</div>' +
+            '<div class="pdf-thumb">' +
+              '<span class="pdf-ico">📕</span>' +
+              '<span class="pdf-tag">VIEW PDF</span>' +
+            '</div>';
+          grid.appendChild(a);
+        } else {
+          const card = document.createElement('div');
+          card.className = 'trust-doc-card';
+          card.innerHTML =
+            '<div class="trust-doc-label" title="' + title.replace(/"/g, '&quot;') + '">🖼️ ' + title + '</div>' +
+            '<img class="zoomable" src="' + src + '" alt="' + title.replace(/"/g, '&quot;') + '" />';
+          card.querySelector('img').addEventListener('click', (e) => openLightbox(e.target.src));
+          grid.appendChild(card);
+        }
+      }
+
+      function loadFromManifest() {
+        return fetch(FOLDER + '/docs.json', { cache: 'no-store' })
+          .then(r => r.ok ? r.json() : [])
+          .then(list => {
+            if (!Array.isArray(list)) return;
+            list.forEach(entry => {
+              if (typeof entry === 'string') renderDoc(entry);
+              else if (entry && entry.file) renderDoc(entry.file, entry.label);
+            });
+          })
+          .catch(() => { /* no manifest — ignore */ });
+      }
+
+      // Try GitHub Contents API first (auto-discovery)
+      const apiUrl = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO +
+                     '/contents/' + FOLDER + '?ref=' + GH_BRANCH;
+
+      fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github+json' } })
+        .then(r => {
+          if (!r.ok) throw new Error('GitHub API ' + r.status);
+          return r.json();
+        })
+        .then(items => {
+          if (!Array.isArray(items)) throw new Error('Bad response');
+          const files = items
+            .filter(it => it.type === 'file' && VALID_RE.test(it.name))
+            .sort((a, b) => a.name.localeCompare(b.name));
+          if (files.length === 0) {
+            return loadFromManifest();
+          }
+          files.forEach(it => renderDoc(it.name));
+        })
+        .catch(() => loadFromManifest());
+    })();
   </script>
 
 </body>
