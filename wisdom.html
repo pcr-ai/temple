@@ -422,6 +422,25 @@
     }
     .bhajan-thumb video { background: #000; }
     .bhajan-card:hover .bhajan-thumb img { transform: scale(1.06); opacity: .85; }
+    .bhajan-thumb-fb {
+      background: linear-gradient(135deg, #1877f2 0%, #0a4ea8 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bhajan-thumb-fb::before {
+      content: "f";
+      font-family: 'Merriweather', serif; font-weight: 900;
+      color: rgba(255,255,255,.18);
+      font-size: 9rem; line-height: 1;
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .bhajan-card:hover .bhajan-thumb-fb { filter: brightness(1.08); }
+    .bhajan-play.bhajan-play-fb {
+      background: rgba(24,119,242,.95);
+    }
+    .bhajan-card:hover .bhajan-play.bhajan-play-fb {
+      background: #0a4ea8;
+    }
     .bhajan-play {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -511,6 +530,9 @@
       .logo-text strong { font-size: 1.05rem; }
     }
   </style>
+
+  <!-- Site-wide announcement / urgent news ticker (edit news.js to update) -->
+  <script src="news.js" defer></script>
 </head>
 <body>
 
@@ -541,6 +563,7 @@
           <li><a href="index.html">Home</a></li>
           <li><a href="index.html#about">About Chari Dham</a></li>
           <li><a href="wisdom.html" class="active">Wisdom &amp; Dharma</a></li>
+          <li><a href="news.html">News</a></li>
           <li><a href="#">Packages</a></li>
           <li><a href="gallery.html">Gallery</a></li>
           <li><a href="#" class="header-cta">Book Now</a></li>
@@ -800,6 +823,19 @@
                   <div class="bhajan-info">
                     <h4>Temple Devotional Video</h4>
                     <span>Bhajan</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bhajan-card">
+                <a class="bhajan-thumb bhajan-thumb-fb" href="https://www.facebook.com/share/v/1CXCdGo2ed/" target="_blank" rel="noopener" aria-label="Watch temple video on Facebook">
+                  <span class="bhajan-play bhajan-play-fb" aria-hidden="true">▶</span>
+                </a>
+                <div class="bhajan-meta">
+                  <div class="bhajan-icon" aria-hidden="true">🪔</div>
+                  <div class="bhajan-info">
+                    <h4>Temple Video on Facebook</h4>
+                    <span>Watch on Facebook</span>
                   </div>
                 </div>
               </div>
