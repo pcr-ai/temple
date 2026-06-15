@@ -414,7 +414,48 @@
     }
     .sd-item .sd-tag.aerial { background: rgba(139, 26, 26, .9); }
     .sd-item .sd-tag.temple { background: rgba(224, 123, 57, .92); }
+    .sd-item .sd-tag.video  { background: rgba(13, 110, 60, .92); }
     .sd-item.hidden { display: none; }
+    /* Video tile: gradient "poster" + centered play button overlay */
+    .sd-item.is-video {
+      background: linear-gradient(135deg, #2d1810 0%, #5a2a18 45%, #8b1a1a 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sd-item.is-video::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(212,160,23,.18) 0%, transparent 55%),
+        radial-gradient(circle at 75% 75%, rgba(224,123,57,.20) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .sd-item.is-video .sd-video-title {
+      position: absolute; left: 0; right: 0; bottom: 10px;
+      text-align: center; color: #fff8ec;
+      font-family: 'Merriweather', serif;
+      font-size: .82rem; font-weight: 700;
+      text-shadow: 0 2px 6px rgba(0,0,0,.7);
+      padding: 0 10px; letter-spacing: .3px;
+    }
+    .sd-item.is-video .sd-play {
+      position: relative; z-index: 1;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,.45);
+      transition: transform .25s, background .25s;
+    }
+    .sd-item.is-video:hover .sd-play {
+      transform: scale(1.12); background: #fff;
+    }
+    .sd-item.is-video .sd-play::after {
+      content: '';
+      width: 0; height: 0;
+      border-left: 16px solid var(--maroon);
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      margin-left: 4px;
+    }
     .sd-loading, .sd-error {
       text-align: center; padding: 30px 20px;
       color: #888; font-size: .9rem; grid-column: 1 / -1;
@@ -684,6 +725,9 @@
         <div class="sd-filter-bar" id="sdFilterBar">
           <button type="button" class="sd-filter-btn active" data-sd-filter="all">
             All <span class="sd-count" id="sdCountAll">0</span>
+          </button>
+          <button type="button" class="sd-filter-btn" data-sd-filter="video">
+            🎬 Video <span class="sd-count" id="sdCountVideo">0</span>
           </button>
           <button type="button" class="sd-filter-btn" data-sd-filter="aerial">
             🚁 Aerial <span class="sd-count" id="sdCountAerial">0</span>
@@ -1703,7 +1747,8 @@
     (function loadSpecialDarshan() {
       var SD_LABELS = {
         aerial: { label: 'Aerial Drone View', icon: '🚁' },
-        temple: { label: 'Temple Photo',      icon: '🕍' }
+        temple: { label: 'Temple Photo',      icon: '🕍' },
+        video:  { label: 'Sacred Video',       icon: '🎬' }
       };
       var sdGrid    = document.getElementById('sdGrid');
       var sdSection = document.getElementById('sdSection');
@@ -1733,18 +1778,33 @@
           var p = list[i];
           var meta = SD_LABELS[p.section] || { label: p.section, icon: '📷' };
           var caption = '🕊️ Divine Glimpses — ' + meta.label;
-          html +=
-            '<div class="sd-item" role="button" tabindex="0" ' +
-              'data-sd-full="'    + sdEscape(p.full)    + '" ' +
-              'data-sd-caption="' + sdEscape(caption)   + '" ' +
-              'aria-label="View ' + sdEscape(meta.label) + '">' +
-              '<img loading="lazy" decoding="async" ' +
-                'src="' + sdEscape(p.thumb) + '" ' +
-                'alt="' + sdEscape(meta.label) + '" />' +
-              '<span class="sd-tag ' + sdEscape(p.section) + '">' +
-                meta.icon + ' ' + sdEscape(meta.label.split(' ')[0]) +
-              '</span>' +
-            '</div>';
+          if (p.kind === 'video') {
+            var vTitle = p.title || meta.label;
+            html +=
+              '<div class="sd-item is-video" role="button" tabindex="0" ' +
+                'data-sd-video="'   + sdEscape(p.src)     + '" ' +
+                'data-sd-caption="' + sdEscape(caption)   + '" ' +
+                'aria-label="Play ' + sdEscape(vTitle)    + '">' +
+                '<span class="sd-tag video">' +
+                  meta.icon + ' Video' +
+                '</span>' +
+                '<span class="sd-play" aria-hidden="true"></span>' +
+                '<span class="sd-video-title">' + sdEscape(vTitle) + '</span>' +
+              '</div>';
+          } else {
+            html +=
+              '<div class="sd-item" role="button" tabindex="0" ' +
+                'data-sd-full="'    + sdEscape(p.full)    + '" ' +
+                'data-sd-caption="' + sdEscape(caption)   + '" ' +
+                'aria-label="View ' + sdEscape(meta.label) + '">' +
+                '<img loading="lazy" decoding="async" ' +
+                  'src="' + sdEscape(p.thumb) + '" ' +
+                  'alt="' + sdEscape(meta.label) + '" />' +
+                '<span class="sd-tag ' + sdEscape(p.section) + '">' +
+                  meta.icon + ' ' + sdEscape(meta.label.split(' ')[0]) +
+                '</span>' +
+              '</div>';
+          }
         }
         sdGrid.innerHTML = html;
       }
@@ -1752,13 +1812,17 @@
       function sdUpdateCounts() {
         var aerial = sdAll.filter(function (p) { return p.section === 'aerial'; }).length;
         var temple = sdAll.filter(function (p) { return p.section === 'temple'; }).length;
+        var video  = sdAll.filter(function (p) { return p.section === 'video';  }).length;
         document.getElementById('sdCountAll').textContent    = sdAll.length;
         document.getElementById('sdCountAerial').textContent = aerial;
         document.getElementById('sdCountTemple').textContent = temple;
+        var vCountEl = document.getElementById('sdCountVideo');
+        if (vCountEl) vCountEl.textContent = video;
         sdSummary.textContent =
           'A very special collection from June 2026 — ' +
+          (video ? video + ' sacred video' + (video > 1 ? 's, ' : ', ') : '') +
           aerial + ' aerial drone views and ' + temple +
-          ' temple photos. Tap any photo to view full size.';
+          ' temple photos. Tap any tile to view full size.';
       }
 
       // Filter button handlers (event delegation)
@@ -1773,26 +1837,37 @@
         sdRender();
       });
 
+      function sdOpenItem(item) {
+        var vidUrl = item.getAttribute('data-sd-video');
+        var imgUrl = item.getAttribute('data-sd-full');
+        var cap    = item.getAttribute('data-sd-caption');
+        if (vidUrl) {
+          openLightbox(null, vidUrl, cap);
+        } else {
+          openLightbox(imgUrl, null, cap);
+        }
+      }
+
       // Click / keyboard → open lightbox using existing openLightbox()
       sdGrid.addEventListener('click', function (e) {
         var item = e.target.closest('.sd-item');
         if (!item) return;
-        openLightbox(item.getAttribute('data-sd-full'), null,
-                     item.getAttribute('data-sd-caption'));
+        sdOpenItem(item);
       });
       sdGrid.addEventListener('keydown', function (e) {
         if (e.key !== 'Enter' && e.key !== ' ') return;
         var item = e.target.closest('.sd-item');
         if (!item) return;
         e.preventDefault();
-        openLightbox(item.getAttribute('data-sd-full'), null,
-                     item.getAttribute('data-sd-caption'));
+        sdOpenItem(item);
       });
 
       // Photo list inlined directly so the section works on http://, https://,
       // and file:// (no fetch / no CORS issues). Regenerate from photos.json
       // via scripts/optimize-photos.ps1 when you add more photos.
       var SD_PHOTOS = [
+        { section:"video", kind:"video", src:"images/special-darshan-jun-2026/video/divine-glimpses-jun-2026.mp4",   title:"Divine Glimpses — Video 1" },
+        { section:"video", kind:"video", src:"images/special-darshan-jun-2026/video/divine-glimpses-jun-2026-2.mp4", title:"Divine Glimpses — Video 2" },
         { section:"aerial", full:"images/special-darshan-jun-2026/aerial/dji_20260609074620_0004_d.jpg", thumb:"images/special-darshan-jun-2026/aerial/dji_20260609074620_0004_d-thumb.jpg", title:"DJI_20260609074620_0004_D" },
         { section:"aerial", full:"images/special-darshan-jun-2026/aerial/dji_20260609074716_0006_d.jpg", thumb:"images/special-darshan-jun-2026/aerial/dji_20260609074716_0006_d-thumb.jpg", title:"DJI_20260609074716_0006_D" },
         { section:"aerial", full:"images/special-darshan-jun-2026/aerial/dji_20260609074907_0009_d.jpg", thumb:"images/special-darshan-jun-2026/aerial/dji_20260609074907_0009_d-thumb.jpg", title:"DJI_20260609074907_0009_D" },

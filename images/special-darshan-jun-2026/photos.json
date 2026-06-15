@@ -1,5 +1,17 @@
 ﻿[
     {
+        "section":  "video",
+        "kind":  "video",
+        "src":  "images/special-darshan-jun-2026/video/divine-glimpses-jun-2026.mp4",
+        "title":  "Divine Glimpses — Video 1"
+    },
+    {
+        "section":  "video",
+        "kind":  "video",
+        "src":  "images/special-darshan-jun-2026/video/divine-glimpses-jun-2026-2.mp4",
+        "title":  "Divine Glimpses — Video 2"
+    },
+    {
         "section":  "aerial",
         "full":  "images/special-darshan-jun-2026/aerial/dji_20260609074620_0004_d.jpg",
         "thumb":  "images/special-darshan-jun-2026/aerial/dji_20260609074620_0004_d-thumb.jpg",
