@@ -376,6 +376,51 @@
       letter-spacing: .3px;
       text-transform: uppercase;
     }
+    .home-gallery-card.is-video {
+      background: linear-gradient(135deg, #2d1810 0%, #5a2a18 45%, #8b1a1a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .home-gallery-card.is-video .home-gallery-play {
+      position: relative;
+      z-index: 1;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .4);
+      transition: transform .25s, background .25s;
+    }
+    .home-gallery-card.is-video:hover .home-gallery-play {
+      transform: scale(1.12);
+      background: #fff;
+    }
+    .home-gallery-card.is-video .home-gallery-play::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 14px solid var(--maroon);
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      margin-left: 4px;
+    }
+    .home-gallery-card.is-video .home-gallery-vtitle {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 8px;
+      text-align: center;
+      color: #fff8ec;
+      font-family: 'Merriweather', serif;
+      font-size: .68rem;
+      font-weight: 700;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, .7);
+      padding: 0 8px;
+    }
     .home-gallery-status {
       grid-column: 1 / -1;
       text-align: center;
@@ -2019,36 +2064,49 @@
           return response.json();
         })
         .then((items) => {
-          const photos = Array.isArray(items)
-            ? items.filter((item) => item && item.kind !== 'video' && (item.full || item.src))
+          const media = Array.isArray(items)
+            ? items.filter((item) => item && (item.full || item.src))
             : [];
 
-          if (!photos.length) {
-            showStatus('No gallery photos found right now.', false);
+          if (!media.length) {
+            showStatus('No gallery media found right now.', false);
             return;
           }
 
+          let videoCount = 0;
           grid.innerHTML = '';
-          photos.forEach((item) => {
-            const full = item.full || item.src;
-            const thumb = item.thumb || full;
-            const tag = (item.section || 'photo').toUpperCase();
+          media.forEach((item) => {
+            const isVideo = item.kind === 'video';
+            const src = item.full || item.src;
+            const tag = (item.section || (isVideo ? 'video' : 'photo')).toUpperCase();
+            const safeTitle = (item.title || (isVideo ? 'Gallery Video' : 'Gallery Photo')).replace(/"/g, '&quot;');
 
             const card = document.createElement('a');
-            card.className = 'home-gallery-card';
-            card.href = full;
+            card.href = src;
             card.target = '_blank';
             card.rel = 'noopener';
-            card.title = item.title || 'Gallery Photo';
+            card.title = item.title || (isVideo ? 'Gallery Video' : 'Gallery Photo');
 
-            card.innerHTML =
-              '<img loading="lazy" decoding="async" src="' + thumb + '" alt="' + (item.title || 'Gallery Photo').replace(/"/g, '&quot;') + '" />' +
-              '<span class="home-gallery-tag">' + tag + '</span>';
+            if (isVideo) {
+              videoCount++;
+              card.className = 'home-gallery-card is-video';
+              card.innerHTML =
+                '<span class="home-gallery-play" aria-hidden="true"></span>' +
+                '<span class="home-gallery-tag">\u{1F3AC} ' + tag + '</span>' +
+                '<span class="home-gallery-vtitle">' + safeTitle + '</span>';
+            } else {
+              const thumb = item.thumb || src;
+              card.className = 'home-gallery-card';
+              card.innerHTML =
+                '<img loading="lazy" decoding="async" src="' + thumb + '" alt="' + safeTitle + '" />' +
+                '<span class="home-gallery-tag">' + tag + '</span>';
+            }
 
             grid.appendChild(card);
           });
 
-          count.textContent = 'Showing ' + photos.length + ' photos';
+          const photoCount = media.length - videoCount;
+          count.textContent = 'Showing ' + photoCount + ' photos' + (videoCount ? ' & ' + videoCount + ' videos' : '');
         })
         .catch(() => {
           showStatus('Could not load gallery photos.', true);
