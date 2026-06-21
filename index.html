@@ -286,6 +286,104 @@
     }
     .section-block p + p { margin-top: .85rem; }
 
+    /* About page gallery preview */
+    .home-gallery-block {
+      background: linear-gradient(180deg, #fffdf9 0%, #fff7ec 100%);
+      border: 1px solid #f0debf;
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 26px;
+    }
+    .home-gallery-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .home-gallery-head h2 {
+      margin-bottom: 0;
+      font-size: 1.35rem;
+    }
+    .home-gallery-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--maroon);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .home-gallery-link:hover {
+      text-decoration: none;
+      background: var(--saffron-d);
+      color: #fff;
+    }
+    .home-gallery-sub {
+      color: #66584a;
+      font-size: .9rem;
+      margin-bottom: 10px;
+    }
+    .home-gallery-count {
+      display: inline-block;
+      font-size: .75rem;
+      color: #7c664e;
+      background: #fff;
+      border: 1px solid #ecd9bb;
+      border-radius: 12px;
+      padding: 3px 10px;
+      margin-bottom: 12px;
+    }
+    .home-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 10px;
+    }
+    .home-gallery-card {
+      display: block;
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: #f2eadf;
+      box-shadow: 0 2px 10px rgba(0,0,0,.12);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .home-gallery-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,.2);
+    }
+    .home-gallery-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .35s;
+    }
+    .home-gallery-card:hover img { transform: scale(1.06); }
+    .home-gallery-tag {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      font-size: .62rem;
+      color: #fff;
+      background: rgba(0, 0, 0, .62);
+      padding: 3px 8px;
+      border-radius: 10px;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+    .home-gallery-status {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #8a7a67;
+      font-size: .9rem;
+      padding: 18px 12px;
+    }
+
     /* Mythology numbered list */
     .myth-list { list-style: none; counter-reset: myth; margin-top: 1rem; }
     .myth-list li {
@@ -972,6 +1070,8 @@
       .hamburger { display: block; }
       .hero { height: 240px; }
       .hero-overlay h1 { font-size: 1.5rem; }
+      .home-gallery-block { padding: 16px 14px; }
+      .home-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .footer-grid { grid-template-columns: 1fr; }
       .dham-grid { grid-template-columns: 1fr; }
       .circuit-steps { flex-direction: column; }
@@ -1073,10 +1173,10 @@
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="#" class="active">About Chari Dham</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
           <li><a href="wisdom.html">Wisdom &amp; Dharma</a></li>
           <li><a href="news.html">News</a></li>
           <li><a href="#">Packages</a></li>
-          <li><a href="gallery.html">Gallery</a></li>
           <li><a href="#trust-section">About Trust</a></li>
           <li><a href="#" class="header-cta">Book Now</a></li>
         </ul>
@@ -1131,6 +1231,21 @@
         <!-- Logo Feature -->
         <div class="logo-feature">
           <img src="Chardhamlogo.jpg" alt="Chari Dham Logo" />
+        </div>
+
+        <!-- All Gallery Photos -->
+        <div class="section-block home-gallery-block" id="all-gallery-photos">
+          <div class="home-gallery-head">
+            <h2>All Gallery Photos</h2>
+            <a class="home-gallery-link" href="gallery.html">Open Full Gallery →</a>
+          </div>
+          <p class="home-gallery-sub">
+            All latest darshan photos from our gallery are shown here. Tap any photo to view in full size.
+          </p>
+          <div class="home-gallery-count" id="homeGalleryCount">Loading photos...</div>
+          <div class="home-gallery-grid" id="homeGalleryGrid">
+            <div class="home-gallery-status">Loading gallery photos...</div>
+          </div>
         </div>
 
         <!-- ── Proposed Temple Showcase ──────────────────────── -->
@@ -1886,6 +2001,59 @@
       e.preventDefault();
       document.getElementById('trust-section').scrollIntoView({ behavior: 'smooth' });
     });
+
+    // Load all gallery photos under About section.
+    (function loadHomeGalleryPhotos() {
+      const grid = document.getElementById('homeGalleryGrid');
+      const count = document.getElementById('homeGalleryCount');
+      if (!grid || !count) return;
+
+      function showStatus(text, isError) {
+        grid.innerHTML = '<div class="home-gallery-status"' + (isError ? ' style="color:#b94a48"' : '') + '>' + text + '</div>';
+        count.textContent = text;
+      }
+
+      fetch('images/special-darshan-jun-2026/photos.json', { cache: 'no-store' })
+        .then((response) => {
+          if (!response.ok) throw new Error('Failed to load photos');
+          return response.json();
+        })
+        .then((items) => {
+          const photos = Array.isArray(items)
+            ? items.filter((item) => item && item.kind !== 'video' && (item.full || item.src))
+            : [];
+
+          if (!photos.length) {
+            showStatus('No gallery photos found right now.', false);
+            return;
+          }
+
+          grid.innerHTML = '';
+          photos.forEach((item) => {
+            const full = item.full || item.src;
+            const thumb = item.thumb || full;
+            const tag = (item.section || 'photo').toUpperCase();
+
+            const card = document.createElement('a');
+            card.className = 'home-gallery-card';
+            card.href = full;
+            card.target = '_blank';
+            card.rel = 'noopener';
+            card.title = item.title || 'Gallery Photo';
+
+            card.innerHTML =
+              '<img loading="lazy" decoding="async" src="' + thumb + '" alt="' + (item.title || 'Gallery Photo').replace(/"/g, '&quot;') + '" />' +
+              '<span class="home-gallery-tag">' + tag + '</span>';
+
+            grid.appendChild(card);
+          });
+
+          count.textContent = 'Showing ' + photos.length + ' photos';
+        })
+        .catch(() => {
+          showStatus('Could not load gallery photos.', true);
+        });
+    })();
 
     // ── Trust Documents (auto-loaded from /trust-upload/) ────────
     (function () {
