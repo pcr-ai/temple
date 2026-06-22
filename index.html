@@ -382,6 +382,21 @@
       align-items: center;
       justify-content: center;
     }
+    .home-gallery-card.is-video .home-gallery-vthumb {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .home-gallery-card.is-video::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .28);
+      z-index: 0;
+    }
     .home-gallery-card.is-video .home-gallery-play {
       position: relative;
       z-index: 1;
@@ -2091,6 +2106,7 @@
               videoCount++;
               card.className = 'home-gallery-card is-video';
               card.innerHTML =
+                '<video class="home-gallery-vthumb" muted playsinline preload="metadata" src="' + src + '#t=0.5"></video>' +
                 '<span class="home-gallery-play" aria-hidden="true"></span>' +
                 '<span class="home-gallery-tag">\u{1F3AC} ' + tag + '</span>' +
                 '<span class="home-gallery-vtitle">' + safeTitle + '</span>';
