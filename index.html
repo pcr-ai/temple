@@ -136,14 +136,15 @@
     .logo-text strong { display: block; font-size: 1.35rem; color: var(--maroon); line-height: 1.2; font-weight: 700; letter-spacing: 0.5px; text-shadow: 0 1px 1px rgba(0,0,0,.08); }
     .logo-text span { font-size: .78rem; color: var(--saffron-d); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
 
-    nav ul { list-style: none; display: flex; gap: 4px; }
+    nav ul { list-style: none; display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; }
     nav ul li a {
       display: block;
-      padding: 8px 13px;
-      font-size: .87rem;
+      padding: 8px 10px;
+      font-size: .82rem;
       font-weight: 600;
       color: var(--dark);
       border-radius: 4px;
+      white-space: nowrap;
       transition: background .2s, color .2s;
     }
     nav ul li a:hover,
@@ -152,10 +153,60 @@
     .header-cta {
       background: var(--maroon);
       color: white !important;
-      padding: 9px 18px !important;
+      padding: 9px 14px !important;
       border-radius: 5px;
     }
     .header-cta:hover { background: var(--saffron-d) !important; }
+
+    /* QR "Scan & Pay" header button */
+    .qr-header-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; margin-left: 4px;
+      background: var(--saffron); color: #fff;
+      border: none; border-radius: 6px; cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .qr-header-btn:hover { background: var(--saffron-d); transform: translateY(-1px); }
+    .qr-header-btn svg { display: block; }
+
+    /* QR "Scan & Pay" modal */
+    .qr-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.8);
+      display: none; align-items: center; justify-content: center;
+      z-index: 10000; padding: 24px;
+      animation: fadeIn .25s ease;
+    }
+    .qr-modal.open { display: flex; }
+    .qr-modal-card {
+      position: relative; background: #fff;
+      border-radius: 12px; padding: 22px 24px 26px;
+      max-width: 360px; width: 100%;
+      text-align: center; box-shadow: 0 16px 48px rgba(0,0,0,.45);
+      border-top: 5px solid var(--saffron);
+    }
+    .qr-modal-card h3 {
+      font-family: 'Merriweather', serif; color: var(--maroon);
+      font-size: 1.25rem; margin-bottom: 4px;
+    }
+    .qr-modal-card .qr-sub { font-size: .85rem; color: var(--text); margin-bottom: 14px; }
+    .qr-modal-card .qr-code-box {
+      width: 260px; max-width: 100%; margin: 0 auto;
+      padding: 10px; background: #fff;
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    .qr-modal-card .qr-code-box svg,
+    .qr-modal-card .qr-code-box img { width: 100%; height: auto; display: block; }
+    .qr-modal-card .qr-upi-id {
+      margin-top: 12px; font-size: .9rem; color: var(--dark);
+    }
+    .qr-modal-card .qr-upi-id strong { color: var(--maroon); }
+    .qr-modal-close {
+      position: absolute; top: 10px; right: 14px;
+      font-size: 1.8rem; line-height: 1; color: #888;
+      cursor: pointer; user-select: none;
+    }
+    .qr-modal-close:hover { color: var(--maroon); }
 
     /* hamburger (mobile) */
     .hamburger { display: none; font-size: 26px; cursor: pointer; color: var(--dark); }
@@ -1232,13 +1283,21 @@
       <nav>
         <ul>
           <li><a href="index.html">Home</a></li>
-          <li><a href="#" class="active">About Chari Dham</a></li>
+          <li><a href="#">About Chari Dham</a></li>
           <li><a href="gallery.html">Gallery</a></li>
           <li><a href="wisdom.html">Wisdom &amp; Dharma</a></li>
           <li><a href="news.html">News</a></li>
           <li><a href="#">Packages</a></li>
           <li><a href="#trust-section">About Trust</a></li>
           <li><a href="#" class="header-cta">Book Now</a></li>
+          <li>
+            <button type="button" class="qr-header-btn" id="qrHeaderBtn"
+                    aria-label="Scan &amp; Pay — Donate via UPI" title="Scan &amp; Pay (UPI Donation)">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm11-2h5v2h-3v3h-2v-5zm3 4h2v4h-4v-2h2v-2zm-6 0h2v2h-2v-2z"/>
+              </svg>
+            </button>
+          </li>
         </ul>
       </nav>
       <div class="hamburger">☰</div>
@@ -1695,6 +1754,23 @@
       <!-- ── SIDEBAR ───────────────────────────────────────────── -->
       <aside class="sidebar">
 
+        <!-- Scan & Pay / Donate -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">📿 Scan &amp; Pay — Donate</div>
+          <div class="sidebar-card-body" style="text-align:center; padding:16px;">
+            <p style="font-size:.85rem; margin-bottom:12px; color:var(--text);">
+              Support ChariDham — scan the QR with any UPI app.
+            </p>
+            <div class="qr-code-box" role="img" aria-label="UPI QR code for charidhamodisha@cnrb">
+              <img class="qr-image" src="images/payment/charidham-upi-qr.jpg"
+                   alt="UPI QR code — charidhamodisha@cnrb (Canara Bank)" />
+            </div>
+            <p class="qr-upi-id" style="margin-top:12px; font-size:.9rem;">
+              UPI ID: <strong style="color:var(--maroon);">charidhamodisha@cnrb</strong>
+            </p>
+          </div>
+        </div>
+
         <!-- Enquiry Form -->
         <div class="sidebar-card">
           <details>
@@ -1925,6 +2001,20 @@
     <img id="trustLightboxImg" alt="Document preview" />
   </div>
 
+  <!-- Scan & Pay (UPI donation) modal -->
+  <div class="qr-modal" id="qrModal" role="dialog" aria-modal="true" aria-label="Scan and Pay via UPI">
+    <div class="qr-modal-card">
+      <span class="qr-modal-close" id="qrModalClose" aria-label="Close">&times;</span>
+      <h3>📿 Scan &amp; Pay</h3>
+      <p class="qr-sub">Support ChariDham — donate securely via UPI</p>
+      <div id="qrCode" class="qr-code-box" role="img" aria-label="UPI QR code for charidhamodisha@cnrb">
+        <img id="qrImage" class="qr-image" src="images/payment/charidham-upi-qr.jpg"
+             alt="UPI QR code — charidhamodisha@cnrb (Canara Bank)" />
+      </div>
+      <p class="qr-upi-id">UPI ID: <strong>charidhamodisha@cnrb</strong></p>
+    </div>
+  </div>
+
   <!-- ═══ TOUR PACKAGES STRIP ══════════════════════════════════ -->
   <section class="packages-strip">
     <div class="container">
@@ -2045,6 +2135,7 @@
   </footer>
 
   <!-- ═══ JAVASCRIPT ════════════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
   <script>
     // FAQ accordion
     document.querySelectorAll('.faq-q').forEach(q => {
@@ -2061,6 +2152,59 @@
       e.preventDefault();
       document.getElementById('trust-section').scrollIntoView({ behavior: 'smooth' });
     });
+
+    // Highlight the nav tab for the current page
+    (function setActiveNav() {
+      const current = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+      const links = document.querySelectorAll('nav ul li a');
+      links.forEach(a => a.classList.remove('active'));
+      let matched = false;
+      links.forEach(a => {
+        if (a.classList.contains('header-cta')) return;
+        const file = (a.getAttribute('href') || '').split('/').pop().split('#')[0].toLowerCase();
+        if (file && file === current) { a.classList.add('active'); matched = true; }
+      });
+      if (!matched) {
+        const home = document.querySelector('nav ul li a[href="index.html"]');
+        if (home) home.classList.add('active');
+      }
+    })();
+
+    // Scan & Pay (UPI) modal
+    (function () {
+      const qrBtn   = document.getElementById('qrHeaderBtn');
+      const qrModal = document.getElementById('qrModal');
+      const qrClose = document.getElementById('qrModalClose');
+      const UPI_URI = 'upi://pay?pa=charidhamodisha@cnrb&pn=Charidham%20Odisha&cu=INR';
+
+      // For every QR box: show the uploaded image; if missing, generate a scannable QR.
+      function generateInto(box) {
+        if (!box || typeof qrcode !== 'function') return;
+        try {
+          const qr = qrcode(0, 'M');
+          qr.addData(UPI_URI);
+          qr.make();
+          box.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+        } catch (e) { /* library not ready */ }
+      }
+      document.querySelectorAll('.qr-code-box').forEach(function (box) {
+        const img = box.querySelector('.qr-image');
+        if (img) {
+          img.addEventListener('error', function () { generateInto(box); });
+          if (img.complete && img.naturalWidth === 0) generateInto(box);
+        } else {
+          generateInto(box);
+        }
+      });
+
+      if (!qrBtn || !qrModal) return;
+      const openQr  = () => qrModal.classList.add('open');
+      const closeQr = () => qrModal.classList.remove('open');
+      qrBtn.addEventListener('click', openQr);
+      qrClose.addEventListener('click', closeQr);
+      qrModal.addEventListener('click', (e) => { if (e.target === qrModal) closeQr(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeQr(); });
+    })();
 
     // Load all gallery photos under About section.
     (function loadHomeGalleryPhotos() {
