@@ -714,32 +714,10 @@
         They will appear in the gallery once approved.
       </div>
 
-      <!-- ── Divine Glimpses featured section ────────────────── -->
-      <section class="sd-section" id="sdSection" aria-label="Divine Glimpses photo collection">
-        <div class="sd-section-head">
-          <div>
-            <h2>🕊️ Divine Glimpses — June 2026 <span class="sd-badge-special">New</span></h2>
-            <p class="sd-sub" id="sdSummary">Loading sacred photos…</p>
-          </div>
-        </div>
-        <div class="sd-filter-bar" id="sdFilterBar">
-          <button type="button" class="sd-filter-btn active" data-sd-filter="all">
-            All <span class="sd-count" id="sdCountAll">0</span>
-          </button>
-          <button type="button" class="sd-filter-btn" data-sd-filter="video">
-            🎬 Video <span class="sd-count" id="sdCountVideo">0</span>
-          </button>
-          <button type="button" class="sd-filter-btn" data-sd-filter="aerial">
-            🚁 Aerial <span class="sd-count" id="sdCountAerial">0</span>
-          </button>
-          <button type="button" class="sd-filter-btn" data-sd-filter="temple">
-            🕍 Temple <span class="sd-count" id="sdCountTemple">0</span>
-          </button>
-        </div>
-        <div class="sd-grid" id="sdGrid" aria-live="polite">
-          <div class="sd-loading">Loading sacred photos…</div>
-        </div>
-      </section>
+      <!-- ── Divine Glimpses monthly albums ──────────────────── -->
+      <div id="sdAlbums" aria-label="Divine Glimpses monthly photo albums">
+        <div class="sd-loading">Loading sacred photos…</div>
+      </div>
 
       <!-- ── Public Gallery ─────────────────────────── -->
       <h2 class="section-title" style="margin-bottom:8px">Community Gallery</h2>
@@ -1746,96 +1724,117 @@
     /* ── Special Darshan featured section loader ─────────────── */
     (function loadSpecialDarshan() {
       var SD_LABELS = {
-        aerial: { label: 'Aerial Drone View', icon: '🚁' },
-        temple: { label: 'Temple Photo',      icon: '🕍' },
-        video:  { label: 'Sacred Video',       icon: '🎬' }
+        aerial: { label: 'Aerial Drone View', icon: '🚁', filter: 'Aerial' },
+        temple: { label: 'Temple Photo',      icon: '🕍', filter: 'Temple' },
+        photo:  { label: 'Photo',             icon: '📷', filter: 'Photos' },
+        video:  { label: 'Sacred Video',      icon: '🎬', filter: 'Video'  }
       };
-      var sdGrid    = document.getElementById('sdGrid');
-      var sdSection = document.getElementById('sdSection');
-      var sdSummary = document.getElementById('sdSummary');
-      if (!sdGrid) return;
-
-      var sdAll = [];
-      var sdFilter = 'all';
+      // Order categories appear in the filter bar.
+      var SD_CAT_ORDER = ['video', 'aerial', 'temple', 'photo'];
+      var sdContainer = document.getElementById('sdAlbums');
+      if (!sdContainer) return;
 
       function sdEscape(s) {
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
           .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       }
 
-      function sdRender() {
-        var list = sdFilter === 'all'
-          ? sdAll
-          : sdAll.filter(function (p) { return p.section === sdFilter; });
-
-        if (!list.length) {
-          sdGrid.innerHTML = '<div class="sd-loading">No photos in this category.</div>';
-          return;
+      function sdCounts(items) {
+        var c = {};
+        for (var i = 0; i < items.length; i++) {
+          var s = items[i].section;
+          c[s] = (c[s] || 0) + 1;
         }
+        return c;
+      }
 
+      function sdItemHtml(p) {
+        var meta = SD_LABELS[p.section] || { label: p.section, icon: '📷' };
+        var caption = '🕊️ Divine Glimpses — ' + meta.label;
+        if (p.kind === 'video') {
+          var vTitle = p.title || meta.label;
+          return '<div class="sd-item is-video" role="button" tabindex="0" ' +
+              'data-sd-video="'   + sdEscape(p.src)   + '" ' +
+              'data-sd-caption="' + sdEscape(caption) + '" ' +
+              'aria-label="Play ' + sdEscape(vTitle)  + '">' +
+              '<span class="sd-tag video">' + meta.icon + ' Video</span>' +
+              '<span class="sd-play" aria-hidden="true"></span>' +
+              '<span class="sd-video-title">' + sdEscape(vTitle) + '</span>' +
+            '</div>';
+        }
+        return '<div class="sd-item" role="button" tabindex="0" ' +
+            'data-sd-full="'    + sdEscape(p.full)   + '" ' +
+            'data-sd-caption="' + sdEscape(caption)  + '" ' +
+            'aria-label="View ' + sdEscape(meta.label) + '">' +
+            '<img loading="lazy" decoding="async" ' +
+              'src="' + sdEscape(p.thumb || p.full) + '" ' +
+              'alt="' + sdEscape(meta.label) + '" />' +
+            '<span class="sd-tag ' + sdEscape(p.section) + '">' +
+              meta.icon + ' ' + sdEscape(meta.label.split(' ')[0]) +
+            '</span>' +
+          '</div>';
+      }
+
+      function sdGridHtml(items) {
+        if (!items.length) {
+          return '<div class="sd-loading">No photos in this category.</div>';
+        }
         var html = '';
-        for (var i = 0; i < list.length; i++) {
-          var p = list[i];
-          var meta = SD_LABELS[p.section] || { label: p.section, icon: '📷' };
-          var caption = '🕊️ Divine Glimpses — ' + meta.label;
-          if (p.kind === 'video') {
-            var vTitle = p.title || meta.label;
-            html +=
-              '<div class="sd-item is-video" role="button" tabindex="0" ' +
-                'data-sd-video="'   + sdEscape(p.src)     + '" ' +
-                'data-sd-caption="' + sdEscape(caption)   + '" ' +
-                'aria-label="Play ' + sdEscape(vTitle)    + '">' +
-                '<span class="sd-tag video">' +
-                  meta.icon + ' Video' +
-                '</span>' +
-                '<span class="sd-play" aria-hidden="true"></span>' +
-                '<span class="sd-video-title">' + sdEscape(vTitle) + '</span>' +
-              '</div>';
-          } else {
-            html +=
-              '<div class="sd-item" role="button" tabindex="0" ' +
-                'data-sd-full="'    + sdEscape(p.full)    + '" ' +
-                'data-sd-caption="' + sdEscape(caption)   + '" ' +
-                'aria-label="View ' + sdEscape(meta.label) + '">' +
-                '<img loading="lazy" decoding="async" ' +
-                  'src="' + sdEscape(p.thumb) + '" ' +
-                  'alt="' + sdEscape(meta.label) + '" />' +
-                '<span class="sd-tag ' + sdEscape(p.section) + '">' +
-                  meta.icon + ' ' + sdEscape(meta.label.split(' ')[0]) +
-                '</span>' +
-              '</div>';
-          }
+        for (var i = 0; i < items.length; i++) html += sdItemHtml(items[i]);
+        return html;
+      }
+
+      function sdSummaryText(album) {
+        var c = sdCounts(album.items);
+        var parts = [];
+        if (c.video)  parts.push(c.video  + ' sacred video'   + (c.video  > 1 ? 's' : ''));
+        if (c.aerial) parts.push(c.aerial + ' aerial drone view' + (c.aerial > 1 ? 's' : ''));
+        if (c.temple) parts.push(c.temple + ' temple photo'   + (c.temple > 1 ? 's' : ''));
+        if (c.photo)  parts.push(c.photo  + ' photo'          + (c.photo  > 1 ? 's' : ''));
+        var joined = parts.length > 1
+          ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1]
+          : (parts[0] || 'photos');
+        return 'A special collection from ' + album.title + ' — ' + joined +
+          '. Tap any tile to view full size.';
+      }
+
+      function sdFilterBarHtml(album) {
+        var c = sdCounts(album.items);
+        var html = '<button type="button" class="sd-filter-btn active" data-sd-filter="all">' +
+          'All <span class="sd-count">' + album.items.length + '</span></button>';
+        for (var i = 0; i < SD_CAT_ORDER.length; i++) {
+          var cat = SD_CAT_ORDER[i];
+          if (!c[cat]) continue;
+          var meta = SD_LABELS[cat];
+          html += '<button type="button" class="sd-filter-btn" data-sd-filter="' + cat + '">' +
+            meta.icon + ' ' + meta.filter +
+            ' <span class="sd-count">' + c[cat] + '</span></button>';
         }
-        sdGrid.innerHTML = html;
+        return html;
       }
 
-      function sdUpdateCounts() {
-        var aerial = sdAll.filter(function (p) { return p.section === 'aerial'; }).length;
-        var temple = sdAll.filter(function (p) { return p.section === 'temple'; }).length;
-        var video  = sdAll.filter(function (p) { return p.section === 'video';  }).length;
-        document.getElementById('sdCountAll').textContent    = sdAll.length;
-        document.getElementById('sdCountAerial').textContent = aerial;
-        document.getElementById('sdCountTemple').textContent = temple;
-        var vCountEl = document.getElementById('sdCountVideo');
-        if (vCountEl) vCountEl.textContent = video;
-        sdSummary.textContent =
-          'A very special collection from June 2026 — ' +
-          (video ? video + ' sacred video' + (video > 1 ? 's, ' : ', ') : '') +
-          aerial + ' aerial drone views and ' + temple +
-          ' temple photos. Tap any tile to view full size.';
+      function sdAlbumHtml(album) {
+        return '<section class="sd-section" data-album-id="' + sdEscape(album.id) + '" ' +
+            'aria-label="Divine Glimpses ' + sdEscape(album.title) + '">' +
+            '<div class="sd-section-head"><div>' +
+              '<h2>🕊️ Divine Glimpses — ' + sdEscape(album.title) +
+                (album.badge ? ' <span class="sd-badge-special">' + sdEscape(album.badge) + '</span>' : '') +
+              '</h2>' +
+              '<p class="sd-sub">' + sdEscape(sdSummaryText(album)) + '</p>' +
+            '</div></div>' +
+            '<div class="sd-filter-bar">' + sdFilterBarHtml(album) + '</div>' +
+            '<div class="sd-grid" data-album-grid="' + sdEscape(album.id) + '" aria-live="polite">' +
+              sdGridHtml(album.items) +
+            '</div>' +
+          '</section>';
       }
 
-      // Filter button handlers (event delegation)
-      document.getElementById('sdFilterBar').addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-sd-filter]');
-        if (!btn) return;
-        var bar = btn.parentNode;
-        var btns = bar.querySelectorAll('.sd-filter-btn');
-        for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
-        btn.classList.add('active');
-        sdFilter = btn.getAttribute('data-sd-filter');
-        sdRender();
-      });
+      function sdFindAlbum(id) {
+        for (var i = 0; i < SD_ALBUMS.length; i++) {
+          if (SD_ALBUMS[i].id === id) return SD_ALBUMS[i];
+        }
+        return null;
+      }
 
       function sdOpenItem(item) {
         var vidUrl = item.getAttribute('data-sd-video');
@@ -1848,13 +1847,27 @@
         }
       }
 
-      // Click / keyboard → open lightbox using existing openLightbox()
-      sdGrid.addEventListener('click', function (e) {
+      // Filter + lightbox handling via event delegation on the albums container.
+      sdContainer.addEventListener('click', function (e) {
+        var fbtn = e.target.closest('[data-sd-filter]');
+        if (fbtn) {
+          var section = fbtn.closest('.sd-section');
+          var album   = sdFindAlbum(section.getAttribute('data-album-id'));
+          if (!album) return;
+          var btns = section.querySelectorAll('.sd-filter-btn');
+          for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+          fbtn.classList.add('active');
+          var filter = fbtn.getAttribute('data-sd-filter');
+          var list = filter === 'all'
+            ? album.items
+            : album.items.filter(function (p) { return p.section === filter; });
+          section.querySelector('[data-album-grid]').innerHTML = sdGridHtml(list);
+          return;
+        }
         var item = e.target.closest('.sd-item');
-        if (!item) return;
-        sdOpenItem(item);
+        if (item) sdOpenItem(item);
       });
-      sdGrid.addEventListener('keydown', function (e) {
+      sdContainer.addEventListener('keydown', function (e) {
         if (e.key !== 'Enter' && e.key !== ' ') return;
         var item = e.target.closest('.sd-item');
         if (!item) return;
@@ -1865,6 +1878,20 @@
       // Photo list inlined directly so the section works on http://, https://,
       // and file:// (no fetch / no CORS issues). Regenerate from photos.json
       // via scripts/optimize-photos.ps1 when you add more photos.
+
+      // ── August 2026 (recent uploads under images/280826) ──
+      var AUG_2026 = [
+        { section:"video", kind:"video", src:"images/280826/news.mp4",   title:"News Coverage" },
+        { section:"video", kind:"video", src:"images/280826/photo6.mp4", title:"Divine Glimpses — Video" },
+        { section:"photo", full:"images/280826/invite.jpeg", thumb:"images/280826/invite.jpeg", title:"Invitation" },
+        { section:"photo", full:"images/280826/photo1.jpeg", thumb:"images/280826/photo1.jpeg", title:"Photo 1" },
+        { section:"photo", full:"images/280826/photo2.jpeg", thumb:"images/280826/photo2.jpeg", title:"Photo 2" },
+        { section:"photo", full:"images/280826/photo3.jpeg", thumb:"images/280826/photo3.jpeg", title:"Photo 3" },
+        { section:"photo", full:"images/280826/photo4.jpeg", thumb:"images/280826/photo4.jpeg", title:"Photo 4" },
+        { section:"photo", full:"images/280826/photo5.jpeg", thumb:"images/280826/photo5.jpeg", title:"Photo 5" }
+      ];
+
+      // ── June 2026 (special darshan collection) ──
       var SD_PHOTOS = [
         { section:"video", kind:"video", src:"images/special-darshan-jun-2026/video/divine-glimpses-jun-2026.mp4",   title:"Divine Glimpses — Video 1" },
         { section:"video", kind:"video", src:"images/special-darshan-jun-2026/video/divine-glimpses-jun-2026-2.mp4", title:"Divine Glimpses — Video 2" },
@@ -1943,12 +1970,19 @@
         { section:"temple", full:"images/special-darshan-jun-2026/temple/dsc00220.jpg", thumb:"images/special-darshan-jun-2026/temple/dsc00220-thumb.jpg", title:"DSC00220" }
       ];
 
-      sdAll = SD_PHOTOS.slice();
-      if (!sdAll.length) {
-        sdSection.style.display = 'none';
+      // Albums are listed newest-first (month-year wise).
+      var SD_ALBUMS = [
+        { id: 'aug-2026', title: 'August 2026', badge: 'New', items: AUG_2026 },
+        { id: 'jun-2026', title: 'June 2026',   badge: '',    items: SD_PHOTOS }
+      ];
+
+      var sdAlbums = SD_ALBUMS.filter(function (a) { return a.items && a.items.length; });
+      if (!sdAlbums.length) {
+        sdContainer.style.display = 'none';
       } else {
-        sdUpdateCounts();
-        sdRender();
+        var html = '';
+        for (var i = 0; i < sdAlbums.length; i++) html += sdAlbumHtml(sdAlbums[i]);
+        sdContainer.innerHTML = html;
       }
     })();
   </script>
